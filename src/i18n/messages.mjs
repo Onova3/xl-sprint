@@ -1,0 +1,438 @@
+// Source unique des messages : node src/i18n/messages.mjs régénère fr.json et en.json.
+// Chaque entrée : [français, anglais]. Les textes français reprennent ceux de la v1.1.
+import { writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const M = {
+  'header.tagline': ["Entraînement de vitesse pour l'Excel esports", 'Speed training for Excel esports'],
+  'header.profile': ['Excel {fn} · séparateur « {sep} » · {kb}', 'Excel {fn} · “{sep}” separator · {kb}'],
+  'header.settings': ['Profil et réglages', 'Profile and settings'],
+  'chip.local': ['Progression enregistrée dans ce navigateur', 'Progress saved in this browser'],
+  'chip.cloud': ['Progression enregistrée sur votre compte', 'Progress saved to your account'],
+  'aside.path': ['Parcours', 'Path'],
+  'data.title': ['Vos données', 'Your data'],
+  'data.note': [
+    'Sans compte, la progression reste dans ce navigateur : exportez-la pour la garder ou la changer d’appareil.',
+    'Without an account, progress stays in this browser: export it to keep it or move it to another device.',
+  ],
+  'data.export': ['Exporter (JSON)', 'Export (JSON)'],
+  'data.import': ['Importer…', 'Import…'],
+  'data.exported': ['Fichier de progression téléchargé.', 'Progress file downloaded.'],
+  'data.imported': [
+    'Progression importée et fusionnée ({n} séances dans le fichier).',
+    'Progress imported and merged ({n} sessions in the file).',
+  ],
+  'data.importError': [
+    'Fichier illisible : ce n’est pas une progression XL Sprint.',
+    'Unreadable file: this is not XL Sprint progress.',
+  ],
+  'data.applyProfile': [
+    'Le fichier contient aussi un profil. L’appliquer à la place du vôtre ?',
+    'The file also contains a profile. Use it instead of yours?',
+  ],
+  'roadmap.title': ['Feuille de route du site', 'Site roadmap'],
+  'roadmap.p1': [
+    'Fondations : profil (langue, séparateurs, clavier), formules dans la langue de votre Excel, export de la progression.',
+    'Foundations: profile (language, separators, keyboard), formulas in your Excel language, progress export.',
+  ],
+  'roadmap.p2': [
+    'Mode Sprint façon Monkeytype, coach de complétion Tab, analyse des symboles, info-bulle des arguments.',
+    'Monkeytype-style Sprint mode, Tab completion coach, symbol analysis, argument tooltip.',
+  ],
+  'roadmap.p3': [
+    'Pédagogie : débogueur, explications, diagnostic des erreurs, répétition espacée, leçons.',
+    'Teaching: debugger, explanations, error diagnosis, spaced repetition, lessons.',
+  ],
+  'roadmap.p4': [
+    'Communauté : éditeur d’exercices, nouvelles langues et claviers, classement.',
+    'Community: exercise editor, new languages and keyboards, leaderboard.',
+  ],
+  'footer.shortcuts': [
+    'Les raccourcis sont ceux d’Excel pour Windows en anglais, saisis sur un clavier QWERTY US. Pour une autre configuration, ceux qui peuvent changer portent le badge « non vérifié pour votre configuration ». Quelques raccourcis réservés par le navigateur (Ctrl+T, Ctrl+W, Ctrl+PageDown…) sont travaillés sous forme de choix.',
+    'Shortcuts are those of English Excel for Windows, typed on a US QWERTY keyboard. For another setup, those that may differ carry the “not verified for your setup” badge. A few shortcuts reserved by the browser (Ctrl+T, Ctrl+W, Ctrl+PageDown…) are practised as multiple choice.',
+  ],
+
+  'step.nav.title': ['Navigation et saisie', 'Navigation and entry'],
+  'step.nav.intro': [
+    'Les déplacements, sélections et saisies que l’on fait des centaines de fois par cas : Ctrl+flèches, F2, Ctrl+D, Alt+=…',
+    'The moves, selections and entries you make hundreds of times per case: Ctrl+arrows, F2, Ctrl+D, Alt+=…',
+  ],
+  'step.fmt.title': ['Mise en forme et ruban', 'Formatting and ribbon'],
+  'step.fmt.intro': [
+    'Formats de nombre, bordures, couleurs et séquences du ruban (Alt H H, Alt H B A…). Relâchez Alt avant de taper les lettres, comme dans Excel.',
+    'Number formats, borders, colours and ribbon sequences (Alt H H, Alt H B A…). Release Alt before typing the letters, as in Excel.',
+  ],
+  'step.typing.title': ['Frappe de formules', 'Formula typing'],
+  'step.typing.intro': [
+    'Recopiez des formules caractère par caractère : parenthèses, séparateurs, guillemets, $ et noms de fonctions. Avec Tab activé, vous travaillez aussi la complétion des fonctions comme dans Excel.',
+    'Copy formulas character by character: parentheses, separators, quotation marks, $ and function names. With Tab on, you also practise function completion as in Excel.',
+  ],
+  'step.formula.title': ['Écrire des formules', 'Writing formulas'],
+  'step.formula.intro': [
+    'Écrivez la formule demandée dans la barre de formule, sur la feuille d’exemple. Tab complète le nom de fonction et vous pouvez omettre les parenthèses finales, comme dans Excel.',
+    'Write the requested formula in the formula bar, on the sample sheet. Tab completes the function name and you can leave out the closing parentheses, as in Excel.',
+  ],
+  'step.dyn.title': ['Tableaux dynamiques (difficile)', 'Dynamic arrays (hard)'],
+  'step.dyn.intro': [
+    'MAKEARRAY, SCAN, REDUCE, MAP, BYROW, BYCOL, TOCOL, WRAPROWS, EXPAND… Votre formule est réellement calculée : toute solution qui donne le résultat attendu est acceptée.',
+    'MAKEARRAY, SCAN, REDUCE, MAP, BYROW, BYCOL, TOCOL, WRAPROWS, EXPAND… Your formula is actually calculated: any solution that gives the expected result is accepted.',
+  ],
+  'step.regex.title': ['Regex', 'Regex'],
+  'step.regex.intro': [
+    'Les expressions régulières de REGEXTEST, REGEXEXTRACT et REGEXREPLACE : un cours, un testeur en direct, des exercices de motifs et des formules REGEX calculées.',
+    'Regular expressions for REGEXTEST, REGEXEXTRACT and REGEXREPLACE: a course, a live tester, pattern exercises and calculated REGEX formulas.',
+  ],
+  'step.vba.title': ['VBA', 'VBA'],
+  'step.vba.intro': [
+    'Recopiez des macros courantes le plus vite possible. L’indentation est ajoutée pour vous et la casse est libre : l’éditeur VBA la corrige.',
+    'Copy common macros as fast as you can. Indentation is added for you and case does not matter: the VBA editor fixes it.',
+  ],
+  'step.case.title': ['Mini-cas chronométrés', 'Timed mini-cases'],
+  'step.case.intro': [
+    'Copiez le jeu de données, collez-le en A1 dans votre Excel, résolvez la question et tapez le résultat ici. C’est l’exercice le plus proche d’un vrai cas de compétition.',
+    'Copy the dataset, paste it into A1 in your Excel, solve the question and type the result here. This is the closest exercise to a real competition case.',
+  ],
+
+  'per.nav': ['par raccourci', 'per shortcut'],
+  'per.fmt': ['par raccourci', 'per shortcut'],
+  'per.formula': ['par formule', 'per formula'],
+  'per.dyn': ['par exercice', 'per exercise'],
+  'per.regex': ['par motif', 'per pattern'],
+  'per.pattern': ['par motif', 'per pattern'],
+  'per.vba': ['caractères / min', 'characters / min'],
+  'per.typing': ['caractères / min', 'characters / min'],
+  'per.case': ['par cas', 'per case'],
+  'per.cpm': ['caractères / min', 'characters / min'],
+  'unit.cpm': ['car./min', 'chars/min'],
+
+  'status.done': ['Objectif atteint', 'Goal reached'],
+  'status.going': ['En cours', 'In progress'],
+  'status.todo': ['À commencer', 'Not started'],
+  'status.new': ['Nouveau', 'New'],
+  'badge.unverifiedConfig': ['Non vérifié pour votre configuration', 'Not verified for your setup'],
+  'badge.toVerify': ['À vérifier', 'To verify'],
+
+  'stat.record': ['Record', 'Best'],
+  'stat.recordShort': ['Record {v}', 'Best {v}'],
+  'stat.last': ['Dernière séance', 'Last session'],
+  'stat.accuracy': ['précision {v} %', 'accuracy {v}%'],
+  'stat.noSession': ['aucune séance', 'no session yet'],
+  'stat.sessions': ['Séances', 'Sessions'],
+  'spark.empty': [
+    'La courbe de progression apparaît après deux séances.',
+    'The progress curve appears after two sessions.',
+  ],
+  'spark.label': ['Progression des {n} dernières séances', 'Progress over the last {n} sessions'],
+  'spark.note': [
+    'Ligne pointillée : objectif ({v}). Plus haut sur la courbe = meilleur.',
+    'Dotted line: goal ({v}). Higher on the curve = better.',
+  ],
+  'weak.title': ['Points faibles revus plus souvent', 'Weak points shown more often'],
+
+  'intro.eyebrow': ['Étape {n} sur {total}', 'Step {n} of {total}'],
+  'intro.goalLow': [
+    'Objectif : <b>≤ {v} {per}</b> avec <b>≥ {acc} %</b> de précision.',
+    'Goal: <b>≤ {v} {per}</b> with <b>≥ {acc}%</b> accuracy.',
+  ],
+  'intro.goalHigh': [
+    'Objectif : <b>≥ {v} {per}</b> avec <b>≥ {acc} %</b> de précision.',
+    'Goal: <b>≥ {v} {per}</b> with <b>≥ {acc}%</b> accuracy.',
+  ],
+  'intro.goalCopy': [
+    'L’objectif de l’étape se valide en mode écriture.',
+    'The step goal is validated in writing mode.',
+  ],
+  'intro.sessionLength': ['Longueur de la séance', 'Session length'],
+  'intro.start': ['Commencer', 'Start'],
+  'intro.kbdNote': [
+    'Ces exercices demandent un clavier physique.',
+    'These exercises need a physical keyboard.',
+  ],
+  'intro.emptyPool': [
+    'Aucun exercice de ce type pour votre version d’Excel : changez de niveau ou de version dans le profil.',
+    'No exercise of this kind for your Excel version: change the level or the version in your profile.',
+  ],
+  'what.keys': ['Raccourcis par séance', 'Shortcuts per session'],
+  'what.typing': ['Formules par séance', 'Formulas per session'],
+  'what.formula': ['Formules par séance', 'Formulas per session'],
+  'what.eval': ['Exercices par séance', 'Exercises per session'],
+  'what.regex': ['Exercices par séance', 'Exercises per session'],
+  'what.vba': ['Macros par séance', 'Macros per session'],
+  'what.case': ['Cas par séance', 'Cases per session'],
+  'mode.label': ['Mode', 'Mode'],
+  'mode.write': ['Écrire', 'Write'],
+  'mode.copy': ['Recopier', 'Copy'],
+  'modeLabel.level': ['niveau {l}', '{l} level'],
+  'modeLabel.copy': ['en recopie', 'copying'],
+  'modeLabel.write': ['en écriture', 'writing'],
+  'modeLabel.excel': ['formules REGEX', 'REGEX formulas'],
+  'modeLabel.pattern': ['motifs', 'patterns'],
+  'modeLabel.done': ['terminées', 'completed'],
+  'level.label': ['Niveau', 'Level'],
+  'level.difficulty': ['Difficulté', 'Difficulty'],
+  'level.base': ['Bases', 'Basics'],
+  'level.mid': ['Intermédiaire', 'Intermediate'],
+  'level.hard': ['Avancé', 'Advanced'],
+  'level.all': ['Tout', 'All'],
+  'level.allDyn': ['Tous', 'All'],
+  'typing.tabOn': ['Tab activé', 'Tab on'],
+  'typing.tabOff': ['Sans Tab', 'No Tab'],
+  'typing.completion': ['Complétion', 'Completion'],
+  'regex.mode.label': ['Type d’exercice', 'Exercise type'],
+  'regex.mode.pattern': ['Motifs', 'Patterns'],
+  'regex.mode.excel': ['Formules REGEX', 'REGEX formulas'],
+  'regex.tab.course': ['Cours', 'Course'],
+  'regex.tab.tester': ['Testeur', 'Tester'],
+  'regex.tab.train': ['Entraînement', 'Practice'],
+  'regex.openTester': ['Ouvrir le testeur', 'Open the tester'],
+  'regex.train': ['S’entraîner', 'Practise'],
+
+  'drill.eyebrow': ['Étape {n} · {title}', 'Step {n} · {title}'],
+  'drill.stop': ['Arrêter', 'Stop'],
+  'drill.paused': [
+    'Cliquez ici pour reprendre (le clavier n’est plus capté)',
+    'Click here to resume (the keyboard is no longer captured)',
+  ],
+  'drill.showAnswer': ['Afficher la réponse', 'Show the answer'],
+  'drill.answer': ['Réponse :', 'Answer:'],
+  'drill.exact': ['Exact.', 'Correct.'],
+
+  'keys.title': ['Faites le raccourci', 'Press the shortcut'],
+  'keys.escNote': ['Esc annule une séquence Alt en cours.', 'Esc cancels an Alt sequence in progress.'],
+  'keys.reserved': [
+    'Raccourci réservé par le navigateur : choisissez la bonne combinaison (touche 1, 2 ou 3).',
+    'Shortcut reserved by the browser: choose the right combination (key 1, 2 or 3).',
+  ],
+  'keys.wrong': ['Pas ce raccourci.', 'Not this shortcut.'],
+  'keys.no': ['Non. Réponse :', 'No. Answer:'],
+  'keys.configNote': [
+    'Les raccourcis viennent d’Excel en anglais sur QWERTY US. Les lettres suivent votre disposition (Ctrl+Z = la touche Z de votre clavier) ; les combinaisons signalées peuvent être différentes dans votre Excel.',
+    'Shortcuts come from English Excel on US QWERTY. Letters follow your layout (Ctrl+Z = the Z key on your keyboard); flagged combinations may differ in your Excel.',
+  ],
+
+  'typing.ctx': ['Tapez la formule exactement', 'Type the formula exactly'],
+  'typing.ctxTab': [
+    'Tab complète la fonction ou le nom LET / LAMBDA proposé, comme dans Excel',
+    'Tab completes the suggested function or LET / LAMBDA name, as in Excel',
+  ],
+  'typing.target': ['Formule à taper', 'Formula to type'],
+  'typing.note': [
+    'La casse est libre. Retour arrière corrige. Les noms de LET et de LAMBDA sont proposés en premier, puis les fonctions dans l’ordre alphabétique de votre Excel : tapez assez de lettres pour viser la bonne.',
+    'Case does not matter. Backspace corrects. LET and LAMBDA names come first, then functions in your Excel’s alphabetical order: type enough letters to reach the right one.',
+  ],
+  'vba.title': ['Recopiez la macro', 'Copy the macro'],
+  'vba.target': ['Code à recopier', 'Code to copy'],
+  'vba.note': [
+    'Tapez directement : Entrée passe à la ligne (indentation automatique), Retour arrière corrige.',
+    'Just type: Enter starts a new line (automatic indentation), Backspace corrects.',
+  ],
+
+  'fx.label': ['Barre de formule', 'Formula bar'],
+  'fx.name': ['nom', 'name'],
+  'formula.titleWrite': ['Écrivez la formule', 'Write the formula'],
+  'formula.titleCopy': ['Recopiez la formule', 'Copy the formula'],
+  'formula.cell': ['Cellule G2', 'Cell G2'],
+  'formula.sheet': ['Feuille d’exemple', 'Sample sheet'],
+  'formula.rows100': ['données jusqu’à la ligne 100', 'data down to row 100'],
+  'formula.h2': ['(produit recherché)', '(product to look up)'],
+  'formula.products': [
+    'Tableau <code>Products</code><br>colonnes <code>[Product]</code> et <code>[Price]</code>',
+    'Table <code>Products</code><br>columns <code>[Product]</code> and <code>[Price]</code>',
+  ],
+  'formula.note': [
+    'Entrée valide · Tab complète une fonction ou un nom · ↑ ↓ choisissent dans la liste',
+    'Enter submits · Tab completes a function or a name · ↑ ↓ choose in the list',
+  ],
+  'formula.or': ['ou', 'or'],
+  'formula.typeIt': ['tapez-la pour continuer.', 'type it to continue.'],
+  'formula.wrong': ['Formule différente de celle attendue.', 'Not the expected formula.'],
+
+  'eval.data': ['Données', 'Data'],
+  'eval.expected': ['Résultat attendu', 'Expected result'],
+  'eval.yours': ['Votre résultat', 'Your result'],
+  'eval.hint': ['Indice', 'Hint'],
+  'eval.hintPrefix': ['Indice :', 'Hint:'],
+  'eval.showSolution': ['Voir une solution', 'Show a solution'],
+  'eval.level': ['niveau {n} sur 3', 'level {n} of 3'],
+  'eval.note': [
+    'Entrée calcule votre formule · Tab complète une fonction ou un nom · toute formule qui donne le bon résultat est acceptée',
+    'Enter calculates your formula · Tab completes a function or a name · any formula giving the right result is accepted',
+  ],
+  'eval.solutions': ['Solutions possibles :', 'Possible solutions:'],
+  'eval.typeOne': ['Tapez une formule qui fonctionne pour continuer.', 'Type a working formula to continue.'],
+  'eval.invalid': ['Formule non valide :', 'Invalid formula:'],
+  'eval.mismatch': [
+    'Le résultat ne correspond pas encore : comparez avec le résultat attendu.',
+    'The result does not match yet: compare it with the expected result.',
+  ],
+  'grid.preview': ['Aperçu limité : {r} × {c} au total.', 'Limited preview: {r} × {c} in total.'],
+  'grid.empty': [
+    'Aucune donnée : la formule part d’une feuille vide.',
+    'No data: the formula starts from an empty sheet.',
+  ],
+  'grid.data': ['Données', 'Data'],
+
+  'pattern.title': ['Écrivez le motif', 'Write the pattern'],
+  'pattern.ctx': ['Motif regex', 'Regex pattern'],
+  'pattern.label': ['Motif', 'Pattern'],
+  'pattern.yes': ['Doit correspondre ({v})', 'Must match ({v})'],
+  'pattern.no': ['Ne doit pas correspondre ({v})', 'Must not match ({v})'],
+  'pattern.note': [
+    'Comme {f} : le motif est cherché n’importe où, pensez aux ancres ^ et $. L’exercice se valide tout seul quand tout est vert.',
+    'As with {f}: the pattern is searched anywhere, remember the ^ and $ anchors. The exercise completes by itself when everything is green.',
+  ],
+  'pattern.emptyCell': ['(cellule vide)', '(empty cell)'],
+  'pattern.pass': ['bien classé', 'correct'],
+  'pattern.fail': ['mal classé', 'wrong'],
+  'pattern.invalid': ['Motif invalide :', 'Invalid pattern:'],
+  'pattern.notYet': [
+    'Pas encore : les lignes marquées ✗ ne sont pas bien classées.',
+    'Not yet: the rows marked ✗ are not classified correctly.',
+  ],
+  'pattern.oneSolution': ['Une solution :', 'One solution:'],
+  'pattern.typeIt': ['tapez-la (ou la vôtre) pour continuer.', 'type it (or yours) to continue.'],
+
+  'tester.pattern': ['Motif (pattern)', 'Pattern'],
+  'tester.ci': ['Ignorer la casse (case_sensitivity = 1)', 'Ignore case (case_sensitivity = 1)'],
+  'tester.text': ['Texte à tester (une cellule par ligne)', 'Text to test (one cell per line)'],
+  'tester.highlighted': ['Correspondances surlignées', 'Highlighted matches'],
+  'tester.detail': ['Détail', 'Details'],
+  'tester.formulas': ['Formules Excel équivalentes (cellule A1)', 'Equivalent Excel formulas (cell A1)'],
+  'tester.cell': ['Cellule', 'Cell'],
+  'tester.match': ['Correspondance', 'Match'],
+  'tester.groups': ['Groupes', 'Groups'],
+  'tester.none': ['Aucune correspondance.', 'No match.'],
+  'tester.fxTest': ['{v} si le motif est trouvé', '{v} if the pattern is found'],
+  'tester.fxFirst': ['première correspondance', 'first match'],
+  'tester.fxAll': ['toutes les correspondances (vers la droite)', 'all matches (spilled to the right)'],
+  'tester.fxGroups': [
+    'groupes de capture de la première correspondance',
+    'capture groups of the first match',
+  ],
+  'tester.fxRemove': ['supprime les correspondances', 'removes the matches'],
+  'tester.copy': ['Copier', 'Copy'],
+  'tester.copied': ['Copié', 'Copied'],
+  'tester.selectText': ['Sélectionnez le texte', 'Select the text'],
+
+  'case.title': ['Résolvez le cas dans Excel', 'Solve the case in Excel'],
+  'case.copy': ['Copier les données', 'Copy the data'],
+  'case.pasteNote': [
+    'Collez en A1 (Ctrl+V) : 60 commandes, colonnes A à F.',
+    'Paste into A1 (Ctrl+V): 60 orders, columns A to F.',
+  ],
+  'case.yourResult': ['Votre résultat', 'Your result'],
+  'case.check': ['Valider', 'Check'],
+  'case.copied': [
+    'Données copiées : collez-les en A1 de votre classeur.',
+    'Data copied: paste it into A1 of your workbook.',
+  ],
+  'case.dataToCopy': ['Données à copier', 'Data to copy'],
+  'case.copyRefused': [
+    'Copie automatique refusée : le texte est sélectionné, faites Ctrl+C.',
+    'Automatic copy refused: the text is selected, press Ctrl+C.',
+  ],
+  'case.wrong': [
+    'Ce n’est pas le bon résultat. Vérifiez vos plages et vos critères.',
+    'That is not the right result. Check your ranges and criteria.',
+  ],
+  'case.lead': ['piste :', 'lead:'],
+  'case.next': ['Cas suivant', 'Next case'],
+  'case.how.orGroupby': ['— ou un GROUPBY', '— or a GROUPBY'],
+  'case.q.revenueRegion': [
+    'Chiffre d’affaires total (Units × Unit Price) de la région {R}',
+    'Total revenue (Units × Unit Price) for the {R} region',
+  ],
+  'case.q.ordersUnits': [
+    'Nombre de commandes de {P} d’au moins {N} unités',
+    'Number of {P} orders with at least {N} units',
+  ],
+  'case.q.unitsMonth': [
+    'Total des unités vendues en {M} 2026 (mois en anglais dans les données)',
+    'Total units sold in {M} 2026',
+  ],
+  'case.q.topRegion': [
+    'Quelle région a le plus gros chiffre d’affaires total ? (tapez le nom de la région)',
+    'Which region has the highest total revenue? (type the region name)',
+  ],
+  'case.q.avgUnits': [
+    'Nombre moyen d’unités par commande dans la région {R}, arrondi à 2 décimales',
+    'Average units per order in the {R} region, rounded to 2 decimals',
+  ],
+  'case.q.maxOrder': [
+    'Plus gros chiffre d’affaires d’une seule commande de {P}',
+    'Largest single-order revenue for {P}',
+  ],
+  'case.q.revenueProductMonth': [
+    'Chiffre d’affaires de {P} en {M} 2026 (mois en anglais dans les données)',
+    'Revenue of {P} in {M} 2026',
+  ],
+
+  'result.eyebrow': ['Étape {n} · Résultat', 'Step {n} · Result'],
+  'result.record': ['Nouveau record', 'New best'],
+  'result.speed': ['Vitesse', 'Speed'],
+  'result.avgTime': ['Temps moyen', 'Average time'],
+  'result.goalMet': ['objectif atteint', 'goal reached'],
+  'result.accuracy': ['Précision', 'Accuracy'],
+  'result.goalAcc': ['objectif ≥ {v} %', 'goal ≥ {v}%'],
+  'result.totalTime': ['Temps total', 'Total time'],
+  'result.nItems': ['{n} exercices', '{n} exercises'],
+  'result.nCases': ['{n} cas', '{n} cases'],
+  'result.review': ['À revoir', 'To review'],
+  'result.noError': ['Aucune erreur sur cette séance.', 'No mistakes this session.'],
+  'result.again': ['Rejouer', 'Play again'],
+  'result.back': ['Voir la progression', 'See progress'],
+
+  'kb.qwerty-us': ['QWERTY US', 'US QWERTY'],
+  'kb.azerty-fr': ['AZERTY français', 'French AZERTY'],
+  'profile.welcome': ['Bienvenue sur XL Sprint', 'Welcome to XL Sprint'],
+  'profile.title': ['Profil et réglages', 'Profile and settings'],
+  'profile.intro': [
+    'Le site s’adapte à votre Excel : formules affichées et saisies dans sa langue, avec ses séparateurs, et raccourcis sur votre clavier. Vous pourrez tout changer plus tard.',
+    'The site adapts to your Excel: formulas shown and typed in its language, with its separators, and shortcuts on your keyboard. You can change everything later.',
+  ],
+  'profile.uiLang': ['Langue du site', 'Site language'],
+  'profile.fnLang': ['Langue des fonctions d’Excel', 'Excel function language'],
+  'profile.fnEn': ['en anglais', 'in English'],
+  'profile.fnFr': ['en français', 'in French'],
+  'profile.listSep': ['Séparateur d’arguments', 'Argument separator'],
+  'profile.decimalSep': ['Séparateur décimal', 'Decimal separator'],
+  'profile.arrayColSep': ['Constantes de tableau : colonnes', 'Array constants: columns'],
+  'profile.arrayRowSep': ['Constantes de tableau : lignes', 'Array constants: rows'],
+  'profile.comma': ['(virgule)', '(comma)'],
+  'profile.semicolon': ['(point-virgule)', '(semicolon)'],
+  'profile.point': ['(point)', '(point)'],
+  'profile.keyboard': ['Clavier', 'Keyboard'],
+  'profile.kbDetecting': ['Détection du clavier…', 'Detecting keyboard…'],
+  'profile.kbDetected': ['Détecté par le navigateur : {k}', 'Detected by the browser: {k}'],
+  'profile.kbNoDetect': [
+    'Détection automatique indisponible dans ce navigateur : choisissez votre clavier.',
+    'Automatic detection is not available in this browser: choose your keyboard.',
+  ],
+  'profile.os': ['Système', 'System'],
+  'profile.soon': ['bientôt', 'coming soon'],
+  'profile.excel': ['Version d’Excel', 'Excel version'],
+  'profile.excelNote': [
+    'Masque les exercices qui demandent une version plus récente (attribution prudente, à vérifier pour 2024).',
+    'Hides exercises that need a newer version (cautious assignment, to verify for 2024).',
+  ],
+  'profile.example': ['Exemple de formule avec ce profil :', 'Example formula with this profile:'],
+  'profile.sepError': [
+    'Séparateurs incompatibles : le séparateur d’arguments, la décimale et les deux séparateurs de tableau doivent être différents.',
+    'Incompatible separators: the argument separator, the decimal mark and the two array separators must all differ.',
+  ],
+  'profile.start': ['Commencer', 'Start'],
+  'profile.save': ['Enregistrer', 'Save'],
+  'profile.cancel': ['Annuler', 'Cancel'],
+};
+
+const here = dirname(fileURLToPath(import.meta.url));
+const fr = {},
+  en = {};
+for (const [k, [f, e]] of Object.entries(M)) {
+  fr[k] = f;
+  en[k] = e;
+}
+writeFileSync(join(here, 'fr.json'), JSON.stringify(fr, null, 2) + '\n');
+writeFileSync(join(here, 'en.json'), JSON.stringify(en, null, 2) + '\n');
+console.log(Object.keys(M).length + ' messages');

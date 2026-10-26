@@ -38,12 +38,13 @@ interface BaseEx {
 }
 export interface ShortcutEx {
   id: string;
-  group: string;
+  group: 'navigation' | 'format';
   action: I18nText;
   context: string;
   keys: string;
-  kind: 'chord' | 'sequence';
+  kind: 'chord' | 'ribbon-sequence';
   browserReserved: boolean;
+  /** Ce qui peut changer selon la langue d’Excel ou le clavier (null = rien de connu). */
   localized: string | null;
 }
 export interface TypingEx extends BaseEx {
@@ -59,10 +60,10 @@ export interface FormulaTextEx extends BaseEx {
 }
 export interface FormulaEvalEx extends BaseEx {
   type: 'formula-eval';
-  level: string;
+  level: 1 | 2 | 3;
   title: I18nText;
   prompt: I18nText;
-  hint?: I18nText;
+  hint?: Partial<I18nText>;
   sheet: Scalar[][];
   output: string;
   solutions: string[];
@@ -70,7 +71,7 @@ export interface FormulaEvalEx extends BaseEx {
 export interface RegexPatternEx {
   id: string;
   type: 'regex-pattern';
-  level: string;
+  level: 1 | 2 | 3;
   task: I18nText;
   yes: string[];
   no: string[];
@@ -81,32 +82,26 @@ export interface VbaEx {
   type: 'vba';
   code: string;
 }
-export type Exercise = TypingEx | FormulaTextEx | FormulaEvalEx | RegexPatternEx | VbaEx;
 
-export type StageId = 'keys' | 'ribbon' | 'typing' | 'write' | 'dyn' | 'regex' | 'vba' | 'case';
-export const STAGES: StageId[] = ['keys', 'ribbon', 'typing', 'write', 'dyn', 'regex', 'vba', 'case'];
+/** Identifiants des 8 étapes, repris de la v1.1 (ils servent de clés dans la progression). */
+export type StepId = 'nav' | 'fmt' | 'typing' | 'formula' | 'dyn' | 'regex' | 'vba' | 'case';
 
-export interface Attempt {
-  exId: string;
-  ok: boolean;
+/** Une séance terminée (format de la v1.1, plus la configuration du joueur). */
+export interface SessionRecord {
+  s: StepId;
+  t: number;
+  n: number;
   ms: number;
-  keystrokes: number;
-  at: number;
+  metric: number;
+  acc: number;
+  mode?: string;
+  /** Configuration au moment de la séance : « fnLang|listSep|clavier ». Absent pour les séances v1.1. */
+  cfg?: string;
 }
-export interface Session {
-  stage: StageId;
-  startedAt: number;
-  attempts: Attempt[];
-  pausedMs: number;
-}
-export interface StageProgress {
-  best: number | null;
-  history: { at: number; score: number }[];
-  goal: number | null;
-  misses: Record<string, number>;
-}
+
 export interface Progress {
   version: 2;
-  stages: Record<StageId, StageProgress>;
-  updatedAt: number;
+  sessions: SessionRecord[];
+  /** Points faibles : nombre d’erreurs récentes par exercice (les ratés reviennent plus souvent). */
+  weak: Record<string, number>;
 }
