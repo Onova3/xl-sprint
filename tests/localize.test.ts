@@ -27,6 +27,9 @@ describe('toLocal (fr-FR)', () => {
     ['=IF(A1="SUM(1,2)",1,0)', '=SI(A1="SUM(1,2)";1;0)'],
     ['=LET(x,C2*1.2,ROUND(x,2))', '=LET(x;C2*1,2;ARRONDI(x;2))'],
     ['=LET(f,LAMBDA(x,x*2),f(21))', '=LET(f;LAMBDA(x;x*2);f(21))'],
+    ['=GROUPBY(B2:B100,C2:C100,SUM)', '=GROUPER.PAR(B2:B100;C2:C100;SOMME)'],
+    ['=LET(sum,A1,sum*2)', '=LET(sum;A1;sum*2)'],
+    ['=REDUCE(0,A1:A3,LAMBDA(max,v,MAX(max,v)))', '=REDUCE(0;A1:A3;LAMBDA(max;v;MAX(max;v)))'],
     ["='My sheet'!A1+LOG10(2)", "='My sheet'!A1+LOG10(2)"],
     ['=SUM(Sales[Amount],Table1[[#Headers],[Qty]])', '=SOMME(Sales[Amount];Table1[[#Headers],[Qty]])'],
   ])('%s', (canon, local) => {

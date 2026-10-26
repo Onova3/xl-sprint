@@ -1,6 +1,7 @@
 /* Conversion canonique (en-US) <-> syntaxe du joueur, sur des jetons.
    Ne touche jamais aux chaînes entre guillemets, aux noms de feuille ni aux références structurées. */
 
+import { FUNCS } from '../engine';
 import type { Syntax } from '../types';
 import { canonicalName, localName } from './functionNames';
 import { lex, type LexSyntax, type LTok } from './tokens';
@@ -10,6 +11,7 @@ export * from './locales';
 
 const CANONICAL: LexSyntax = { decimalSep: '.', listSep: ',', arrayColSep: ',', arrayRowSep: ';' };
 const BOOLS = ['TRUE', 'FALSE'];
+const isCell = (s: string) => /^\$?[A-Z]{1,3}\$?\d+$/.test(s);
 
 function lexSyntax(p: Syntax): LexSyntax {
   return {
@@ -25,13 +27,25 @@ function isCall(toks: LTok[], i: number): boolean {
   return toks[i + 1]?.kind === 'other' && toks[i + 1].text === '(';
 }
 
-/** Noms LET/LAMBDA du joueur : identifiants employés aussi sans parenthèses (hors booléens). */
+/** Noms déclarés par le joueur : identifiant seul en début d'argument de LET ou LAMBDA, suivi d'un séparateur. */
 function userNames(toks: LTok[], toCanon: (s: string) => string | null): Set<string> {
   const names = new Set<string>();
-  toks.forEach((t, i) => {
-    if (t.kind !== 'id' || isCall(toks, i)) return;
-    const up = t.text.toUpperCase();
-    if (!BOOLS.includes(toCanon(up) ?? up)) names.add(up);
+  const stack: string[] = [];
+  const sig = toks.map((_t, i) => i).filter((i) => !/^\s+$/.test(toks[i].text));
+  sig.forEach((i, k) => {
+    const tk = toks[i];
+    if (tk.kind === 'other' && tk.text === '(') {
+      const prev = sig[k - 1] !== undefined ? toks[sig[k - 1]] : null;
+      stack.push(prev && prev.kind === 'id' ? (toCanon(prev.text.toUpperCase()) ?? '') : '');
+    } else if (tk.kind === 'other' && tk.text === ')') stack.pop();
+    else if (tk.kind === 'id') {
+      const fn = stack[stack.length - 1];
+      if (fn !== 'LET' && fn !== 'LAMBDA') return;
+      const before = toks[sig[k - 1]],
+        after = toks[sig[k + 1]];
+      const startsArg = before && (before.kind === 'sep' || before.text === '(');
+      if (startsArg && after && after.kind === 'sep') names.add(tk.text.toUpperCase());
+    }
   });
   return names;
 }
@@ -56,9 +70,11 @@ function convert(
         case 'id': {
           const up = t.text.toUpperCase();
           const call = isCall(toks, i);
-          if (call && mine.has(up)) return t.text;
+          // les noms du joueur (LET, LAMBDA) ne sont jamais traduits
+          if (mine.has(up)) return t.text;
           const canon = toCanon(up);
-          if (!call && !(canon && BOOLS.includes(canon))) return t.text;
+          const bareFunction = !call && canon !== null && FUNCS.includes(canon) && !isCell(up);
+          if (!call && !bareFunction && !(canon && BOOLS.includes(canon))) return t.text;
           return rename(up) ?? t.text;
         }
         default:
