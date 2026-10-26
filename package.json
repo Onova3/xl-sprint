@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "build": "tsc --noEmit && vite build",
-    "build:single": "tsc --noEmit && vite build --mode single"
+    "build:single": "tsc --noEmit && vite build --mode single && node scripts/single.mjs",
+    "i18n": "node src/i18n/messages.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

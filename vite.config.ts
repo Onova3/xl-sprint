@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
     base: single ? './' : (process.env.BASE_PATH ?? './'),
     plugins: single ? [viteSingleFile({ removeViteModuleLoader: true })] : [],
     build: single
-      ? { outDir: 'dist', emptyOutDir: false, rollupOptions: { input: 'xl-sprint.html' } }
+      ? { outDir: 'dist/single', emptyOutDir: true, assetsInlineLimit: 100000000 }
       : { outDir: 'dist/site', emptyOutDir: true },
     test: { include: ['tests/**/*.test.ts'], environment: 'node' },
   };
