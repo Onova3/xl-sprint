@@ -83,6 +83,7 @@ export function keyboardMapHtml(kb: KeyboardId, stats: SymStats): string {
   const avgs = [...data.values()].filter((d) => d.n).map((d) => d.ms / d.n);
   const lo = Math.min(...avgs, 9999),
     hi = Math.max(...avgs, 0);
+  let k = 0;
   const rows = ROWS.map((row, r) => {
     const keys = row
       .filter((code) => LAYOUTS[kb].keys[code])
@@ -101,7 +102,7 @@ export function keyboardMapHtml(kb: KeyboardId, stats: SymStats): string {
               err: Math.round(errRate * 100),
             })
           : label;
-        return `<span class="kmap-key${d ? ' has' : ''}${errRate >= 0.1 ? ' errs' : ''}" style="--heat:${heat.toFixed(2)}" title="${esc(title)}">
+        return `<span class="kmap-key${d ? ' has' : ''}${errRate >= 0.1 ? ' errs' : ''}" style="--heat:${heat.toFixed(2)};--k:${k++}" title="${esc(title)}">
           <span class="kmap-ch">${esc(label.toUpperCase())}</span>${avg !== null ? `<span class="kmap-ms">${Math.round(avg)}</span>` : ''}${errRate >= 0.1 ? '<span class="kmap-x" aria-hidden="true">✗</span>' : ''}</span>`;
       })
       .join('');

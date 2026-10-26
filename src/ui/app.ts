@@ -22,6 +22,7 @@ import { pick, t } from '../i18n';
 import { loc, saveSettings, state } from '../state';
 import type { FormulaEvalEx, FormulaTextEx, RegexPatternEx, ShortcutEx, StepId, VbaEx } from '../types';
 import { $, $$, esc, fmtClock } from './dom';
+import { countUp } from './motion';
 import { courseHtml } from './regexCourse';
 import { bindTester, testerHtml } from './regexTester';
 import { bestOf, defaultMode, fmtVal, meetsGoal, sessionsOf, spec, stepStatus, type Spec } from './stats';
@@ -61,7 +62,7 @@ function sparkline(sp: Spec, metrics: number[]): string {
   return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(t('spark.label', { n: pts.length }))}">
     <line x1="${pad}" x2="${w - pad}" y1="${y(goal)}" y2="${y(goal)}" stroke="var(--amber)" stroke-dasharray="4 4" stroke-width="1"/>
     <polygon points="${area}" fill="var(--accent-soft)"/>
-    <polyline points="${line}" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    <polyline pathLength="1" points="${line}" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke"/>
     <circle cx="${x(pts.length - 1)}" cy="${y(last)}" r="4" fill="var(--accent)"/>
   </svg><p class="note">${esc(t('spark.note', { v: fmtVal(sp, goal) + cpm(sp) }))}</p>`;
 }
@@ -321,6 +322,7 @@ export function renderResult(): void {
     renderIntro();
   });
   $('#againBtn').focus();
+  countUp($('#work'));
 }
 
 export function renderAll(): void {

@@ -19,6 +19,7 @@ import type { SprintRecord } from '../types';
 import { $, $$, esc } from './dom';
 import { argTipHtml } from './argTip';
 import { keyboardMapHtml } from './keyboardMap';
+import { countUp } from './motion';
 
 interface SprintSettings {
   mode: SprintMode;
@@ -277,7 +278,7 @@ function chartHtml(perSecond: { ok: number; err: number }[]): string {
       const err = s.err
         ? `<text x="${(x + bw / 2).toFixed(1)}" y="${pad - 4}" text-anchor="middle" font-size="11" fill="var(--bad)">✗${s.err > 1 ? s.err : ''}</text>`
         : '';
-      return `<rect x="${(x + 1).toFixed(1)}" y="${(h - pad - bh).toFixed(1)}" width="${Math.max(1, bw - 2).toFixed(1)}" height="${bh.toFixed(1)}" fill="var(--accent)" opacity="0.85"/>${err}`;
+      return `<rect style="--i:${i}" x="${(x + 1).toFixed(1)}" y="${(h - pad - bh).toFixed(1)}" width="${Math.max(1, bw - 2).toFixed(1)}" height="${bh.toFixed(1)}" fill="var(--accent)" opacity="0.85"/>${err}`;
     })
     .join('');
   return `<svg class="spark sprint-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(t('sprint.chartLabel'))}">
@@ -368,6 +369,7 @@ function finishRun(): void {
     newRun();
   });
   $('#sAgain').focus();
+  countUp($('#work'));
 }
 
 /* -------------------------------------------------------- palette Échap -- */

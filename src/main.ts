@@ -1,6 +1,8 @@
 /* Démarrage : profil (assistant au premier lancement), progression, mise en page. */
 
+import './ui/fonts.css';
 import './ui/styles.css';
+import './ui/polish.css';
 import { hooks } from './drills/base';
 import { setUiLang, t } from './i18n';
 import { loadProfile, readProfile, saveProfile } from './profile';
