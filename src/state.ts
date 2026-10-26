@@ -38,6 +38,8 @@ export interface LastResult {
   first: boolean;
   misses: Miss[];
   mode: string | null;
+  /** Bloc ajouté aux résultats (coach Tab de l'étape 3). */
+  extraHtml?: string;
 }
 export interface DrillHandle {
   stop(showIntro: boolean): void;

@@ -122,7 +122,7 @@ export abstract class BaseDrill {
   weak(id: string, delta: number): void {
     bumpWeak(state.progress, id, delta);
   }
-  finish(metric: number, acc: number): void {
+  finish(metric: number, acc: number, extraHtml?: string): void {
     const totalMs = now() - this.t0;
     this.detach();
     state.drill = null;
@@ -150,6 +150,7 @@ export abstract class BaseDrill {
       first: prevBest == null,
       misses: this.misses,
       mode: this.mode,
+      extraHtml,
     };
     hooks.renderSteps();
     hooks.renderResult();

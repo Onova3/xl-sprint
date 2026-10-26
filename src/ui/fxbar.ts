@@ -5,6 +5,7 @@ import { completableWord, completions, type Completion } from '../pedagogy/compl
 import { syntaxOf } from '../profile';
 import { state } from '../state';
 import { esc } from './dom';
+import { updateArgTip } from './argTip';
 
 export class FxBar {
   sugg: Completion[] = [];
@@ -19,6 +20,10 @@ export class FxBar {
       this.update();
     });
     input.addEventListener('click', () => this.update());
+    // info-bulle des arguments : suit le curseur
+    const tip = () =>
+      updateArgTip(document.getElementById('fxArg'), input.value.slice(0, input.selectionStart ?? 0));
+    for (const ev of ['input', 'click', 'keyup', 'focus']) input.addEventListener(ev, tip);
   }
   token() {
     const fx = this.input,
@@ -96,4 +101,5 @@ export const fxbarHtml = (
   nb: string,
 ): string => `<div class="fbar"><span class="namebox" id="nb">${esc(nb)}</span><span class="fx">fx</span>
   <input id="fx" autocomplete="off" spellcheck="false" aria-label="${esc(t('fx.label'))}">
-  <div class="suggest" id="suggest" hidden></div></div>`;
+  <div class="suggest" id="suggest" hidden></div></div>
+  <div class="argtip" id="fxArg" hidden></div>`;

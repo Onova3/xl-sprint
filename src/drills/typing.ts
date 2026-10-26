@@ -8,6 +8,8 @@ import { loc, state } from '../state';
 import { weightedSample } from '../storage/progress';
 import { $, esc, now } from '../ui/dom';
 import { BaseDrill } from './base';
+import { updateArgTip } from '../ui/argTip';
+import { minKeystrokes } from '../pedagogy/keystrokes';
 
 export class TypingDrill extends BaseDrill {
   kind = 'typing';
@@ -17,6 +19,9 @@ export class TypingDrill extends BaseDrill {
   chars = 0;
   target = '';
   typed = '';
+  /** Touches pressées par formule (coach Tab). */
+  keysOnItem = 0;
+  coachLog: { target: string; keys: number }[] = [];
   constructor(
     step: Step,
     n: number,
@@ -36,6 +41,7 @@ export class TypingDrill extends BaseDrill {
       `
       <div class="ctx">${esc(t('typing.ctx'))}${this.tab ? ' · ' + esc(t('typing.ctxTab')) : ''}</div>
       <pre class="code formula-target" id="code" aria-label="${esc(t('typing.target'))}"></pre>
+      <div class="argtip" id="argtip" hidden></div>
       <div class="hintchip" id="hint"></div>
       <div class="feedback" id="feedback"></div>
       <span class="note">${esc(t('typing.note'))}</span>`,
@@ -52,6 +58,7 @@ export class TypingDrill extends BaseDrill {
     this.target = this.item.f;
     this.typed = '';
     this.errorsOnItem = 0;
+    this.keysOnItem = 0;
     this.render();
     this.counter();
     this.feedback('');
@@ -76,6 +83,7 @@ export class TypingDrill extends BaseDrill {
     if (ty.length >= tg.length) html += '<span class="cur"> </span>';
     $('#code').innerHTML = html;
     const c = this.tab ? this.candidate() : null;
+    updateArgTip(document.getElementById('argtip'), ty);
     $('#hint').innerHTML = c
       ? `<kbd>Tab</kbd> → ${esc(c.o.insert)}${c.o.fn ? '' : ` <span class="tag">${esc(t('fx.name'))}</span>`}`
       : '&nbsp;';
@@ -106,6 +114,7 @@ export class TypingDrill extends BaseDrill {
     if (e.key === 'Backspace') {
       e.preventDefault();
       this.typed = this.typed.slice(0, -1);
+      this.keysOnItem++;
       this.render();
       return;
     }
@@ -115,17 +124,20 @@ export class TypingDrill extends BaseDrill {
       const c = this.candidate();
       if (!c) return;
       this.keystrokes++;
+      this.keysOnItem++;
       const before = this.badKeys;
       for (const ch of c.o.insert.slice(c.prefix.length)) this.put(ch);
       if (this.badKeys > before) this.badKeys = before + 1;
     } else if (e.key.length === 1) {
       e.preventDefault();
       this.keystrokes++;
+      this.keysOnItem++;
       this.put(e.key);
     } else return;
     this.render();
     if (this.typed.toLowerCase() === this.target.toLowerCase()) {
       if (!this.errorsOnItem) this.weak(this.item.id, -1);
+      this.coachLog.push({ target: this.target, keys: this.keysOnItem });
       this.chars += this.target.length;
       this.flash();
       this.i++;
@@ -134,10 +146,30 @@ export class TypingDrill extends BaseDrill {
         return this.finish(
           this.chars / (total / 60000),
           (100 * (this.keystrokes - this.badKeys)) / Math.max(1, this.keystrokes),
+          this.coachHtml(),
         );
       }
       this.show();
     }
+  }
+  /** Coach Tab : frappes réelles et minimum possible avec la complétion. */
+  coachHtml(): string {
+    if (!this.tab) return '';
+    let keys = 0,
+      min = 0;
+    const tips = new Map<string, { prefix: string; saved: number }>();
+    for (const l of this.coachLog) {
+      const p = minKeystrokes(l.target, syntaxOf(state.profile));
+      keys += l.keys;
+      min += p.min;
+      for (const tp of p.tips) if (!tips.has(tp.word)) tips.set(tp.word, tp);
+    }
+    const list = [...tips.entries()].sort((a, b) => b[1].saved - a[1].saved).slice(0, 6);
+    return `<div><span class="eyebrow">${esc(t('coach.title'))}</span><p>${esc(t('coach.summary', { keys, min }))}</p>${
+      list.length
+        ? `<ul class="misses">${list.map(([w, tp]) => `<li><span class="answer">${esc(w)}</span><span>${esc(t('coach.tip', { prefix: tp.prefix, n: tp.saved }))}</span></li>`).join('')}</ul>`
+        : `<p class="note">${esc(t('coach.noTip'))}</p>`
+    }</div>`;
   }
 }
 

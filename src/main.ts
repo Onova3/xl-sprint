@@ -11,6 +11,7 @@ import type { StepId } from './types';
 import { renderAll, selectStep } from './ui/app';
 import { $, esc } from './ui/dom';
 import { openProfileDialog } from './ui/profileDialog';
+import { closeSprint, openSprint, sprintActive } from './ui/sprintView';
 
 type CloudDoc = { get(): Promise<{ exists: boolean; data(): unknown }>; set(v: unknown): Promise<void> };
 type ClaudeRuntime = { use(name: string): Promise<unknown> };
@@ -81,6 +82,7 @@ function shellHtml(): string {
     <div class="chips">
       <span class="chip" id="storeChip"></span>
       <span class="chip">Windows · ${esc(p.excel === '365' ? 'Excel 365' : 'Excel ' + p.excel)}</span>
+      <button class="btn primary" id="sprintBtn" title="${esc(t('header.sprintTitle'))}">${esc(t('header.sprint'))}</button>
       <button class="btn" id="profileBtn">${esc(t('header.settings'))}</button>
     </div>
   </header>
@@ -165,7 +167,9 @@ function mount(): void {
   document.title = 'XL Sprint';
   document.getElementById('app')!.innerHTML = shellHtml();
   setChip();
+  $('#sprintBtn').addEventListener('click', openSprint);
   $('#profileBtn').addEventListener('click', () => {
+    if (sprintActive()) closeSprint();
     if (state.drill) state.drill.stop(false);
     openProfileDialog(false, (p) => {
       if (p) mount();
@@ -180,7 +184,9 @@ function mount(): void {
 
 document.addEventListener('click', (e) => {
   const b = (e.target as HTMLElement).closest<HTMLElement>('[data-step]');
-  if (b) selectStep(b.dataset.step as StepId);
+  if (!b) return;
+  if (sprintActive()) closeSprint();
+  selectStep(b.dataset.step as StepId);
 });
 
 hooks.save = persist;

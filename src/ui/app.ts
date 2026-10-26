@@ -310,6 +310,7 @@ export function renderResult(): void {
         ? `<div><span class="eyebrow">${esc(t('result.review'))}</span><ul class="misses">${res.misses.map((m) => `<li><span>${esc(m.label)}</span>${m.html}</li>`).join('')}</ul></div>`
         : `<p class="note">${esc(t('result.noError'))}</p>`
     }
+    ${res.extraHtml ?? ''}
     <div class="controls"><button class="btn primary" id="againBtn">${esc(t('result.again'))}</button><button class="btn" id="backBtn">${esc(t('result.back'))}</button></div>`;
   $('#againBtn').addEventListener('click', () => {
     state.lastResult = null;

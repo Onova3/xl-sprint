@@ -1223,3 +1223,156 @@ label.btn:focus-within {
 .feedback:empty {
   min-height: 0;
 }
+
+/* ---------- phase 2 : Sprint, info-bulle, carte du clavier ---------- */
+.focus-mode .path,
+.focus-mode .foot {
+  display: none;
+}
+.focus-mode .layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+.sprint-stage .formula-target {
+  font-size: 22px;
+}
+.sprint-controls .seg button {
+  font-size: 13px;
+  padding: 5px 9px;
+}
+.argtip {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 4px 8px;
+  justify-self: start;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.fbar + .argtip {
+  margin-top: -10px;
+}
+.argtip b {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ghost {
+  display: grid;
+  gap: 4px;
+}
+.ghost-track {
+  position: relative;
+  height: 10px;
+  background: var(--line);
+  border-radius: 5px;
+}
+.ghost-track i {
+  position: absolute;
+  top: -3px;
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  transition: left 0.1s linear;
+}
+.ghost-me {
+  background: var(--accent);
+}
+.ghost-rec {
+  background: var(--amber);
+  outline: 1px dashed var(--ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ghost-track i {
+    transition: none;
+  }
+}
+.sprint-chart {
+  height: 120px;
+}
+.palette {
+  position: fixed;
+  top: 12vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(420px, calc(100vw - 32px));
+  max-height: 70vh;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 8px;
+  font-size: 14px;
+}
+.palette [role='option'] {
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.palette [role='option'][aria-selected='true'] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.palette [role='option'][aria-selected='true']::before {
+  content: '› ';
+}
+.kmap {
+  margin: 8px 0 0;
+  display: grid;
+  gap: 4px;
+  overflow-x: auto;
+}
+.kmap-row {
+  display: flex;
+  gap: 4px;
+  padding-left: calc(var(--indent) * 34px);
+}
+.kmap-key {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-bottom-width: 3px;
+  border-radius: 5px;
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1;
+}
+.kmap-key.has {
+  background: color-mix(in srgb, var(--bad) calc(var(--heat) * 55%), var(--accent-soft));
+}
+.kmap-key.errs {
+  border-color: var(--bad);
+}
+.kmap-ch {
+  font-weight: 700;
+}
+.kmap-ms {
+  font-size: 9px;
+  color: var(--muted);
+}
+.kmap-x {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  font-size: 9px;
+  color: var(--bad);
+}
+@media (max-width: 480px) {
+  .kmap-key {
+    width: 26px;
+    height: 34px;
+    font-size: 11px;
+  }
+  .kmap-row {
+    padding-left: calc(var(--indent) * 26px);
+  }
+}
