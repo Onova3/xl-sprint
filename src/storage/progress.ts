@@ -1,13 +1,22 @@
 /* Progression du joueur : versionnée, avec migration depuis la v1.1.
    Fonctions pures ici ; l'accès à localStorage est dans storage/local.ts. */
 
-import type { Progress, SessionRecord } from '../types';
+import { mergeStats, type SymStats } from '../pedagogy/symbols';
+import type { Progress, SessionRecord, SprintRecord } from '../types';
 
 export const KEY_V1 = 'xlsprint.progress.v1';
 export const KEY_V2 = 'xlsprint.progress.v2';
+export const KEY_V3 = 'xlsprint.progress.v3';
+export const MAX_SPRINTS = 300;
 export const MAX_SESSIONS = 400;
 
-export const emptyProgress = (): Progress => ({ version: 2, sessions: [], weak: {} });
+export const emptyProgress = (): Progress => ({
+  version: 3,
+  sessions: [],
+  weak: {},
+  sprints: [],
+  symbols: {},
+});
 
 const isObj = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null;
 
@@ -28,11 +37,39 @@ function cleanWeak(w: unknown): Record<string, number> {
   return out;
 }
 
-/** Accepte une progression v1.1 ({ v: 1, sessions, weak }) ou v2, renvoie une v2 (ou null si illisible). */
+function cleanSprints(list: unknown): SprintRecord[] {
+  if (!Array.isArray(list)) return [];
+  return list.filter(
+    (s): s is SprintRecord =>
+      isObj(s) &&
+      typeof s.t === 'number' &&
+      (s.mode === 'time' || s.mode === 'count') &&
+      typeof s.size === 'number' &&
+      typeof s.net === 'number' &&
+      typeof s.cfg === 'string' &&
+      Array.isArray(s.perSecond),
+  );
+}
+function cleanSymbols(x: unknown): SymStats {
+  const out: SymStats = {};
+  if (isObj(x))
+    for (const [k, v] of Object.entries(x))
+      if (isObj(v) && typeof v.n === 'number' && typeof v.ms === 'number' && typeof v.err === 'number')
+        out[k] = { n: v.n, ms: v.ms, err: v.err };
+  return out;
+}
+
+/** Accepte une progression v1.1 ({ v: 1, sessions, weak }), v2 ou v3 ; renvoie une v3 (ou null si illisible). */
 export function migrate(raw: unknown): Progress | null {
   if (!isObj(raw)) return null;
-  if (raw.version === 2 || raw.v === 1) {
-    return { version: 2, sessions: cleanSessions(raw.sessions), weak: cleanWeak(raw.weak) };
+  if (raw.version === 3 || raw.version === 2 || raw.v === 1) {
+    return {
+      version: 3,
+      sessions: cleanSessions(raw.sessions),
+      weak: cleanWeak(raw.weak),
+      sprints: cleanSprints(raw.sprints),
+      symbols: cleanSymbols(raw.symbols),
+    };
   }
   return null;
 }
@@ -51,7 +88,26 @@ export function mergeProgress(a: Progress, b: Progress): Progress {
   sessions.sort((x, y) => x.t - y.t);
   const weak = { ...a.weak };
   for (const [k, v] of Object.entries(b.weak)) weak[k] = Math.max(weak[k] || 0, v);
-  return { version: 2, sessions: sessions.slice(-MAX_SESSIONS), weak };
+  const seenSprint = new Set<string>(),
+    sprints: SprintRecord[] = [];
+  for (const s of [...a.sprints, ...b.sprints]) {
+    const key = s.t + '|' + s.cfg;
+    if (!seenSprint.has(key)) {
+      seenSprint.add(key);
+      sprints.push(s);
+    }
+  }
+  sprints.sort((x, y) => x.t - y.t);
+  // statistiques de symboles : on garde le cumul le plus riche (pas d'addition, pour ne rien compter deux fois)
+  const size = (s: SymStats) => Object.values(s).reduce((n, v) => n + v.n + v.err, 0);
+  const symbols = size(a.symbols) >= size(b.symbols) ? a.symbols : b.symbols;
+  return {
+    version: 3,
+    sessions: sessions.slice(-MAX_SESSIONS),
+    weak,
+    sprints: sprints.slice(-MAX_SPRINTS),
+    symbols: mergeStats({}, symbols),
+  };
 }
 
 export function bumpWeak(p: Progress, id: string, delta: number): void {
@@ -90,7 +146,7 @@ export const EXPORT_KIND = 'xl-sprint-progress';
 
 export interface ExportFile {
   kind: typeof EXPORT_KIND;
-  version: 2;
+  version: 3;
   exportedAt: string;
   progress: Progress;
   settings?: Record<string, unknown>;
@@ -105,7 +161,7 @@ export function makeExport(
 ): ExportFile {
   return {
     kind: EXPORT_KIND,
-    version: 2,
+    version: 3,
     exportedAt: date.toISOString(),
     progress,
     settings,
@@ -126,7 +182,7 @@ export function parseImport(text: string): ExportFile | null {
     if (!progress) return null;
     return {
       kind: EXPORT_KIND,
-      version: 2,
+      version: 3,
       exportedAt: String(raw.exportedAt ?? ''),
       progress,
       settings: isObj(raw.settings) ? raw.settings : undefined,
@@ -134,5 +190,5 @@ export function parseImport(text: string): ExportFile | null {
     };
   }
   const progress = migrate(raw);
-  return progress ? { kind: EXPORT_KIND, version: 2, exportedAt: '', progress } : null;
+  return progress ? { kind: EXPORT_KIND, version: 3, exportedAt: '', progress } : null;
 }

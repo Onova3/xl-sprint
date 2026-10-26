@@ -100,8 +100,33 @@ export interface SessionRecord {
 }
 
 export interface Progress {
-  version: 2;
+  version: 3;
   sessions: SessionRecord[];
   /** Points faibles : nombre d’erreurs récentes par exercice (les ratés reviennent plus souvent). */
   weak: Record<string, number>;
+  /** Tests du mode Sprint (phase 2). */
+  sprints: SprintRecord[];
+  /** Analyse des symboles cumulée : « c:X » par caractère, « b:XY » par paire. */
+  symbols: Record<string, { n: number; ms: number; err: number }>;
+}
+
+/** Un test du mode Sprint. */
+export interface SprintRecord {
+  t: number;
+  mode: 'time' | 'count';
+  /** Secondes (mode temps) ou nombre de formules (mode nombre). */
+  size: number;
+  level: string;
+  /** Variantes actives : 'noBack', 'stopFirst', 'hidden', 'symbols'. */
+  variants: string[];
+  /** Configuration « fnLang|listSep|clavier » : un record par configuration. */
+  cfg: string;
+  net: number;
+  raw: number;
+  fpm: number;
+  acc: number;
+  consistency: number;
+  ms: number;
+  /** Caractères justes par seconde (pour la courbe et le fantôme). */
+  perSecond: number[];
 }

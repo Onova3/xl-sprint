@@ -22,7 +22,7 @@ const V1 = {
 describe('migration v1.1 → v2', () => {
   it('reprend séances et points faibles', () => {
     const p = migrate(V1);
-    expect(p).toEqual({ version: 2, sessions: V1.sessions, weak: V1.weak });
+    expect(p).toEqual({ version: 3, sessions: V1.sessions, weak: V1.weak, sprints: [], symbols: {} });
   });
   it('ignore les entrées abîmées', () => {
     const p = migrate({
@@ -36,6 +36,41 @@ describe('migration v1.1 → v2', () => {
   it('refuse ce qui n’est pas une progression', () => {
     expect(migrate(null)).toBeNull();
     expect(migrate({ foo: 1 })).toBeNull();
+  });
+});
+
+describe('migration v2 → v3', () => {
+  it('ajoute sprints et symboles vides', () => {
+    const p = migrate({ version: 2, sessions: V1.sessions, weak: {} });
+    expect(p?.version).toBe(3);
+    expect(p?.sprints).toEqual([]);
+  });
+  it('garde les sprints valides', () => {
+    const sp = {
+      t: 5,
+      mode: 'time',
+      size: 30,
+      level: 'base',
+      variants: [],
+      cfg: 'en|,|qwerty-us',
+      net: 200,
+      raw: 210,
+      fpm: 6,
+      acc: 95,
+      consistency: 80,
+      ms: 30000,
+      perSecond: [3, 4],
+    };
+    const p = migrate({
+      version: 3,
+      sessions: [],
+      weak: {},
+      sprints: [sp, { t: 1 }],
+      symbols: { 'c:(': { n: 2, ms: 500, err: 1 }, bad: 3 },
+    });
+    expect(p?.sprints).toEqual([sp]);
+    expect(p?.symbols).toEqual({ 'c:(': { n: 2, ms: 500, err: 1 } });
+    expect(mergeProgress(p!, p!).sprints).toHaveLength(1);
   });
 });
 
