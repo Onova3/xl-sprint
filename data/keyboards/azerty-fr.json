@@ -1,0 +1,256 @@
+{
+  "_note": "AZERTY français (Windows). Touches mortes : ^ et ¨ se combinent avec la lettre suivante. Remarque : les chiffres demandent Shift ; ( et ) sont directs ; $ est direct ; \" est direct (Digit3). À contrôler sur un vrai clavier, et via navigator.keyboard.getLayoutMap() quand il est disponible.",
+  "layout": "AZERTY FR",
+  "columns": [
+    "base",
+    "shift",
+    "altGr"
+  ],
+  "keys": {
+    "Digit1": [
+      "&",
+      "1",
+      null
+    ],
+    "Digit2": [
+      "é",
+      "2",
+      "~"
+    ],
+    "Digit3": [
+      "\"",
+      "3",
+      "#"
+    ],
+    "Digit4": [
+      "'",
+      "4",
+      "{"
+    ],
+    "Digit5": [
+      "(",
+      "5",
+      "["
+    ],
+    "Digit6": [
+      "-",
+      "6",
+      "|"
+    ],
+    "Digit7": [
+      "è",
+      "7",
+      "`"
+    ],
+    "Digit8": [
+      "_",
+      "8",
+      "\\"
+    ],
+    "Digit9": [
+      "ç",
+      "9",
+      "^"
+    ],
+    "Digit0": [
+      "à",
+      "0",
+      "@"
+    ],
+    "Minus": [
+      ")",
+      "°",
+      "]"
+    ],
+    "Equal": [
+      "=",
+      "+",
+      "}"
+    ],
+    "Backquote": [
+      "²",
+      null,
+      null
+    ],
+    "BracketLeft": [
+      "^ (touche morte)",
+      "¨ (touche morte)",
+      null
+    ],
+    "BracketRight": [
+      "$",
+      "£",
+      "¤"
+    ],
+    "Backslash": [
+      "*",
+      "µ",
+      null
+    ],
+    "Quote": [
+      "ù",
+      "%",
+      null
+    ],
+    "Semicolon": [
+      "m",
+      "M",
+      null
+    ],
+    "IntlBackslash": [
+      "<",
+      ">",
+      null
+    ],
+    "KeyM": [
+      ",",
+      "?",
+      null
+    ],
+    "Comma": [
+      ";",
+      ".",
+      null
+    ],
+    "Period": [
+      ":",
+      "/",
+      null
+    ],
+    "Slash": [
+      "!",
+      "§",
+      null
+    ],
+    "Space": [
+      " ",
+      " ",
+      null
+    ],
+    "KeyA": [
+      "q",
+      "Q",
+      null
+    ],
+    "KeyB": [
+      "b",
+      "B",
+      null
+    ],
+    "KeyC": [
+      "c",
+      "C",
+      null
+    ],
+    "KeyD": [
+      "d",
+      "D",
+      null
+    ],
+    "KeyE": [
+      "e",
+      "E",
+      "€"
+    ],
+    "KeyF": [
+      "f",
+      "F",
+      null
+    ],
+    "KeyG": [
+      "g",
+      "G",
+      null
+    ],
+    "KeyH": [
+      "h",
+      "H",
+      null
+    ],
+    "KeyI": [
+      "i",
+      "I",
+      null
+    ],
+    "KeyJ": [
+      "j",
+      "J",
+      null
+    ],
+    "KeyK": [
+      "k",
+      "K",
+      null
+    ],
+    "KeyL": [
+      "l",
+      "L",
+      null
+    ],
+    "KeyN": [
+      "n",
+      "N",
+      null
+    ],
+    "KeyO": [
+      "o",
+      "O",
+      null
+    ],
+    "KeyP": [
+      "p",
+      "P",
+      null
+    ],
+    "KeyR": [
+      "r",
+      "R",
+      null
+    ],
+    "KeyS": [
+      "s",
+      "S",
+      null
+    ],
+    "KeyT": [
+      "t",
+      "T",
+      null
+    ],
+    "KeyU": [
+      "u",
+      "U",
+      null
+    ],
+    "KeyV": [
+      "v",
+      "V",
+      null
+    ],
+    "KeyX": [
+      "x",
+      "X",
+      null
+    ],
+    "KeyY": [
+      "y",
+      "Y",
+      null
+    ],
+    "KeyQ": [
+      "a",
+      "A",
+      null
+    ],
+    "KeyW": [
+      "z",
+      "Z",
+      null
+    ],
+    "KeyZ": [
+      "w",
+      "W",
+      null
+    ]
+  }
+}

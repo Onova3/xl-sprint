@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XL Sprint exercise",
+  "description": "Format neutre d'un exercice. Les formules sont stockées en syntaxe canonique en-US (noms anglais, virgule) et converties à l'affichage/à la saisie selon le profil du joueur.",
+  "type": "object",
+  "required": [
+    "id",
+    "type"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "shortcut",
+        "typing",
+        "formula-text",
+        "formula-eval",
+        "regex-pattern",
+        "vba",
+        "case",
+        "lesson"
+      ]
+    },
+    "level": {
+      "description": "1-3 ou base/mid/hard"
+    },
+    "title": {
+      "$ref": "#/$defs/i18n"
+    },
+    "prompt": {
+      "$ref": "#/$defs/i18n"
+    },
+    "hint": {
+      "$ref": "#/$defs/i18n"
+    },
+    "explanation": {
+      "$ref": "#/$defs/i18n"
+    },
+    "sheet": {
+      "type": "array",
+      "description": "Lignes de la feuille à partir de A1",
+      "items": {
+        "type": "array"
+      }
+    },
+    "output": {
+      "type": "string",
+      "description": "Cellule où la formule est écrite, ex. C2"
+    },
+    "solutions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "La 1re est la référence ; toutes doivent donner le même résultat"
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "minExcel": {
+      "enum": [
+        "2016",
+        "2019",
+        "2021",
+        "2024",
+        "365"
+      ],
+      "description": "Version minimale (2021/365 attribués automatiquement : à vérifier pour 2024)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "i18n": {
+      "type": "object",
+      "description": "Texte par langue d'interface : {\"en\": \"...\", \"fr\": \"...\"}",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

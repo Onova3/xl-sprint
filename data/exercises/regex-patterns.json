@@ -1,0 +1,281 @@
+{
+  "note": "Le motif doit correspondre (test JS sans ancrage implicite, comme REGEXTEST) à toutes les chaînes 'yes' et à aucune des 'no'.",
+  "items": [
+    {
+      "id": "p1",
+      "type": "regex-pattern",
+      "level": 1,
+      "task": {
+        "en": "Only digits (at least one)"
+      },
+      "yes": [
+        "2026",
+        "7",
+        "0042"
+      ],
+      "no": [
+        "20a6",
+        "",
+        "12 3"
+      ],
+      "solution": "^\\d+$"
+    },
+    {
+      "id": "p2",
+      "type": "regex-pattern",
+      "level": 1,
+      "task": {
+        "en": "A 5-digit ZIP code"
+      },
+      "yes": [
+        "90210",
+        "10001"
+      ],
+      "no": [
+        "9021",
+        "902100",
+        "9O210"
+      ],
+      "solution": "^\\d{5}$"
+    },
+    {
+      "id": "p3",
+      "type": "regex-pattern",
+      "level": 1,
+      "task": {
+        "en": "An ISO date yyyy-mm-dd"
+      },
+      "yes": [
+        "2026-10-25",
+        "1999-01-01"
+      ],
+      "no": [
+        "2026/10/25",
+        "26-10-25",
+        "2026-1-5"
+      ],
+      "solution": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    {
+      "id": "p4",
+      "type": "regex-pattern",
+      "level": 2,
+      "task": {
+        "en": "A hex color: # then 3 or 6 hex digits"
+      },
+      "yes": [
+        "#1B6B3F",
+        "#fff",
+        "#00aaFF"
+      ],
+      "no": [
+        "1B6B3F",
+        "#12345",
+        "#GGGGGG"
+      ],
+      "solution": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+    },
+    {
+      "id": "p5",
+      "type": "regex-pattern",
+      "level": 1,
+      "task": {
+        "en": "Product code: 2 capitals, a hyphen, 3 or 4 digits"
+      },
+      "yes": [
+        "AB-123",
+        "XL-2026"
+      ],
+      "no": [
+        "ab-123",
+        "ABC-123",
+        "AB-12",
+        "AB123"
+      ],
+      "solution": "^[A-Z]{2}-\\d{3,4}$"
+    },
+    {
+      "id": "p6",
+      "type": "regex-pattern",
+      "level": 1,
+      "task": {
+        "en": "A single word: one capital then lowercase letters"
+      },
+      "yes": [
+        "Excel",
+        "Lambda"
+      ],
+      "no": [
+        "excel",
+        "EXcel",
+        "Excel 365"
+      ],
+      "solution": "^[A-Z][a-z]+$"
+    },
+    {
+      "id": "p7",
+      "type": "regex-pattern",
+      "level": 2,
+      "task": {
+        "en": "US phone written (555) 123-4567"
+      },
+      "yes": [
+        "(555) 123-4567",
+        "(212) 555-0199"
+      ],
+      "no": [
+        "555-123-4567",
+        "(555)123-4567",
+        "(55) 123-4567"
+      ],
+      "solution": "^\\(\\d{3}\\) \\d{3}-\\d{4}$"
+    },
+    {
+      "id": "p8",
+      "type": "regex-pattern",
+      "level": 1,
+      "task": {
+        "en": "Contains no digit at all"
+      },
+      "yes": [
+        "Excel",
+        "Speed run!",
+        ""
+      ],
+      "no": [
+        "Excel 365",
+        "R2D2"
+      ],
+      "solution": "^\\D*$"
+    },
+    {
+      "id": "p9",
+      "type": "regex-pattern",
+      "level": 1,
+      "task": {
+        "en": "A file ending in .xlsx or .xlsm"
+      },
+      "yes": [
+        "budget.xlsx",
+        "Macro.Book.xlsm"
+      ],
+      "no": [
+        "data.csv",
+        "file.xlsx.bak",
+        "xlsx"
+      ],
+      "solution": "\\.xls[xm]$"
+    },
+    {
+      "id": "p10",
+      "type": "regex-pattern",
+      "level": 2,
+      "task": {
+        "en": "Contains a word written twice in a row"
+      },
+      "yes": [
+        "the the end",
+        "go go"
+      ],
+      "no": [
+        "the then",
+        "go to"
+      ],
+      "solution": "\\b(\\w+) \\1\\b"
+    },
+    {
+      "id": "p11",
+      "type": "regex-pattern",
+      "level": 2,
+      "task": {
+        "en": "A 24-hour time hh:mm"
+      },
+      "yes": [
+        "00:00",
+        "09:30",
+        "23:59"
+      ],
+      "no": [
+        "24:00",
+        "7:05",
+        "12:60"
+      ],
+      "solution": "^([01]\\d|2[0-3]):[0-5]\\d$"
+    },
+    {
+      "id": "p12",
+      "type": "regex-pattern",
+      "level": 2,
+      "task": {
+        "en": "A simple email address"
+      },
+      "yes": [
+        "ana@mail.com",
+        "leo.m@club-xl.fr"
+      ],
+      "no": [
+        "ana@mail",
+        "@mail.com",
+        "ana mail@x.com"
+      ],
+      "solution": "^[\\w.]+@[\\w-]+\\.[a-z]{2,}$"
+    },
+    {
+      "id": "p13",
+      "type": "regex-pattern",
+      "level": 3,
+      "task": {
+        "en": "Password: 8+ characters with at least one digit and one capital"
+      },
+      "yes": [
+        "Excel2026",
+        "Abcdefg1"
+      ],
+      "no": [
+        "excel2026",
+        "Abcdefgh",
+        "Ab1"
+      ],
+      "solution": "^(?=.*\\d)(?=.*[A-Z]).{8,}$"
+    },
+    {
+      "id": "p14",
+      "type": "regex-pattern",
+      "level": 3,
+      "task": {
+        "en": "An A1 cell reference ($ allowed, row ≥ 1, 1 to 3 letters)"
+      },
+      "yes": [
+        "A1",
+        "$B$2",
+        "XFD1048576",
+        "c10"
+      ],
+      "no": [
+        "1A",
+        "A0",
+        "ABCD1",
+        "A$"
+      ],
+      "solution": "^\\$?[A-Za-z]{1,3}\\$?[1-9]\\d*$"
+    },
+    {
+      "id": "p15",
+      "type": "regex-pattern",
+      "level": 3,
+      "task": {
+        "en": "An IPv4 address (each number 0-255)"
+      },
+      "yes": [
+        "192.168.1.1",
+        "10.0.0.255"
+      ],
+      "no": [
+        "256.1.1.1",
+        "1.2.3",
+        "1.2.3.4.5"
+      ],
+      "solution": "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$"
+    }
+  ]
+}

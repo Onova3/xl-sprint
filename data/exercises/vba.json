@@ -1,0 +1,65 @@
+{
+  "note": "Macros à recopier. Le VBA n'est pas localisé (mots-clés anglais partout).",
+  "items": [
+    {
+      "id": "v1",
+      "type": "vba",
+      "code": "Sub HelloRange()\n    Range(\"A1\").Value = \"Hello\"\nEnd Sub"
+    },
+    {
+      "id": "v2",
+      "type": "vba",
+      "code": "Sub LastRow()\n    Dim lastRow As Long\n    lastRow = Cells(Rows.Count, \"A\").End(xlUp).Row\n    MsgBox lastRow\nEnd Sub"
+    },
+    {
+      "id": "v3",
+      "type": "vba",
+      "code": "Sub HighlightBig()\n    Dim c As Range\n    For Each c In Range(\"C2:C100\")\n        If c.Value > 1000 Then c.Interior.Color = vbYellow\n    Next c\nEnd Sub"
+    },
+    {
+      "id": "v4",
+      "type": "vba",
+      "code": "Sub FormatHeader()\n    With Range(\"A1:E1\")\n        .Font.Bold = True\n        .Interior.Color = RGB(27, 107, 63)\n        .Font.Color = vbWhite\n    End With\nEnd Sub"
+    },
+    {
+      "id": "v5",
+      "type": "vba",
+      "code": "Function Square(x As Double) As Double\n    Square = x * x\nEnd Function"
+    },
+    {
+      "id": "v6",
+      "type": "vba",
+      "code": "Sub SumArray()\n    Dim arr As Variant, i As Long, total As Double\n    arr = Range(\"C2:C100\").Value\n    For i = 1 To UBound(arr, 1)\n        total = total + arr(i, 1)\n    Next i\n    Debug.Print total\nEnd Sub"
+    },
+    {
+      "id": "v7",
+      "type": "vba",
+      "code": "Sub CountUnique()\n    Dim d As Object, c As Range\n    Set d = CreateObject(\"Scripting.Dictionary\")\n    For Each c In Range(\"B2:B100\")\n        d(c.Value) = 1\n    Next c\n    MsgBox d.Count\nEnd Sub"
+    },
+    {
+      "id": "v8",
+      "type": "vba",
+      "code": "Sub AddSheets()\n    Dim i As Long\n    For i = 1 To 3\n        Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = \"Case\" & i\n    Next i\nEnd Sub"
+    },
+    {
+      "id": "v9",
+      "type": "vba",
+      "code": "Sub FastMode()\n    Application.ScreenUpdating = False\n    Application.Calculation = xlCalculationManual\n    ' ... your code ...\n    Application.Calculation = xlCalculationAutomatic\n    Application.ScreenUpdating = True\nEnd Sub"
+    },
+    {
+      "id": "v10",
+      "type": "vba",
+      "code": "Sub RevenueLoop()\n    Dim r As Long\n    r = 2\n    Do While Cells(r, 1).Value <> \"\"\n        Cells(r, 6).Value = Cells(r, 3).Value * Cells(r, 5).Value\n        r = r + 1\n    Loop\nEnd Sub"
+    },
+    {
+      "id": "v11",
+      "type": "vba",
+      "code": "Sub WriteSquares()\n    Dim out(1 To 10, 1 To 1) As Long, i As Long\n    For i = 1 To 10\n        out(i, 1) = i ^ 2\n    Next i\n    Range(\"H1:H10\").Value = out\nEnd Sub"
+    },
+    {
+      "id": "v12",
+      "type": "vba",
+      "code": "Sub PasteAsValues()\n    Range(\"A1\").CurrentRegion.Copy\n    Range(\"H1\").PasteSpecial Paste:=xlPasteValues\n    Application.CutCopyMode = False\nEnd Sub"
+    }
+  ]
+}

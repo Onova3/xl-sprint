@@ -1,0 +1,3025 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="XL Sprint : entraînement de vitesse pour l'Excel esports (raccourcis, formules, tableaux dynamiques, regex, VBA, mini-cas).">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='7' width='26' height='18' fill='white' stroke='%231b6b3f' stroke-width='3'/%3E%3Crect x='25' y='21' width='6' height='6' fill='%231b6b3f'/%3E%3Ctext x='15' y='21' font-family='Arial' font-weight='700' font-size='11' text-anchor='middle' fill='%231b6b3f'%3EXL%3C/text%3E%3C/svg%3E">
+<style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<title>XL Sprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Mise en page : une feuille de calcul. Fond quadrillé (colonnes 72 px, lignes 22 px),
+   parcours en « en-têtes de ligne » 1 à 5, cellule active verte avec poignée de recopie. */
+:root {
+  --bg: #eef2ee;
+  --grid: rgba(23, 60, 38, 0.07);
+  --surface: #ffffff;
+  --surface-2: #f5f8f5;
+  --ink: #16211a;
+  --muted: #5b6b60;
+  --line: #d3ddd5;
+  --accent: #1b6b3f;
+  --accent-soft: #dcefe3;
+  --accent-ink: #ffffff;
+  --amber: #b77a06;
+  --good: #23784a;
+  --bad: #bf3a24;
+  --bad-soft: #fbe3de;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Cascadia Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1411; --grid: rgba(140, 200, 160, 0.055); --surface: #151d18; --surface-2: #1b251f;
+    --ink: #e2ebe4; --muted: #94a59a; --line: #2b3830; --accent: #52c483; --accent-soft: #1d3a29;
+    --accent-ink: #07130c; --amber: #e8b04a; --good: #5fd08f; --bad: #ff7d66; --bad-soft: #3a1d18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1411; --grid: rgba(140, 200, 160, 0.055); --surface: #151d18; --surface-2: #1b251f;
+  --ink: #e2ebe4; --muted: #94a59a; --line: #2b3830; --accent: #52c483; --accent-soft: #1d3a29;
+  --accent-ink: #07130c; --amber: #e8b04a; --good: #5fd08f; --bad: #ff7d66; --bad-soft: #3a1d18;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 72px 22px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-block: 20px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 20px;
+}
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.mono { font-family: var(--font-mono); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- en-tête ---------- */
+.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+.brand { display: grid; gap: 4px; }
+.brand h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.brand h1 .cell {
+  display: inline-block; border: 2px solid var(--accent); padding: 0 8px; position: relative; margin-left: 2px;
+}
+.brand h1 .cell::after {
+  content: ""; position: absolute; right: -5px; bottom: -5px; width: 7px; height: 7px;
+  background: var(--accent); border: 1px solid var(--bg);
+}
+.brand p { margin: 0; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600;
+  border: 1px solid var(--line); background: var(--surface); padding: 4px 10px; border-radius: 999px; color: var(--muted);
+}
+.chip.ok { color: var(--good); border-color: color-mix(in srgb, var(--good) 40%, var(--line)); }
+
+/* ---------- grille principale ---------- */
+.layout { display: grid; grid-template-columns: 310px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+.eyebrow { font-family: var(--font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+/* parcours : en-têtes de ligne */
+.path { display: grid; gap: 16px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; }
+.step {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr); width: 100%; text-align: left;
+  background: transparent; border: 0; border-bottom: 1px solid var(--line); padding: 0; cursor: pointer;
+}
+.steps li:last-child .step { border-bottom: 0; }
+.step .rowhead {
+  display: grid; place-items: center; background: var(--surface-2); border-right: 1px solid var(--line);
+  font-family: var(--font-mono); font-size: 13px; color: var(--muted);
+}
+.step .cellbody { padding: 12px 14px; display: grid; gap: 4px; position: relative; min-width: 0; }
+.step .name { font-weight: 600; }
+.step .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.step:hover .cellbody { background: var(--surface-2); }
+.step[aria-current="true"] .rowhead { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.step[aria-current="true"] .cellbody { outline: 2px solid var(--accent); outline-offset: -2px; }
+.step[aria-current="true"] .cellbody::after {
+  content: ""; position: absolute; right: -3px; bottom: -3px; width: 7px; height: 7px;
+  background: var(--accent); border: 1px solid var(--surface);
+}
+.status { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 1px 7px; border-radius: 3px; border: 1px solid var(--line); }
+.status.done { color: var(--good); border-color: var(--good); }
+.status.going { color: var(--amber); border-color: var(--amber); }
+
+.roadmap { padding: 14px 16px; display: grid; gap: 10px; }
+.roadmap ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.roadmap li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; font-size: 14px; color: var(--muted); }
+.roadmap li b { font-family: var(--font-mono); font-size: 12px; color: var(--ink); }
+.roadmap li.now { color: var(--ink); }
+.roadmap li.now b { color: var(--accent); }
+
+/* ---------- espace de travail ---------- */
+.work { padding: 22px; display: grid; gap: 18px; min-width: 0; }
+.work-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; align-items: start; }
+.work-head h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; }
+.work-head p { margin: 4px 0 0; color: var(--muted); max-width: 62ch; }
+.goal { font-size: 13px; color: var(--muted); border-left: 3px solid var(--accent); padding: 2px 0 2px 10px; }
+.goal b { color: var(--ink); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { background: var(--surface); border: 0; padding: 7px 12px; cursor: pointer; font-size: 14px; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn {
+  border: 1px solid var(--line); background: var(--surface); padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: 500;
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; }
+.label { font-size: 13px; color: var(--muted); }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.stat { border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; display: grid; gap: 2px; background: var(--surface-2); }
+.stat .v { font-family: var(--font-display); font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat .k { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.stat.best .v { color: var(--accent); }
+
+.spark { width: 100%; height: 64px; display: block; }
+.note { font-size: 13px; color: var(--muted); }
+.kbdnote { display: none; }
+@media (hover: none) and (pointer: coarse) { .kbdnote { display: block; } }
+
+kbd {
+  font-family: var(--font-mono); font-size: 0.9em; font-weight: 500;
+  display: inline-block; min-width: 1.9em; text-align: center;
+  padding: 0.15em 0.5em; border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 5px;
+  background: var(--surface); color: var(--ink); line-height: 1.4;
+}
+.keys { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.keys .plus, .keys .then { color: var(--muted); font-size: 13px; }
+
+/* zone d'exercice */
+.stage {
+  border: 1px solid var(--line); border-radius: 4px; background: var(--surface-2);
+  padding: 22px; display: grid; gap: 16px; position: relative; outline: none; min-width: 0;
+}
+.stage:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.runbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: center; font-size: 14px; }
+.timer { font-family: var(--font-mono); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.progress { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--accent); transition: width 0.15s; }
+.prompt { font-family: var(--font-display); font-size: clamp(26px, 4.4vw, 40px); font-weight: 700; letter-spacing: -0.01em; line-height: 1.1; }
+.ctx { font-size: 13px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+.pressed { min-height: 38px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.feedback { min-height: 22px; font-size: 14px; }
+.feedback.bad { color: var(--bad); }
+.feedback.good { color: var(--good); }
+.shake { animation: shake 0.28s; }
+@keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.flash { animation: flash 0.35s; }
+@keyframes flash { from { background: var(--accent-soft); } to { background: var(--surface-2); } }
+@media (prefers-reduced-motion: reduce) { .shake, .flash { animation: none; } .progress i { transition: none; } }
+.choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.choice { border: 1px solid var(--line); background: var(--surface); border-radius: 4px; padding: 12px; cursor: pointer; display: flex; gap: 10px; align-items: center; text-align: left; }
+.choice:hover { border-color: var(--accent); }
+.choice .idx { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.paused {
+  position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--surface-2) 88%, transparent);
+  font-weight: 600; border-radius: 4px; cursor: pointer;
+}
+
+/* feuille d'exemple pour les formules */
+.sheetwrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: start; }
+@media (max-width: 640px) { .sheetwrap { grid-template-columns: minmax(0, 1fr); } }
+.xscroll { overflow-x: auto; min-width: 0; }
+table.sheet { border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; background: var(--surface); }
+table.sheet th, table.sheet td { border: 1px solid var(--line); padding: 3px 8px; white-space: nowrap; }
+table.sheet th { background: var(--surface-2); color: var(--muted); font-weight: 500; font-size: 12px; text-align: center; }
+table.sheet td.hdr { font-weight: 600; }
+table.sheet td.r { text-align: right; }
+.side { display: grid; gap: 8px; font-size: 13px; }
+.side .box { border: 1px solid var(--line); background: var(--surface); padding: 8px 10px; border-radius: 4px; }
+.side code { font-family: var(--font-mono); font-size: 12px; }
+
+.fbar { display: grid; grid-template-columns: 70px 34px minmax(0, 1fr); border: 1px solid var(--line); border-radius: 4px; background: var(--surface); position: relative; }
+.fbar .namebox { font-family: var(--font-mono); font-size: 13px; display: grid; place-items: center; border-right: 1px solid var(--line); color: var(--muted); }
+.fbar .fx { font-family: Georgia, "Times New Roman", serif; font-style: italic; display: grid; place-items: center; border-right: 1px solid var(--line); color: var(--muted); }
+.fbar input { border: 0; background: transparent; font-family: var(--font-mono); font-size: 16px; padding: 10px 12px; color: var(--ink); width: 100%; min-width: 0; outline: none; }
+.fbar:focus-within { outline: 2px solid var(--accent); outline-offset: -1px; }
+.suggest { position: absolute; left: 104px; top: 100%; margin-top: 4px; z-index: 5; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; min-width: 220px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); font-family: var(--font-mono); font-size: 13px; }
+.suggest div { padding: 5px 10px; }
+.suggest div[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+.suggest div { display: flex; justify-content: space-between; gap: 12px; }
+.tag { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 3px; padding: 0 4px; opacity: 0.75; align-self: center; }
+.target { font-family: var(--font-mono); font-size: 17px; background: var(--surface); border: 1px dashed var(--line); padding: 10px 12px; border-radius: 4px; overflow-x: auto; white-space: pre; }
+.answer { font-family: var(--font-mono); font-size: 14px; }
+
+/* VBA */
+.code {
+  font-family: var(--font-mono); font-size: 15px; line-height: 1.6; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 4px; padding: 14px 16px; margin: 0; overflow-x: auto; white-space: pre; tab-size: 4;
+}
+.code .p { color: var(--muted); opacity: 0.75; }
+.code .k { color: var(--ink); }
+.code .x { color: var(--bad); background: var(--bad-soft); }
+.code .cur { box-shadow: inset 2px 0 0 var(--amber); }
+.code .nl::after { content: "↵"; color: var(--muted); opacity: 0.45; }
+.code .x.nl::after { color: var(--bad); opacity: 1; }
+
+/* mini-cas */
+.case-q { font-family: var(--font-display); font-size: clamp(20px, 3.2vw, 26px); font-weight: 700; line-height: 1.25; }
+.datatable { max-height: 260px; overflow: auto; border: 1px solid var(--line); border-radius: 4px; }
+.datatable table.sheet { width: 100%; }
+.datatable thead th { position: sticky; top: 0; }
+.inline { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.inline input[type="text"] { font-family: var(--font-mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--ink); width: 200px; max-width: 100%; }
+textarea.copybox { width: 100%; height: 90px; font-family: var(--font-mono); font-size: 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; }
+
+/* résultats */
+.misses { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.misses li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 14px; border-bottom: 1px dashed var(--line); padding: 6px 0; font-size: 14px; }
+.record { display: inline-block; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; }
+.foot { font-size: 12px; color: var(--muted); }
+
+/* v1.1 : onglets, grilles de résultats, regex, frappe */
+.status.new { color: var(--accent); border-color: var(--accent); }
+.tabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 14px; cursor: pointer; font-weight: 600; color: var(--muted); margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.stars { color: var(--amber); letter-spacing: 1px; font-size: 14px; }
+.grids { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; align-items: start; }
+.gridbox { display: grid; gap: 6px; min-width: 0; }
+.gridbox[hidden], [hidden] { display: none !important; }
+table.sheet td.err { color: var(--bad); font-weight: 600; }
+table.sheet td.bool { text-align: center; }
+.result-ok table.sheet { outline: 2px solid var(--good); outline-offset: -1px; }
+.result-bad table.sheet { outline: 2px solid var(--bad); outline-offset: -1px; }
+.hintchip { font-family: var(--font-mono); font-size: 13px; color: var(--muted); min-height: 22px; }
+.hintchip kbd { font-size: 11px; }
+.formula-target { font-size: 18px; white-space: pre-wrap; word-break: break-all; }
+.plist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.plist li { font-family: var(--font-mono); font-size: 14px; display: flex; gap: 10px; align-items: center; padding: 5px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); overflow-wrap: anywhere; }
+.plist li.pass { border-color: var(--good); }
+.plist li.pass .mark { color: var(--good); }
+.plist li.fail { border-color: var(--bad); background: var(--bad-soft); }
+.plist li.fail .mark { color: var(--bad); }
+.plist .mark { width: 1.2em; flex: none; font-weight: 700; color: var(--muted); }
+mark { background: color-mix(in srgb, var(--amber) 35%, transparent); color: inherit; border-radius: 2px; }
+.patbar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); font-family: var(--font-mono); }
+.patbar span { padding: 0 10px; color: var(--muted); font-size: 18px; }
+.patbar input { border: 0; background: transparent; font-family: var(--font-mono); font-size: 17px; padding: 10px 2px; color: var(--ink); min-width: 0; width: 100%; outline: none; }
+.patbar:focus-within { outline: 2px solid var(--accent); outline-offset: -1px; }
+.course { display: grid; gap: 26px; max-width: 78ch; }
+.course h3 { font-size: 21px; font-weight: 700; }
+.course section { display: grid; gap: 10px; }
+.course p { margin: 0; }
+.course code, .tbl code, .fxrow code { font-family: var(--font-mono); font-size: 0.9em; background: var(--surface-2); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; overflow-wrap: anywhere; }
+.course pre { font-family: var(--font-mono); font-size: 13.5px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; margin: 0; overflow-x: auto; }
+.tbl { border-collapse: collapse; font-size: 14px; width: 100%; }
+.tbl th, .tbl td { border-bottom: 1px solid var(--line); padding: 7px 8px; text-align: left; vertical-align: top; }
+.tbl th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 600; }
+.tester { display: grid; gap: 10px; }
+.tester textarea { width: 100%; min-height: 110px; font-family: var(--font-mono); font-size: 14px; padding: 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--ink); }
+.hl { font-family: var(--font-mono); font-size: 14px; white-space: pre-wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; min-height: 60px; overflow-wrap: anywhere; }
+.check { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; }
+.fxlist { display: grid; gap: 6px; }
+.fxrow { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <h1>XL <span class="cell">Sprint</span></h1>
+      <p>Entraînement de vitesse pour l'Excel esports · Excel en anglais · clavier QWERTY US</p>
+    </div>
+    <div class="chips">
+      <span class="chip" id="storeChip">Chargement…</span>
+      <span class="chip">Windows · Excel 365</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="path">
+      <div class="panel">
+        <div style="padding: 12px 14px 8px;"><span class="eyebrow">Parcours</span></div>
+        <ol class="steps" id="steps"></ol>
+      </div>
+      <section class="panel roadmap" aria-labelledby="rmTitle">
+        <span class="eyebrow" id="rmTitle">Feuille de route du site</span>
+        <ol>
+          <li><b>v1</b><span>Raccourcis, formules, VBA, mini-cas, chronomètre et progression.</span></li>
+          <li class="now"><b>v1.1</b><span>Frappe de formules avec Tab (fonctions et noms LET / LAMBDA), tableaux dynamiques difficiles et section Regex, formules vérifiées par calcul réel.</span></li>
+          <li><b>v2</b><span>Éditeur pour créer vos propres exercices, plus de fonctions dans le moteur de calcul.</span></li>
+          <li><b>v3</b><span>Défi du jour et classement partagé avec d'autres joueurs.</span></li>
+          <li><b>v4</b><span>Cas complets façon compétition : niveaux, gros jeux de données, barème de points.</span></li>
+        </ol>
+      </section>
+    </aside>
+
+    <main class="panel work" id="work"></main>
+  </div>
+
+  <p class="foot">Les raccourcis sont ceux d'Excel pour Windows en anglais avec un clavier QWERTY US. Quelques raccourcis réservés par le navigateur (Ctrl+T, Ctrl+W, Ctrl+PageDown…) sont travaillés sous forme de choix.</p>
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   Données : raccourcis, formules, VBA
+   ========================================================================= */
+
+const NAV = [
+  { id: "n1", act: "Jump to the last filled cell below", ctx: "Navigation", keys: "Ctrl+Down" },
+  { id: "n2", act: "Jump to the last filled cell on the right", ctx: "Navigation", keys: "Ctrl+Right" },
+  { id: "n3", act: "Extend the selection down to the end of the data", ctx: "Selection", keys: "Ctrl+Shift+Down" },
+  { id: "n4", act: "Extend the selection right to the end of the data", ctx: "Selection", keys: "Ctrl+Shift+Right" },
+  { id: "n5", act: "Go to cell A1", ctx: "Navigation", keys: "Ctrl+Home" },
+  { id: "n6", act: "Go to the last used cell", ctx: "Navigation", keys: "Ctrl+End" },
+  { id: "n7", act: "Select the entire row", ctx: "Selection", keys: "Shift+Space" },
+  { id: "n8", act: "Select the entire column", ctx: "Selection", keys: "Ctrl+Space" },
+  { id: "n9", act: "Select the current region (Ctrl+*)", ctx: "Selection", keys: "Ctrl+Shift+8" },
+  { id: "n10", act: "Edit the active cell", ctx: "Editing", keys: "F2" },
+  { id: "n11", act: "Fill Down", ctx: "Editing", keys: "Ctrl+D" },
+  { id: "n12", act: "Fill Right", ctx: "Editing", keys: "Ctrl+R" },
+  { id: "n13", act: "Enter the same entry in every selected cell", ctx: "Editing", keys: "Ctrl+Enter" },
+  { id: "n14", act: "Start a new line inside a cell", ctx: "Editing", keys: "Alt+Enter" },
+  { id: "n15", act: "AutoSum", ctx: "Formulas", keys: "Alt+=" },
+  { id: "n16", act: "Insert today's date", ctx: "Editing", keys: "Ctrl+;" },
+  { id: "n17", act: "Insert the current time", ctx: "Editing", keys: "Ctrl+Shift+;" },
+  { id: "n18", act: "Show Formulas", ctx: "Formulas", keys: "Ctrl+`" },
+  { id: "n19", act: "Toggle absolute / relative reference", ctx: "Formulas", keys: "F4" },
+  { id: "n20", act: "Turn Filter on or off", ctx: "Data", keys: "Ctrl+Shift+L" },
+  { id: "n21", act: "Insert cells, rows or columns", ctx: "Editing", keys: "Ctrl+Shift+=" },
+  { id: "n22", act: "Delete cells, rows or columns", ctx: "Editing", keys: "Ctrl+-" },
+  { id: "n23", act: "Hide the selected rows", ctx: "Format", keys: "Ctrl+9" },
+  { id: "n24", act: "Hide the selected columns", ctx: "Format", keys: "Ctrl+0" },
+  { id: "n25", act: "Undo", ctx: "Editing", keys: "Ctrl+Z" },
+  { id: "n26", act: "Redo", ctx: "Editing", keys: "Ctrl+Y" },
+  { id: "n27", act: "Go To", ctx: "Navigation", keys: "Ctrl+G" },
+  { id: "n28", act: "Find and Replace", ctx: "Editing", keys: "Ctrl+H" },
+  { id: "n29", act: "Paste Special", ctx: "Clipboard", keys: "Ctrl+Alt+V" },
+  { id: "n30", act: "Calculate Now", ctx: "Formulas", keys: "F9" },
+  { id: "n31", act: "Name Manager", ctx: "Formulas", keys: "Ctrl+F3" },
+  { id: "n32", act: "Expand or collapse the formula bar", ctx: "Formulas", keys: "Ctrl+Shift+U" },
+  { id: "n33", act: "Open the Visual Basic Editor", ctx: "Developer", keys: "Alt+F11" },
+  { id: "n34", act: "Open the Macro dialog", ctx: "Developer", keys: "Alt+F8" },
+  { id: "n35", act: "Insert a new worksheet", ctx: "Sheets", keys: "Shift+F11" },
+  { id: "n36", act: "Next worksheet", ctx: "Sheets", keys: "Ctrl+PageDown", reserved: true },
+  { id: "n37", act: "Previous worksheet", ctx: "Sheets", keys: "Ctrl+PageUp", reserved: true },
+  { id: "n38", act: "Create a Table", ctx: "Insert", keys: "Ctrl+T", reserved: true },
+  { id: "n39", act: "New workbook", ctx: "File", keys: "Ctrl+N", reserved: true },
+  { id: "n40", act: "Close the workbook", ctx: "File", keys: "Ctrl+W", reserved: true },
+  { id: "n41", act: "Save As", ctx: "File", keys: "F12", reserved: true }
+];
+
+const FMT = [
+  { id: "f1", act: "Bold", ctx: "Home › Font", keys: "Ctrl+B" },
+  { id: "f2", act: "Italic", ctx: "Home › Font", keys: "Ctrl+I" },
+  { id: "f3", act: "Underline", ctx: "Home › Font", keys: "Ctrl+U" },
+  { id: "f4", act: "Strikethrough", ctx: "Home › Font", keys: "Ctrl+5" },
+  { id: "f5", act: "Format Cells dialog", ctx: "Home › Format", keys: "Ctrl+1" },
+  { id: "f6", act: "Number format (2 decimals, thousands separator)", ctx: "Number format", keys: "Ctrl+Shift+1" },
+  { id: "f7", act: "Time format", ctx: "Number format", keys: "Ctrl+Shift+2" },
+  { id: "f8", act: "Date format", ctx: "Number format", keys: "Ctrl+Shift+3" },
+  { id: "f9", act: "Currency format", ctx: "Number format", keys: "Ctrl+Shift+4" },
+  { id: "f10", act: "Percentage format", ctx: "Number format", keys: "Ctrl+Shift+5" },
+  { id: "f11", act: "Scientific format", ctx: "Number format", keys: "Ctrl+Shift+6" },
+  { id: "f12", act: "General format", ctx: "Number format", keys: "Ctrl+Shift+`" },
+  { id: "f13", act: "Outline border", ctx: "Borders", keys: "Ctrl+Shift+7" },
+  { id: "f14", act: "Remove all borders", ctx: "Borders", keys: "Ctrl+Shift+-" },
+  { id: "f15", act: "Fill Color", ctx: "Home › Font", keys: "Alt H H", seq: true },
+  { id: "f16", act: "Font Color", ctx: "Home › Font", keys: "Alt H F C", seq: true },
+  { id: "f17", act: "All Borders", ctx: "Home › Font › Borders", keys: "Alt H B A", seq: true },
+  { id: "f18", act: "Thick Outside Borders", ctx: "Home › Font › Borders", keys: "Alt H B T", seq: true },
+  { id: "f19", act: "No Border", ctx: "Home › Font › Borders", keys: "Alt H B N", seq: true },
+  { id: "f20", act: "Bottom Border", ctx: "Home › Font › Borders", keys: "Alt H B O", seq: true },
+  { id: "f21", act: "Center", ctx: "Home › Alignment", keys: "Alt H A C", seq: true },
+  { id: "f22", act: "Align Left", ctx: "Home › Alignment", keys: "Alt H A L", seq: true },
+  { id: "f23", act: "Align Right", ctx: "Home › Alignment", keys: "Alt H A R", seq: true },
+  { id: "f24", act: "Merge & Center", ctx: "Home › Alignment", keys: "Alt H M C", seq: true },
+  { id: "f25", act: "Wrap Text", ctx: "Home › Alignment", keys: "Alt H W", seq: true },
+  { id: "f26", act: "AutoFit Column Width", ctx: "Home › Cells › Format", keys: "Alt H O I", seq: true },
+  { id: "f27", act: "AutoFit Row Height", ctx: "Home › Cells › Format", keys: "Alt H O A", seq: true },
+  { id: "f28", act: "Increase Decimal", ctx: "Home › Number", keys: "Alt H 0", seq: true },
+  { id: "f29", act: "Decrease Decimal", ctx: "Home › Number", keys: "Alt H 9", seq: true },
+  { id: "f30", act: "Comma Style", ctx: "Home › Number", keys: "Alt H K", seq: true },
+  { id: "f31", act: "Percent Style", ctx: "Home › Number", keys: "Alt H P", seq: true },
+  { id: "f32", act: "Conditional Formatting menu", ctx: "Home › Styles", keys: "Alt H L", seq: true },
+  { id: "f33", act: "Format Painter", ctx: "Home › Clipboard", keys: "Alt H F P", seq: true },
+  { id: "f34", act: "Paste Values", ctx: "Home › Clipboard", keys: "Alt H V V", seq: true },
+  { id: "f35", act: "Clear All", ctx: "Home › Editing", keys: "Alt H E A", seq: true },
+  { id: "f36", act: "Insert Sheet Rows", ctx: "Home › Cells", keys: "Alt H I R", seq: true },
+  { id: "f37", act: "Delete Sheet Columns", ctx: "Home › Cells", keys: "Alt H D C", seq: true },
+  { id: "f38", act: "Freeze Panes", ctx: "View › Window", keys: "Alt W F F", seq: true },
+  { id: "f39", act: "Sort dialog", ctx: "Data › Sort & Filter", keys: "Alt A S S", seq: true },
+  { id: "f40", act: "Filter", ctx: "Data › Sort & Filter", keys: "Alt A T", seq: true }
+];
+
+const FORMULAS = [
+  { id: "x1", q: "Total of all Sales", a: ["=SUM(C2:C100)"] },
+  { id: "x2", q: "Sales total for the East region", a: ['=SUMIFS(C2:C100,B2:B100,"East")', '=SUMIF(B2:B100,"East",C2:C100)'] },
+  { id: "x3", q: "Number of East orders with Sales above 500", a: ['=COUNTIFS(B2:B100,"East",C2:C100,">500")'] },
+  { id: "x4", q: "Largest sale in the West region", a: ['=MAXIFS(C2:C100,B2:B100,"West")'] },
+  { id: "x5", q: "Price of the product in H2, from the Products table", a: ["=XLOOKUP(H2,Products[Product],Products[Price])", "=VLOOKUP(H2,Products,2,FALSE)", "=VLOOKUP(H2,Products,2,0)"] },
+  { id: "x6", q: "Units of the first order of the product in H2 (INDEX + MATCH)", a: ["=INDEX(E2:E100,MATCH(H2,D2:D100,0))", "=XLOOKUP(H2,D2:D100,E2:E100)"] },
+  { id: "x7", q: "Sorted list of unique regions", a: ["=SORT(UNIQUE(B2:B100))"] },
+  { id: "x8", q: "Every row of A2:E100 where Sales exceed 1000", a: ["=FILTER(A2:E100,C2:C100>1000)"] },
+  { id: "x9", q: "Number of distinct products", a: ["=COUNTA(UNIQUE(D2:D100))", "=ROWS(UNIQUE(D2:D100))"] },
+  { id: "x10", q: "Top 3 sales, largest first", a: ["=TAKE(SORT(C2:C100,,-1),3)", "=LARGE(C2:C100,{1;2;3})", "=LARGE(C2:C100,SEQUENCE(3))"] },
+  { id: "x11", q: "Sum of Sales × Units, row by row", a: ["=SUMPRODUCT(C2:C100,E2:E100)", "=SUMPRODUCT(C2:C100*E2:E100)", "=SUM(C2:C100*E2:E100)"] },
+  { id: "x12", q: "Month number of the date in A2", a: ["=MONTH(A2)"] },
+  { id: "x13", q: "Last day of the month of the date in A2", a: ["=EOMONTH(A2,0)"] },
+  { id: "x14", q: "Day name of the date in A2 (e.g. Monday)", a: ['=TEXT(A2,"dddd")'] },
+  { id: "x15", q: "Sales total for March 2026", a: ['=SUMIFS(C2:C100,A2:A100,">="&DATE(2026,3,1),A2:A100,"<"&DATE(2026,4,1))', '=SUMIFS(C2:C100,A2:A100,">="&DATE(2026,3,1),A2:A100,"<="&DATE(2026,3,31))', '=SUMIFS(C2:C100,A2:A100,">="&DATE(2026,3,1),A2:A100,"<="&EOMONTH(DATE(2026,3,1),0))'] },
+  { id: "x16", q: 'Return "Pass" if C2 is at least 500, otherwise "Fail"', a: ['=IF(C2>=500,"Pass","Fail")', '=IF(C2<500,"Fail","Pass")'] },
+  { id: "x17", q: "Region in B2 in capitals, without extra spaces", a: ["=UPPER(TRIM(B2))", "=TRIM(UPPER(B2))"] },
+  { id: "x18", q: "Text after the last hyphen in D2", a: ['=TEXTAFTER(D2,"-",-1)'] },
+  { id: "x19", q: "Split D2 into columns at each hyphen", a: ['=TEXTSPLIT(D2,"-")'] },
+  { id: "x20", q: "Rank of C2 among all Sales (1 = largest)", a: ["=RANK.EQ(C2,C2:C100)", "=RANK(C2,C2:C100)", "=RANK.EQ(C2,C2:C100,0)"] },
+  { id: "x21", q: "C2 rounded to the nearest hundred", a: ["=ROUND(C2,-2)", "=MROUND(C2,100)"] },
+  { id: "x22", q: "Numbers 1 to 12 in a column", a: ["=SEQUENCE(12)"] },
+  { id: "x23", q: "With LET, store C2*1.2 in a name and return it rounded to 2 decimals", a: ["=LET(x,C2*1.2,ROUND(x,2))"], re: "^=LET\\(([A-Z_][A-Z0-9_.]*),(C2\\*1\\.2|1\\.2\\*C2),ROUND\\(\\1,2\\)\\)$" },
+  { id: "x24", q: "Running total of C2:C100 with SCAN", a: ["=SCAN(0,C2:C100,LAMBDA(a,b,a+b))"], re: "^=SCAN\\(0,C2:C100,LAMBDA\\(([A-Z_][A-Z0-9_.]*),([A-Z_][A-Z0-9_.]*),(\\1\\+\\2|\\2\\+\\1)\\)\\)$" },
+  { id: "x25", q: "Total of each row of C2:E100 with BYROW", a: ["=BYROW(C2:E100,LAMBDA(rw,SUM(rw)))"], re: "^=BYROW\\(C2:E100,LAMBDA\\(([A-Z_][A-Z0-9_.]*),SUM\\(\\1\\)\\)\\)$" },
+  { id: "x26", q: "Number of empty cells in E2:E100", a: ["=COUNTBLANK(E2:E100)"] },
+  { id: "x27", q: "Average sale in the North region, 0 if there is none", a: ['=IFERROR(AVERAGEIFS(C2:C100,B2:B100,"North"),0)', '=IFERROR(AVERAGEIF(B2:B100,"North",C2:C100),0)'] },
+  { id: "x28", q: 'Region and Product joined with " - " (row 2)', a: ['=B2&" - "&D2', '=CONCAT(B2," - ",D2)', '=TEXTJOIN(" - ",,B2,D2)', '=TEXTJOIN(" - ",TRUE,B2,D2)'] },
+  { id: "x29", q: "Sales total for each region with GROUPBY", a: ["=GROUPBY(B2:B100,C2:C100,SUM)"] },
+  { id: "x30", q: 'Position of the "Sales" header in A1:E1', a: ['=MATCH("Sales",A1:E1,0)', '=XMATCH("Sales",A1:E1)'] }
+];
+
+const VBA = [
+  { id: "v1", code: 'Sub HelloRange()\n    Range("A1").Value = "Hello"\nEnd Sub' },
+  { id: "v2", code: 'Sub LastRow()\n    Dim lastRow As Long\n    lastRow = Cells(Rows.Count, "A").End(xlUp).Row\n    MsgBox lastRow\nEnd Sub' },
+  { id: "v3", code: 'Sub HighlightBig()\n    Dim c As Range\n    For Each c In Range("C2:C100")\n        If c.Value > 1000 Then c.Interior.Color = vbYellow\n    Next c\nEnd Sub' },
+  { id: "v4", code: 'Sub FormatHeader()\n    With Range("A1:E1")\n        .Font.Bold = True\n        .Interior.Color = RGB(27, 107, 63)\n        .Font.Color = vbWhite\n    End With\nEnd Sub' },
+  { id: "v5", code: 'Function Square(x As Double) As Double\n    Square = x * x\nEnd Function' },
+  { id: "v6", code: 'Sub SumArray()\n    Dim arr As Variant, i As Long, total As Double\n    arr = Range("C2:C100").Value\n    For i = 1 To UBound(arr, 1)\n        total = total + arr(i, 1)\n    Next i\n    Debug.Print total\nEnd Sub' },
+  { id: "v7", code: 'Sub CountUnique()\n    Dim d As Object, c As Range\n    Set d = CreateObject("Scripting.Dictionary")\n    For Each c In Range("B2:B100")\n        d(c.Value) = 1\n    Next c\n    MsgBox d.Count\nEnd Sub' },
+  { id: "v8", code: 'Sub AddSheets()\n    Dim i As Long\n    For i = 1 To 3\n        Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = "Case" & i\n    Next i\nEnd Sub' },
+  { id: "v9", code: 'Sub FastMode()\n    Application.ScreenUpdating = False\n    Application.Calculation = xlCalculationManual\n    \' ... your code ...\n    Application.Calculation = xlCalculationAutomatic\n    Application.ScreenUpdating = True\nEnd Sub' },
+  { id: "v10", code: 'Sub RevenueLoop()\n    Dim r As Long\n    r = 2\n    Do While Cells(r, 1).Value <> ""\n        Cells(r, 6).Value = Cells(r, 3).Value * Cells(r, 5).Value\n        r = r + 1\n    Loop\nEnd Sub' },
+  { id: "v11", code: 'Sub WriteSquares()\n    Dim out(1 To 10, 1 To 1) As Long, i As Long\n    For i = 1 To 10\n        out(i, 1) = i ^ 2\n    Next i\n    Range("H1:H10").Value = out\nEnd Sub' },
+  { id: "v12", code: 'Sub PasteAsValues()\n    Range("A1").CurrentRegion.Copy\n    Range("H1").PasteSpecial Paste:=xlPasteValues\n    Application.CutCopyMode = False\nEnd Sub' }
+];
+
+const FUNCS = ("ABS ACCRINT ADDRESS AGGREGATE AND ARABIC ARRAYTOTEXT ASC ASIN ATAN ATAN2 AVEDEV AVERAGE AVERAGEA AVERAGEIF AVERAGEIFS " +
+  "BASE BIN2DEC BITAND BYCOL BYROW CEILING CEILING.MATH CELL CHAR CHIDIST CHISQ.DIST CHOOSE CHOOSECOLS CHOOSEROWS CLEAN CODE COLUMN COLUMNS " +
+  "COMBIN CONCAT CONCATENATE CONVERT CORREL COS COUNT COUNTA COUNTBLANK COUNTIF COUNTIFS COVARIANCE.S DATE DATEDIF DATEVALUE DAY DAYS DAYS360 " +
+  "DEC2BIN DEC2HEX DEGREES DELTA DOLLAR DROP EDATE EOMONTH EVEN EXACT EXP EXPAND FACT FALSE FILTER FILTERXML FIND FINDB FIXED FLOOR FLOOR.MATH " +
+  "FORECAST FREQUENCY FV GCD GROUPBY HEX2DEC HLOOKUP HOUR HSTACK HYPERLINK IF IFERROR IFNA IFS IMAGE INDEX INDIRECT INFO INT INTERCEPT IRR " +
+  "ISBLANK ISERR ISERROR ISEVEN ISFORMULA ISLOGICAL ISNA ISNUMBER ISODD ISOMITTED ISREF ISTEXT LAMBDA LARGE LCM LEFT LEFTB LEN LENB LET LINEST " +
+  "LN LOG LOG10 LOOKUP LOWER MAKEARRAY MAP MATCH MAX MAXA MAXIFS MEDIAN MID MIDB MIN MINA MINIFS MINUTE MMULT MOD MODE MODE.SNGL MONTH MROUND " +
+  "N NA NETWORKDAYS NOT NOW NPV NUMBERVALUE ODD OFFSET OR PERCENTILE.INC PERCENTRANK.INC PI PIVOTBY PMT POWER PRODUCT PROPER PV QUARTILE.INC " +
+  "QUOTIENT RADIANS RAND RANDARRAY RANDBETWEEN RANK RANK.AVG RANK.EQ RATE RECEIVED REDUCE REGEXEXTRACT REGEXREPLACE REGEXTEST REPLACE REPT RIGHT " +
+  "ROMAN ROUND ROUNDDOWN ROUNDUP ROW ROWS SCAN SEARCH SEARCHB SEC SECOND SEQUENCE SHEET SIGN SIN SLOPE SMALL SORT SORTBY SQRT STANDARDIZE STDEV " +
+  "STDEV.P STDEV.S SUBSTITUTE SUBTOTAL SUM SUMIF SUMIFS SUMPRODUCT SUMSQ SWITCH T TAKE TAN TEXT TEXTAFTER TEXTBEFORE TEXTJOIN TEXTSPLIT TIME " +
+  "TIMEVALUE TOCOL TODAY TOROW TRANSPOSE TREND TRIM TRIMMEAN TRIMRANGE TRUE TRUNC TYPE UNICHAR UNICODE UNIQUE UPPER VALUE VAR VAR.P VAR.S VLOOKUP " +
+  "VSTACK WEEKDAY WEEKNUM WORKDAY WRAPCOLS WRAPROWS XLOOKUP XMATCH XOR YEAR YEARFRAC").split(" ");
+const FUNCS_SORTED = [...FUNCS].sort();
+
+/* =========================================================================
+   Moteur de formules Excel (sous-ensemble Office 365) : vérifie une formule
+   par son RÉSULTAT, pas par son texte. Tableaux dynamiques, LET, LAMBDA,
+   MAKEARRAY, SCAN, REDUCE, MAP, BYROW, BYCOL, REGEX…
+   ========================================================================= */
+
+class XErr { constructor(code) { this.code = code; } toString() { return this.code; } }
+const ERR = c => new XErr(c);
+class Arr {
+  constructor(rows, cols, d) { this.rows = rows; this.cols = cols; this.d = d || new Array(rows * cols).fill(null); }
+  get(r, c) { return this.d[r * this.cols + c]; }
+  set(r, c, v) { this.d[r * this.cols + c] = v; }
+  static from(rows2d) {
+    const R = rows2d.length, C = Math.max(...rows2d.map(r => r.length));
+    const a = new Arr(R, C);
+    rows2d.forEach((row, r) => { for (let c = 0; c < C; c++) a.set(r, c, c < row.length ? row[c] : ERR("#N/A")); });
+    return a;
+  }
+}
+class Fn { constructor(params, body, env, ctx) { this.params = params; this.body = body; this.env = env; this.ctx = ctx; } }
+const OMIT = { omit: true };
+class FormulaError extends Error { }
+class Bail { constructor(e) { this.e = e; } }
+const isArr = v => v instanceof Arr;
+const toArr = v => isArr(v) ? v : new Arr(1, 1, [v]);
+
+/* ------------------------------------------------------------- lecture -- */
+
+function tokenize(s) {
+  const toks = [];
+  let i = 0, m;
+  while (i < s.length) {
+    const ch = s[i], rest = s.slice(i);
+    if (/\s/.test(ch)) { i++; continue; }
+    if (ch === '"') {
+      let j = i + 1, str = "";
+      for (;;) {
+        if (j >= s.length) throw new FormulaError("Guillemet non fermé.");
+        if (s[j] === '"') { if (s[j + 1] === '"') { str += '"'; j += 2; continue; } break; }
+        str += s[j++];
+      }
+      toks.push({ t: "str", v: str }); i = j + 1; continue;
+    }
+    if ((m = /^\$?([A-Za-z]{1,3})\$?(\d+)(?::\$?([A-Za-z]{1,3})\$?(\d+))?/.exec(rest))) {
+      const next = s[i + m[0].length] || "";
+      if (!/[A-Za-z0-9_.(]/.test(next)) {
+        toks.push({ t: "ref", v: m[0], c1: m[1].toUpperCase(), r1: +m[2], c2: m[3] ? m[3].toUpperCase() : null, r2: m[4] ? +m[4] : null });
+        i += m[0].length; continue;
+      }
+    }
+    if ((m = /^(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?/.exec(rest))) { toks.push({ t: "num", v: parseFloat(m[0]) }); i += m[0].length; continue; }
+    if ((m = /^[A-Za-z_\\][A-Za-z0-9_.]*/.exec(rest))) { toks.push({ t: "id", v: m[0] }); i += m[0].length; continue; }
+    const two = s.slice(i, i + 2);
+    if (two === "<>" || two === "<=" || two === ">=") { toks.push({ t: "op", v: two }); i += 2; continue; }
+    if ("+-*/^&=<>%(),{};".includes(ch)) { toks.push({ t: "op", v: ch }); i++; continue; }
+    if (ch === "[" || ch === "]") throw new FormulaError("Les références structurées (Table[Colonne]) ne sont pas gérées ici : utilisez les plages de la feuille.");
+    throw new FormulaError("Caractère inattendu : « " + ch + " ».");
+  }
+  return toks;
+}
+
+function parseFormula(src) {
+  let s = String(src).trim();
+  if (s.startsWith("=")) s = s.slice(1);
+  if (!s.trim()) throw new FormulaError("Formule vide.");
+  const toks = tokenize(s);
+  let depth = 0;
+  for (const t of toks) { if (t.t === "op" && t.v === "(") depth++; if (t.t === "op" && t.v === ")") depth--; }
+  for (let k = 0; k < depth; k++) toks.push({ t: "op", v: ")" });   // Excel referme les parenthèses
+  let p = 0;
+  const isOp = v => toks[p] && toks[p].t === "op" && toks[p].v === v;
+  const expect = v => { if (!isOp(v)) throw new FormulaError(`« ${v} » attendu${toks[p] ? " avant « " + toks[p].v + " »" : " en fin de formule"}.`); p++; };
+  const CMP = ["=", "<>", "<", ">", "<=", ">="];
+
+  function expr() {
+    let l = concat();
+    while (toks[p] && toks[p].t === "op" && CMP.includes(toks[p].v)) { const op = toks[p++].v; l = { k: "bin", op, l, r: concat() }; }
+    return l;
+  }
+  function concat() { let l = add(); while (isOp("&")) { p++; l = { k: "bin", op: "&", l, r: add() }; } return l; }
+  function add() { let l = mul(); while (isOp("+") || isOp("-")) { const op = toks[p++].v; l = { k: "bin", op, l, r: mul() }; } return l; }
+  function mul() { let l = pow(); while (isOp("*") || isOp("/")) { const op = toks[p++].v; l = { k: "bin", op, l, r: pow() }; } return l; }
+  function pow() { let l = pct(); while (isOp("^")) { p++; l = { k: "bin", op: "^", l, r: pct() }; } return l; }
+  function pct() { let e = unary(); while (isOp("%")) { p++; e = { k: "pct", e }; } return e; }
+  function unary() {
+    if (isOp("-")) { p++; return { k: "neg", e: unary() }; }
+    if (isOp("+")) { p++; return unary(); }
+    return postfix();
+  }
+  function postfix() { let e = primary(); while (isOp("(")) { p++; e = { k: "invoke", f: e, args: args() }; } return e; }
+  function args() {
+    const out = [];
+    if (isOp(")")) { p++; return out; }
+    for (;;) {
+      if (isOp(",") || isOp(")")) out.push({ k: "omit" }); else out.push(expr());
+      if (isOp(",")) { p++; continue; }
+      expect(")");
+      return out;
+    }
+  }
+  function primary() {
+    const t = toks[p];
+    if (!t) throw new FormulaError("Formule incomplète.");
+    if (t.t === "num") { p++; return { k: "num", v: t.v }; }
+    if (t.t === "str") { p++; return { k: "str", v: t.v }; }
+    if (t.t === "ref") { p++; return { k: "ref", t }; }
+    if (t.t === "id") {
+      p++;
+      const up = t.v.toUpperCase();
+      if (isOp("(")) { p++; return { k: "call", name: up, args: args() }; }
+      if (up === "TRUE") return { k: "lit", v: true };
+      if (up === "FALSE") return { k: "lit", v: false };
+      return { k: "name", name: up };
+    }
+    if (isOp("(")) { p++; const e = expr(); expect(")"); return e; }
+    if (isOp("{")) { p++; return arrayConst(); }
+    throw new FormulaError("Élément inattendu : « " + t.v + " ».");
+  }
+  function arrayConst() {
+    const rows = [[]];
+    for (;;) {
+      let neg = false;
+      if (isOp("-")) { p++; neg = true; }
+      const t = toks[p++];
+      if (!t) throw new FormulaError("Constante de tableau non fermée.");
+      let v;
+      if (t.t === "num") v = neg ? -t.v : t.v;
+      else if (t.t === "str") v = t.v;
+      else if (t.t === "id" && /^(TRUE|FALSE)$/i.test(t.v)) v = t.v.toUpperCase() === "TRUE";
+      else throw new FormulaError("Constante de tableau invalide.");
+      rows[rows.length - 1].push(v);
+      if (isOp(",")) { p++; continue; }
+      if (isOp(";")) { p++; rows.push([]); continue; }
+      expect("}");
+      break;
+    }
+    if (rows.some(r => r.length !== rows[0].length)) throw new FormulaError("Les lignes de la constante de tableau n'ont pas la même longueur.");
+    return { k: "lit", v: Arr.from(rows) };
+  }
+  const ast = expr();
+  if (p < toks.length) throw new FormulaError("Élément en trop : « " + toks[p].v + " ».");
+  return ast;
+}
+
+/* ------------------------------------------------------ conversions -- */
+
+function fmtNum(n) { return Number.isInteger(n) ? String(n) : String(parseFloat(n.toPrecision(15))); }
+function toNum(v) {
+  if (v instanceof XErr) return v;
+  if (typeof v === "number") return v;
+  if (typeof v === "boolean") return v ? 1 : 0;
+  if (v === null || v === undefined || v === OMIT) return 0;
+  if (typeof v === "string") { const t = v.trim(); const n = Number(t); return t === "" || isNaN(n) ? ERR("#VALUE!") : n; }
+  if (isArr(v)) return toNum(v.d[0]);
+  return ERR("#VALUE!");
+}
+function toStr(v) {
+  if (v instanceof XErr) return v;
+  if (v === null || v === undefined || v === OMIT) return "";
+  if (typeof v === "string") return v;
+  if (typeof v === "boolean") return v ? "TRUE" : "FALSE";
+  if (typeof v === "number") return fmtNum(v);
+  if (isArr(v)) return toStr(v.d[0]);
+  return ERR("#VALUE!");
+}
+function toBool(v) {
+  if (v instanceof XErr) return v;
+  if (typeof v === "boolean") return v;
+  if (typeof v === "number") return v !== 0;
+  if (v === null || v === undefined || v === OMIT) return false;
+  if (typeof v === "string") { const u = v.toUpperCase(); if (u === "TRUE") return true; if (u === "FALSE") return false; }
+  if (isArr(v)) return toBool(v.d[0]);
+  return ERR("#VALUE!");
+}
+function num(v) { const n = toNum(v); if (n instanceof XErr) throw new Bail(n); return n; }
+function str(v) { const s = toStr(v); if (s instanceof XErr) throw new Bail(s); return s; }
+function bool(v) { const b = toBool(v); if (b instanceof XErr) throw new Bail(b); return b; }
+function int(v) { return Math.trunc(num(v)); }
+const opt = (v, d) => (v === undefined || v === OMIT) ? d : v;
+function scal(v) { return isArr(v) ? v.d[0] : v; }
+
+function broadcast(vals, f) {
+  if (!vals.some(isArr)) return f(...vals);
+  let R = 1, C = 1;
+  for (const v of vals) if (isArr(v)) { R = Math.max(R, v.rows); C = Math.max(C, v.cols); }
+  const out = new Arr(R, C);
+  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+    out.set(r, c, f(...vals.map(v => {
+      if (!isArr(v)) return v;
+      const rr = v.rows === 1 ? 0 : r, cc = v.cols === 1 ? 0 : c;
+      return rr < v.rows && cc < v.cols ? v.get(rr, cc) : ERR("#N/A");
+    })));
+  }
+  return out;
+}
+/* Applique f élément par élément ; les erreurs sont propagées. */
+function lift(f, errorsOk) {
+  return args => broadcast(args, (...xs) => {
+    if (!errorsOk) for (const x of xs) if (x instanceof XErr) return x;
+    try { const r = f(...xs); return r === undefined ? ERR("#VALUE!") : r; }
+    catch (e) { if (e instanceof Bail) return e.e; throw e; }
+  });
+}
+
+function cmpVals(x, y) {
+  if (x === null || x === undefined) x = typeof y === "string" ? "" : typeof y === "boolean" ? false : 0;
+  if (y === null || y === undefined) y = typeof x === "string" ? "" : typeof x === "boolean" ? false : 0;
+  const tr = v => typeof v === "number" ? 0 : typeof v === "string" ? 1 : 2;
+  if (tr(x) !== tr(y)) return tr(x) < tr(y) ? -1 : 1;
+  if (typeof x === "string") { const a = x.toLowerCase(), b = y.toLowerCase(); return a < b ? -1 : a > b ? 1 : 0; }
+  if (typeof x === "boolean") return x === y ? 0 : (x ? 1 : -1);
+  return x < y ? -1 : x > y ? 1 : 0;
+}
+function binop(op, a, b) {
+  return broadcast([a, b], (x, y) => {
+    if (x instanceof XErr) return x;
+    if (y instanceof XErr) return y;
+    if (x instanceof Fn || y instanceof Fn) return ERR("#CALC!");
+    if (op === "&") return toStr(x) + toStr(y);
+    if ("+-*/^".includes(op)) {
+      const p = toNum(x), q = toNum(y);
+      if (p instanceof XErr) return p;
+      if (q instanceof XErr) return q;
+      if (op === "+") return p + q;
+      if (op === "-") return p - q;
+      if (op === "*") return p * q;
+      if (op === "/") return q === 0 ? ERR("#DIV/0!") : p / q;
+      const r = Math.pow(p, q);
+      return isFinite(r) ? r : ERR("#NUM!");
+    }
+    const c = cmpVals(x, y);
+    return op === "=" ? c === 0 : op === "<>" ? c !== 0 : op === "<" ? c < 0 : op === ">" ? c > 0 : op === "<=" ? c <= 0 : c >= 0;
+  });
+}
+
+/* ---------------------------------------------------------- évaluation -- */
+
+class Env {
+  constructor(parent) { this.parent = parent; this.vars = new Map(); }
+  lookup(n) { for (let e = this; e; e = e.parent) if (e.vars.has(n)) return e.vars.get(n); return undefined; }
+}
+const colNum = s => s.split("").reduce((a, ch) => a * 26 + ch.charCodeAt(0) - 64, 0);
+const colName = n => { let s = ""; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+function validName(n) {
+  return /^[A-Z_\\][A-Z0-9_.]*$/.test(n) && !/^\$?[A-Z]{1,3}\$?\d+$/.test(n) && !/^R\d*C\d*$/.test(n) && n !== "TRUE" && n !== "FALSE" && n !== "R" && n !== "C";
+}
+function nameOf(node, what) {
+  if (node.k === "name" && validName(node.name)) return node.name;
+  const shown = node.k === "name" ? node.name : node.k === "ref" ? node.t.v : "?";
+  throw new FormulaError(`Nom de ${what} invalide : « ${shown} ». Évitez c, r et les noms qui ressemblent à une cellule (A1, ab12).`);
+}
+
+function makeCtx(sheet) {
+  const ctx = { sheet, budget: 400000, depth: 0 };
+  ctx.cell = (c, r) => { const v = sheet[c + r]; return v === undefined ? null : v; };
+  ctx.ref = t => {
+    const c1 = colNum(t.c1), r1 = t.r1;
+    if (!t.c2) return ctx.cell(t.c1, r1);
+    const c2 = colNum(t.c2), r2 = t.r2;
+    const R0 = Math.min(r1, r2), R1 = Math.max(r1, r2), C0 = Math.min(c1, c2), C1 = Math.max(c1, c2);
+    const a = new Arr(R1 - R0 + 1, C1 - C0 + 1);
+    for (let r = R0; r <= R1; r++) for (let c = C0; c <= C1; c++) a.set(r - R0, c - C0, ctx.cell(colName(c), r));
+    return a;
+  };
+  return ctx;
+}
+
+function callFn(f, args) {
+  const ctx = f.ctx;
+  if (args.length > f.params.length) return ERR("#VALUE!");
+  if (++ctx.depth > 1500) throw new FormulaError("Calcul trop profond.");
+  const env = new Env(f.env);
+  f.params.forEach((pn, i) => env.vars.set(pn, i < args.length ? args[i] : OMIT));
+  try { return ev(f.body, env, ctx); } finally { ctx.depth--; }
+}
+function asScalarResult(v) {
+  if (isArr(v)) return v.rows === 1 && v.cols === 1 ? v.d[0] : ERR("#CALC!");
+  if (v instanceof Fn) return ERR("#CALC!");
+  return v === OMIT ? null : v;
+}
+
+function ev(node, env, ctx) {
+  if (--ctx.budget < 0) throw new FormulaError("Calcul trop long.");
+  switch (node.k) {
+    case "num": case "str": case "lit": return node.v;
+    case "omit": return OMIT;
+    case "ref": return ctx.ref(node.t);
+    case "name": { const v = env.lookup(node.name); return v === undefined ? ERR("#NAME?") : v; }
+    case "neg": return broadcast([ev(node.e, env, ctx)], x => { if (x instanceof XErr) return x; const n = toNum(x); return n instanceof XErr ? n : -n; });
+    case "pct": return broadcast([ev(node.e, env, ctx)], x => { if (x instanceof XErr) return x; const n = toNum(x); return n instanceof XErr ? n : n / 100; });
+    case "bin": return binop(node.op, ev(node.l, env, ctx), ev(node.r, env, ctx));
+    case "invoke": {
+      const f = ev(node.f, env, ctx);
+      if (!(f instanceof Fn)) return f instanceof XErr ? f : ERR("#VALUE!");
+      return callFn(f, node.args.map(a => ev(a, env, ctx)));
+    }
+    case "call": return callNamed(node, env, ctx);
+  }
+  throw new FormulaError("Expression inconnue.");
+}
+
+function callNamed(node, env, ctx) {
+  const name = node.name, A = node.args;
+  const E = n => ev(n, env, ctx);
+  switch (name) {
+    case "LET": {
+      if (A.length < 3 || A.length % 2 === 0) throw new FormulaError("LET attend des paires nom, valeur puis un calcul final.");
+      const e2 = new Env(env);
+      for (let i = 0; i < A.length - 1; i += 2) e2.vars.set(nameOf(A[i], "variable"), ev(A[i + 1], e2, ctx));
+      return ev(A[A.length - 1], e2, ctx);
+    }
+    case "LAMBDA": {
+      if (!A.length) throw new FormulaError("LAMBDA attend au moins un calcul.");
+      const params = A.slice(0, -1).map(a => nameOf(a, "paramètre"));
+      return new Fn(params, A[A.length - 1], env, ctx);
+    }
+    case "ISOMITTED": return A[0] && A[0].k === "name" ? env.lookup(A[0].name) === OMIT : false;
+    case "IF": {
+      const c = E(A[0]);
+      if (isArr(c)) {
+        const t = A[1] ? E(A[1]) : true, f = A[2] && A[2].k !== "omit" ? E(A[2]) : false;
+        return broadcast([c, t, f], (x, y, z) => { const b = toBool(x); return b instanceof XErr ? b : b ? (y === OMIT ? 0 : y) : (z === OMIT ? 0 : z); });
+      }
+      const b = toBool(c);
+      if (b instanceof XErr) return b;
+      if (b) return A[1] && A[1].k !== "omit" ? E(A[1]) : (A[1] ? 0 : true);
+      return A[2] && A[2].k !== "omit" ? E(A[2]) : (A[2] ? 0 : false);
+    }
+    case "IFERROR": case "IFNA": {
+      const v = E(A[0]);
+      const hit = x => x instanceof XErr && (name === "IFERROR" || x.code === "#N/A");
+      if (isArr(v)) {
+        if (!v.d.some(hit)) return v;
+        const alt = E(A[1]);
+        return broadcast([v, alt], (x, y) => hit(x) ? (y === OMIT ? 0 : y) : x);
+      }
+      return hit(v) ? E(A[1]) : v;
+    }
+    case "ROW": case "COLUMN": {
+      if (!A.length || A[0].k === "omit") return ERR("#VALUE!");
+      if (A[0].k !== "ref") return ERR("#VALUE!");
+      const t = A[0].t;
+      if (name === "ROW") {
+        const r1 = t.r1, r2 = t.r2 || t.r1, lo = Math.min(r1, r2), n = Math.abs(r2 - r1) + 1;
+        return n === 1 ? lo : new Arr(n, 1, Array.from({ length: n }, (_, i) => lo + i));
+      }
+      const c1 = colNum(t.c1), c2 = t.c2 ? colNum(t.c2) : c1, lo = Math.min(c1, c2), n = Math.abs(c2 - c1) + 1;
+      return n === 1 ? lo : new Arr(1, n, Array.from({ length: n }, (_, i) => lo + i));
+    }
+  }
+  const bound = env.lookup(name);
+  if (bound instanceof Fn) return callFn(bound, A.map(E));
+  const fn = FN[name];
+  if (!fn) return ERR("#NAME?");
+  try { return fn(A.map(E), ctx); }
+  catch (e) { if (e instanceof Bail) return e.e; throw e; }
+}
+
+/* ----------------------------------------------------------- fonctions -- */
+
+function nums(args) {
+  const out = [];
+  for (const a of args) {
+    if (a === OMIT) continue;
+    if (isArr(a)) { for (const v of a.d) { if (v instanceof XErr) throw new Bail(v); if (typeof v === "number") out.push(v); } }
+    else { if (a instanceof XErr) throw new Bail(a); if (a === null) continue; out.push(num(a)); }
+  }
+  return out;
+}
+function flat(args) { const out = []; for (const a of args) { if (a === OMIT) continue; if (isArr(a)) out.push(...a.d); else out.push(a); } return out; }
+function roundTo(n, d) {
+  const f = Math.pow(10, d);
+  const m = +(Math.abs(n) * f).toPrecision(15);
+  return Math.sign(n) * Math.round(m) / f;
+}
+function needFn(f) { if (!(f instanceof Fn)) throw new Bail(ERR("#VALUE!")); return f; }
+function wild(pattern) {
+  return new RegExp("^" + pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/~\*/g, "\u0001").replace(/~\?/g, "\u0002")
+    .replace(/\*/g, ".*").replace(/\?/g, ".").replace(/\u0001/g, "\\*").replace(/\u0002/g, "\\?") + "$", "i");
+}
+function criteria(crit) {
+  crit = scal(crit);
+  if (typeof crit === "number" || typeof crit === "boolean") return v => cmpVals(v, crit) === 0 && typeof v === typeof crit;
+  const s = str(crit);
+  const m = /^(<=|>=|<>|<|>|=)?(.*)$/.exec(s);
+  const op = m[1] || "=", rhs = m[2];
+  const n = rhs.trim() !== "" && !isNaN(Number(rhs)) ? Number(rhs) : null;
+  if (n !== null) return v => typeof v === "number" && (op === "=" ? v === n : op === "<>" ? v !== n : op === "<" ? v < n : op === ">" ? v > n : op === "<=" ? v <= n : v >= n);
+  if (op === "=" || op === "<>") {
+    const re = wild(rhs);
+    const hit = v => rhs === "" ? (v === null || v === "") : (typeof v === "string" && re.test(v));
+    return op === "=" ? hit : v => !hit(v);
+  }
+  return v => { if (typeof v !== "string") return false; const c = cmpVals(v, rhs); return op === "<" ? c < 0 : op === ">" ? c > 0 : op === "<=" ? c <= 0 : c >= 0; };
+}
+function makeRegex(p, cs, global) {
+  let pat = str(p), flags = global ? "g" : "";
+  if (/^\(\?i\)/.test(pat)) { pat = pat.slice(4); flags += "i"; }
+  if (int(opt(cs, 0)) === 1 && !flags.includes("i")) flags += "i";
+  try { return new RegExp(pat, flags); } catch (e) { throw new Bail(ERR("#VALUE!")); }
+}
+function expandRepl(repl, m) {
+  return repl.replace(/\$(\d+|&)/g, (_, g) => g === "&" || g === "0" ? m[0] : (m[+g] === undefined ? "" : m[+g]));
+}
+function sortRows(A, keyFns) {
+  const idx = Array.from({ length: A.rows }, (_, i) => i);
+  idx.sort((i, j) => { for (const [key, ord] of keyFns) { const c = cmpVals(key(i), key(j)); if (c) return c * ord; } return i - j; });
+  const out = new Arr(A.rows, A.cols);
+  idx.forEach((src, r) => { for (let c = 0; c < A.cols; c++) out.set(r, c, A.get(src, c)); });
+  return out;
+}
+function pickRows(A, rows) { const out = new Arr(rows.length, A.cols); rows.forEach((r, i) => { for (let c = 0; c < A.cols; c++) out.set(i, c, A.get(r, c)); }); return out; }
+function pickCols(A, cols) { const out = new Arr(A.rows, cols.length); for (let r = 0; r < A.rows; r++) cols.forEach((c, j) => out.set(r, j, A.get(r, c))); return out; }
+function vectorItems(v) { const a = toArr(v); return a.d; }
+function idxList(args, n) {
+  const out = [];
+  for (const v of flat(args)) {
+    let k = int(v);
+    if (k < 0) k = n + k + 1;
+    if (k < 1 || k > n) throw new Bail(ERR("#VALUE!"));
+    out.push(k - 1);
+  }
+  return out;
+}
+function textPos(s, d, inst) {
+  const pos = [];
+  if (d === "") return pos;
+  let i = s.indexOf(d);
+  while (i >= 0) { pos.push(i); i = s.indexOf(d, i + d.length); }
+  const k = inst > 0 ? inst - 1 : pos.length + inst;
+  return k >= 0 && k < pos.length ? [pos[k]] : [];
+}
+function lookupIndex(lv, items, mode, search) {
+  mode = int(opt(mode, 0)); search = int(opt(search, 1));
+  const order = search === -1 ? items.map((_, i) => items.length - 1 - i) : items.map((_, i) => i);
+  if (mode === 3) { const re = makeRegex(lv, 0, false); for (const i of order) if (typeof items[i] === "string" && re.test(items[i])) return i; return -1; }
+  if (mode === 2 && typeof lv === "string") { const re = wild(lv); for (const i of order) if (typeof items[i] === "string" && re.test(items[i])) return i; return -1; }
+  for (const i of order) if (items[i] !== null && cmpVals(items[i], lv) === 0 && (typeof items[i] === typeof lv || items[i] === null)) return i;
+  if (mode === -1 || mode === 1) {
+    let best = -1;
+    items.forEach((v, i) => {
+      if (typeof v !== typeof lv) return;
+      const c = cmpVals(v, lv);
+      if (mode === -1 && c < 0 && (best < 0 || cmpVals(v, items[best]) > 0)) best = i;
+      if (mode === 1 && c > 0 && (best < 0 || cmpVals(v, items[best]) < 0)) best = i;
+    });
+    return best;
+  }
+  return -1;
+}
+
+const FN = {
+  /* nombres */
+  ABS: lift(x => Math.abs(num(x))),
+  INT: lift(x => Math.floor(num(x))),
+  SIGN: lift(x => Math.sign(num(x))),
+  SQRT: lift(x => { const n = num(x); return n < 0 ? ERR("#NUM!") : Math.sqrt(n); }),
+  POWER: lift((x, y) => Math.pow(num(x), num(y))),
+  MOD: lift((x, y) => { const n = num(x), d = num(y); return d === 0 ? ERR("#DIV/0!") : n - d * Math.floor(n / d); }),
+  ROUND: lift((x, d) => roundTo(num(x), int(opt(d, 0)))),
+  ROUNDUP: lift((x, d) => { const f = Math.pow(10, int(opt(d, 0))), n = num(x); return Math.sign(n) * Math.ceil(+(Math.abs(n) * f).toPrecision(15)) / f; }),
+  ROUNDDOWN: lift((x, d) => { const f = Math.pow(10, int(opt(d, 0))), n = num(x); return Math.sign(n) * Math.floor(+(Math.abs(n) * f).toPrecision(15)) / f; }),
+  ISODD: lift(x => Math.abs(Math.trunc(num(x))) % 2 === 1),
+  ISEVEN: lift(x => Math.abs(Math.trunc(num(x))) % 2 === 0),
+  ISNUMBER: lift(x => typeof x === "number", true),
+  ISTEXT: lift(x => typeof x === "string", true),
+  ISBLANK: lift(x => x === null, true),
+  ISERROR: lift(x => x instanceof XErr, true),
+  ISNA: lift(x => x instanceof XErr && x.code === "#N/A", true),
+  ISLOGICAL: lift(x => typeof x === "boolean", true),
+  N: lift(x => typeof x === "number" ? x : typeof x === "boolean" ? +x : 0),
+  NOT: lift(x => !bool(x)),
+  NA: () => ERR("#N/A"),
+  PI: () => Math.PI,
+  VALUE: lift(x => { if (typeof x === "number") return x; const s = str(x).trim(), n = Number(s); return s === "" || isNaN(n) ? ERR("#VALUE!") : n; }),
+  CHAR: lift(x => String.fromCharCode(int(x))),
+  CODE: lift(x => { const s = str(x); return s ? s.charCodeAt(0) : ERR("#VALUE!"); }),
+  ADDRESS: lift((r, c, a) => { const k = int(opt(a, 1)), cn = colName(int(c)), rn = int(r); return k === 4 ? cn + rn : k === 2 ? cn + "$" + rn : k === 3 ? "$" + cn + rn : "$" + cn + "$" + rn; }),
+
+  /* agrégats */
+  SUM: a => nums(a).reduce((x, y) => x + y, 0),
+  PRODUCT: a => nums(a).reduce((x, y) => x * y, 1),
+  AVERAGE: a => { const n = nums(a); return n.length ? n.reduce((x, y) => x + y, 0) / n.length : ERR("#DIV/0!"); },
+  MIN: a => { const n = nums(a); return n.length ? Math.min(...n) : 0; },
+  MAX: a => { const n = nums(a); return n.length ? Math.max(...n) : 0; },
+  MEDIAN: a => { const n = nums(a).sort((x, y) => x - y); if (!n.length) return ERR("#NUM!"); const h = n.length >> 1; return n.length % 2 ? n[h] : (n[h - 1] + n[h]) / 2; },
+  COUNT: a => flat(a).filter(v => typeof v === "number").length,
+  COUNTA: a => flat(a).filter(v => v !== null).length,
+  COUNTBLANK: a => flat(a).filter(v => v === null || v === "").length,
+  LARGE: a => { const n = nums([a[0]]).sort((x, y) => y - x); return lift(k => { const i = int(k); return i >= 1 && i <= n.length ? n[i - 1] : ERR("#NUM!"); })([a[1]]); },
+  SMALL: a => { const n = nums([a[0]]).sort((x, y) => x - y); return lift(k => { const i = int(k); return i >= 1 && i <= n.length ? n[i - 1] : ERR("#NUM!"); })([a[1]]); },
+  AND: a => { const v = flat(a).filter(x => x !== null); if (!v.length) return ERR("#VALUE!"); return v.every(x => bool(x)); },
+  OR: a => { const v = flat(a).filter(x => x !== null); if (!v.length) return ERR("#VALUE!"); return v.some(x => bool(x)); },
+  SUMPRODUCT: a => {
+    const arrs = a.filter(x => x !== OMIT).map(toArr);
+    const R = arrs[0].rows, C = arrs[0].cols;
+    if (arrs.some(x => x.rows !== R || x.cols !== C)) return ERR("#VALUE!");
+    let s = 0;
+    for (let i = 0; i < R * C; i++) {
+      let p = 1;
+      for (const x of arrs) { const v = x.d[i]; if (v instanceof XErr) return v; p *= typeof v === "number" ? v : 0; }
+      s += p;
+    }
+    return s;
+  },
+  COUNTIF: a => { const t = criteria(a[1]); return toArr(a[0]).d.filter(t).length; },
+  SUMIF: a => { const rng = toArr(a[0]), t = criteria(a[1]), sr = a[2] && a[2] !== OMIT ? toArr(a[2]) : rng; let s = 0; rng.d.forEach((v, i) => { if (t(v) && typeof sr.d[i] === "number") s += sr.d[i]; }); return s; },
+  COUNTIFS: a => {
+    const pairs = []; for (let i = 0; i < a.length; i += 2) pairs.push([toArr(a[i]), criteria(a[i + 1])]);
+    const n = pairs[0][0].d.length; let k = 0;
+    for (let i = 0; i < n; i++) if (pairs.every(([r, t]) => t(r.d[i]))) k++;
+    return k;
+  },
+  SUMIFS: a => {
+    const sr = toArr(a[0]), pairs = []; for (let i = 1; i < a.length; i += 2) pairs.push([toArr(a[i]), criteria(a[i + 1])]);
+    let s = 0; sr.d.forEach((v, i) => { if (typeof v === "number" && pairs.every(([r, t]) => t(r.d[i]))) s += v; }); return s;
+  },
+
+  /* logique */
+  IFS: a => broadcast(a, (...xs) => { for (let i = 0; i + 1 < xs.length; i += 2) { const b = toBool(xs[i]); if (b instanceof XErr) return b; if (b) return xs[i + 1]; } return ERR("#N/A"); }),
+  SWITCH: a => broadcast(a, (...xs) => { const v = xs[0]; let i = 1; for (; i + 1 < xs.length; i += 2) if (cmpVals(v, xs[i]) === 0) return xs[i + 1]; return i < xs.length ? xs[i] : ERR("#N/A"); }),
+  CHOOSE: a => broadcast([a[0]], k => { const i = Math.trunc(toNum(k)); return i >= 1 && i < a.length ? a[i] : ERR("#VALUE!"); }),
+
+  /* texte */
+  LEN: lift(x => str(x).length),
+  UPPER: lift(x => str(x).toUpperCase()),
+  LOWER: lift(x => str(x).toLowerCase()),
+  PROPER: lift(x => str(x).toLowerCase().replace(/(^|[^a-zA-Z])([a-z])/g, (m, p, ch) => p + ch.toUpperCase())),
+  TRIM: lift(x => str(x).replace(/ +/g, " ").trim()),
+  LEFT: lift((t, n) => { const k = int(opt(n, 1)); return k < 0 ? ERR("#VALUE!") : str(t).slice(0, k); }),
+  RIGHT: lift((t, n) => { const k = int(opt(n, 1)), s = str(t); return k < 0 ? ERR("#VALUE!") : k === 0 ? "" : s.slice(-k); }),
+  MID: lift((t, s, n) => { const a = int(s), k = int(n); return a < 1 || k < 0 ? ERR("#VALUE!") : str(t).substr(a - 1, k); }),
+  REPT: lift((t, n) => str(t).repeat(Math.max(0, int(n)))),
+  EXACT: lift((x, y) => str(x) === str(y)),
+  SUBSTITUTE: lift((t, o, nw, inst) => {
+    const s = str(t), old = str(o), neu = str(nw);
+    if (old === "") return s;
+    if (inst === undefined || inst === OMIT) return s.split(old).join(neu);
+    const k = int(inst); let i = -1;
+    for (let c = 0; c < k; c++) { i = s.indexOf(old, i + 1); if (i < 0) return s; }
+    return s.slice(0, i) + neu + s.slice(i + old.length);
+  }),
+  SEARCH: lift((f, w, st) => { const i = str(w).toLowerCase().indexOf(str(f).toLowerCase(), int(opt(st, 1)) - 1); return i < 0 ? ERR("#VALUE!") : i + 1; }),
+  FIND: lift((f, w, st) => { const i = str(w).indexOf(str(f), int(opt(st, 1)) - 1); return i < 0 ? ERR("#VALUE!") : i + 1; }),
+  TEXTBEFORE: lift((t, d, inst) => { const s = str(t), dl = str(d), p = textPos(s, dl, int(opt(inst, 1))); return p.length ? s.slice(0, p[0]) : ERR("#N/A"); }),
+  TEXTAFTER: lift((t, d, inst) => { const s = str(t), dl = str(d), p = textPos(s, dl, int(opt(inst, 1))); return p.length ? s.slice(p[0] + dl.length) : ERR("#N/A"); }),
+  TEXT: lift((v, f) => {
+    const fmt = str(f), n = toNum(v);
+    if (n instanceof XErr) return str(v);
+    const m = /^(#,##)?(0+)(?:\.(0+))?$/.exec(fmt);
+    if (!m) return str(v);
+    const dec = m[3] ? m[3].length : 0;
+    let s = roundTo(n, dec).toFixed(dec);
+    let [ip, dp] = s.replace("-", "").split(".");
+    ip = ip.padStart(m[2].length, "0");
+    if (m[1]) ip = ip.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (n < 0 ? "-" : "") + ip + (dp ? "." + dp : "");
+  }),
+  CONCAT: a => { let s = ""; for (const v of flat(a)) s += str(v); return s; },
+  TEXTJOIN: a => {
+    const d = str(scal(a[0])), ig = bool(scal(opt(a[1], true)));
+    const parts = flat(a.slice(2)).map(v => str(v)).filter(s => !(ig && s === ""));
+    return parts.join(d);
+  },
+  TEXTSPLIT: a => {
+    const s = str(scal(a[0]));
+    const toRe = v => { if (v === undefined || v === OMIT) return null; const ds = vectorItems(v).map(x => str(x)).filter(x => x !== ""); return ds.length ? new RegExp(ds.map(x => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")) : null; };
+    const cre = toRe(a[1]), rre = toRe(a[2]), ig = bool(opt(a[3], false));
+    let rows = rre ? s.split(rre) : [s];
+    if (ig) rows = rows.filter(r => r !== "");
+    let grid = rows.map(r => cre ? r.split(cre) : [r]);
+    if (ig) grid = grid.map(r => r.filter(x => x !== ""));
+    return Arr.from(grid.length ? grid : [[""]]);
+  },
+  REGEXTEST: lift((t, p, cs) => makeRegex(p, cs, false).test(str(t))),
+  REGEXREPLACE: lift((t, p, r, occ, cs) => {
+    const s = str(t), re = makeRegex(p, cs, true), repl = str(r), o = int(opt(occ, 0));
+    const all = [...s.matchAll(re)];
+    const target = o === 0 ? -1 : o > 0 ? o - 1 : all.length + o;
+    let k = -1;
+    return s.replace(re, (...m) => {
+      k++;
+      const groups = m.slice(0, typeof m[m.length - 1] === "object" ? -3 : -2);
+      return (o === 0 || k === target) ? expandRepl(repl, groups) : m[0];
+    });
+  }),
+  REGEXEXTRACT: a => {
+    const mode = int(scal(opt(a[2], 0)));
+    if (isArr(a[0]) && mode === 0) return lift((t, p, m, cs) => { const x = str(t).match(makeRegex(p, cs, false)); return x ? x[0] : ERR("#N/A"); })([a[0], a[1], OMIT, opt(a[3], OMIT)]);
+    const s = str(scal(a[0]));
+    if (mode === 0) { const x = s.match(makeRegex(scal(a[1]), scal(opt(a[3], 0)), false)); return x ? x[0] : ERR("#N/A"); }
+    if (mode === 1) { const all = [...s.matchAll(makeRegex(scal(a[1]), scal(opt(a[3], 0)), true))].map(m => m[0]); return all.length ? new Arr(1, all.length, all) : ERR("#N/A"); }
+    if (mode === 2) { const x = s.match(makeRegex(scal(a[1]), scal(opt(a[3], 0)), false)); if (!x) return ERR("#N/A"); const g = x.length > 1 ? x.slice(1).map(v => v === undefined ? "" : v) : [x[0]]; return new Arr(1, g.length, g); }
+    return ERR("#VALUE!");
+  },
+
+  /* tableaux */
+  ROWS: a => toArr(a[0]).rows,
+  COLUMNS: a => toArr(a[0]).cols,
+  TRANSPOSE: a => { const A = toArr(a[0]), o = new Arr(A.cols, A.rows); for (let r = 0; r < A.rows; r++) for (let c = 0; c < A.cols; c++) o.set(c, r, A.get(r, c)); return o; },
+  SEQUENCE: a => {
+    const R = int(scal(opt(a[0], 1))), C = int(scal(opt(a[1], 1))), st = num(scal(opt(a[2], 1))), sp = num(scal(opt(a[3], 1)));
+    if (R < 1 || C < 1) return ERR("#CALC!");
+    if (R * C > 100000) return ERR("#NUM!");
+    const o = new Arr(R, C); for (let i = 0; i < R * C; i++) o.d[i] = st + i * sp; return o;
+  },
+  MAKEARRAY: a => {
+    const R = int(scal(a[0])), C = int(scal(a[1])), f = needFn(a[2]);
+    if (R < 1 || C < 1) return ERR("#CALC!");
+    const o = new Arr(R, C);
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) o.set(r, c, asScalarResult(callFn(f, [r + 1, c + 1])));
+    return o;
+  },
+  MAP: a => {
+    const f = needFn(a[a.length - 1]), arrs = a.slice(0, -1).map(toArr);
+    const R = Math.max(...arrs.map(x => x.rows)), C = Math.max(...arrs.map(x => x.cols));
+    const o = new Arr(R, C);
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+      o.set(r, c, asScalarResult(callFn(f, arrs.map(x => (x.rows === 1 && x.cols === 1) ? x.d[0] : (r < x.rows && c < x.cols ? x.get(r, c) : ERR("#N/A"))))));
+    }
+    return o;
+  },
+  SCAN: a => {
+    let acc = opt(a[0], null); const A = toArr(a[1]), f = needFn(a[2]), o = new Arr(A.rows, A.cols);
+    for (let i = 0; i < A.d.length; i++) { acc = asScalarResult(callFn(f, [acc, A.d[i]])); o.d[i] = acc; }
+    return o;
+  },
+  REDUCE: a => {
+    let acc = opt(a[0], null); const A = toArr(a[1]), f = needFn(a[2]);
+    for (let i = 0; i < A.d.length; i++) acc = callFn(f, [acc, A.d[i]]);
+    return acc === OMIT ? null : acc;
+  },
+  BYROW: a => { const A = toArr(a[0]), f = needFn(a[1]), o = new Arr(A.rows, 1); for (let r = 0; r < A.rows; r++) o.d[r] = asScalarResult(callFn(f, [pickRows(A, [r])])); return o; },
+  BYCOL: a => { const A = toArr(a[0]), f = needFn(a[1]), o = new Arr(1, A.cols); for (let c = 0; c < A.cols; c++) o.d[c] = asScalarResult(callFn(f, [pickCols(A, [c])])); return o; },
+  INDEX: a => {
+    const A = toArr(a[0]);
+    let r = opt(a[1], OMIT), c = opt(a[2], OMIT);
+    if (c === OMIT) {
+      if (A.rows === 1 && A.cols > 1) { c = r; r = 1; }
+      else if (A.cols === 1) c = 1;
+      else if (!isArr(r)) { const k = int(r); if (k < 1 || k > A.rows) return ERR("#REF!"); return pickRows(A, [k - 1]); }
+    }
+    if (r === OMIT) r = 0;
+    if (!isArr(r) && !isArr(c)) {
+      const ri = int(r), ci = int(c);
+      if (ri < 0 || ci < 0 || ri > A.rows || ci > A.cols) return ERR("#REF!");
+      if (ri === 0 && ci === 0) return A;
+      if (ri === 0) return pickCols(A, [ci - 1]);
+      if (ci === 0) return pickRows(A, [ri - 1]);
+      return A.get(ri - 1, ci - 1);
+    }
+    return lift((x, y) => { const ri = int(x), ci = int(y); return ri < 1 || ci < 1 || ri > A.rows || ci > A.cols ? ERR("#REF!") : A.get(ri - 1, ci - 1); })([r, c]);
+  },
+  HSTACK: a => {
+    const arrs = a.filter(x => x !== OMIT).map(toArr), R = Math.max(...arrs.map(x => x.rows)), C = arrs.reduce((s, x) => s + x.cols, 0);
+    const o = new Arr(R, C); let off = 0;
+    for (const x of arrs) { for (let r = 0; r < R; r++) for (let c = 0; c < x.cols; c++) o.set(r, off + c, r < x.rows ? x.get(r, c) : ERR("#N/A")); off += x.cols; }
+    return o;
+  },
+  VSTACK: a => {
+    const arrs = a.filter(x => x !== OMIT).map(toArr), C = Math.max(...arrs.map(x => x.cols)), R = arrs.reduce((s, x) => s + x.rows, 0);
+    const o = new Arr(R, C); let off = 0;
+    for (const x of arrs) { for (let r = 0; r < x.rows; r++) for (let c = 0; c < C; c++) o.set(off + r, c, c < x.cols ? x.get(r, c) : ERR("#N/A")); off += x.rows; }
+    return o;
+  },
+  TOCOL: a => toLine(a, true),
+  TOROW: a => toLine(a, false),
+  WRAPROWS: a => wrap(a, true),
+  WRAPCOLS: a => wrap(a, false),
+  TAKE: a => takeDrop(a, true),
+  DROP: a => takeDrop(a, false),
+  CHOOSEROWS: a => { const A = toArr(a[0]); return pickRows(A, idxList(a.slice(1), A.rows)); },
+  CHOOSECOLS: a => { const A = toArr(a[0]); return pickCols(A, idxList(a.slice(1), A.cols)); },
+  EXPAND: a => {
+    const A = toArr(a[0]), R = int(scal(opt(a[1], A.rows))), C = int(scal(opt(a[2], A.cols))), pad = opt(a[3], ERR("#N/A"));
+    if (R < A.rows || C < A.cols) return ERR("#VALUE!");
+    const o = new Arr(R, C);
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) o.set(r, c, r < A.rows && c < A.cols ? A.get(r, c) : scal(pad));
+    return o;
+  },
+  SORT: a => {
+    const A = toArr(a[0]), k = int(scal(opt(a[1], 1))), ord = int(scal(opt(a[2], 1))) === -1 ? -1 : 1, byCol = bool(scal(opt(a[3], false)));
+    if (byCol) { const T = FN.TRANSPOSE([A]); return FN.TRANSPOSE([sortRows(T, [[i => T.get(i, k - 1), ord]])]); }
+    if (k < 1 || k > A.cols) return ERR("#VALUE!");
+    return sortRows(A, [[i => A.get(i, k - 1), ord]]);
+  },
+  SORTBY: a => {
+    const A = toArr(a[0]), keys = [];
+    for (let i = 1; i < a.length; i += 2) {
+      const K = toArr(a[i]), ord = int(scal(opt(a[i + 1], 1))) === -1 ? -1 : 1;
+      if (K.d.length !== A.rows) return ERR("#VALUE!");
+      keys.push([j => K.d[j], ord]);
+    }
+    return sortRows(A, keys);
+  },
+  UNIQUE: a => {
+    const A = toArr(a[0]), byCol = bool(scal(opt(a[1], false))), once = bool(scal(opt(a[2], false)));
+    const M = byCol ? FN.TRANSPOSE([A]) : A;
+    const keyOf = r => { const ks = []; for (let c = 0; c < M.cols; c++) { const v = M.get(r, c); ks.push(typeof v + ":" + (typeof v === "string" ? v.toLowerCase() : String(v))); } return ks.join("\u0001"); };
+    const count = new Map(), first = [];
+    for (let r = 0; r < M.rows; r++) { const k = keyOf(r); if (!count.has(k)) { count.set(k, 0); first.push(r); } count.set(k, count.get(k) + 1); }
+    const rows = first.filter(r => !once || count.get(keyOf(r)) === 1);
+    if (!rows.length) return ERR("#CALC!");
+    const out = pickRows(M, rows);
+    return byCol ? FN.TRANSPOSE([out]) : out;
+  },
+  FILTER: a => {
+    const A = toArr(a[0]), inc = toArr(a[1]);
+    let keep, byRows;
+    if (inc.cols === 1 && inc.rows === A.rows) byRows = true;
+    else if (inc.rows === 1 && inc.cols === A.cols) byRows = false;
+    else return ERR("#VALUE!");
+    keep = [];
+    for (let i = 0; i < inc.d.length; i++) { const b = toBool(inc.d[i]); if (b instanceof XErr) return b; if (b) keep.push(i); }
+    if (!keep.length) return a[2] !== undefined && a[2] !== OMIT ? a[2] : ERR("#CALC!");
+    return byRows ? pickRows(A, keep) : pickCols(A, keep);
+  },
+  XLOOKUP: a => {
+    const la = toArr(a[1]), ra = toArr(a[2]), items = la.d, horiz = la.rows === 1 && la.cols > 1;
+    const nf = a[3] === undefined || a[3] === OMIT ? ERR("#N/A") : a[3];
+    const one = lv => {
+      const i = lookupIndex(lv, items, a[4], a[5]);
+      if (i < 0) return nf;
+      if (horiz) return ra.rows === 1 ? ra.get(0, i) : pickCols(ra, [i]);
+      return ra.cols === 1 ? ra.get(i, 0) : pickRows(ra, [i]);
+    };
+    if (isArr(a[0])) return lift(lv => asScalarResult(one(lv)))([a[0]]);
+    return one(a[0]);
+  },
+  XMATCH: a => { const items = toArr(a[1]).d; return lift(lv => { const i = lookupIndex(lv, items, a[2], a[3]); return i < 0 ? ERR("#N/A") : i + 1; })([a[0]]); },
+  MATCH: a => {
+    const items = toArr(a[1]).d, t = int(scal(opt(a[2], 1)));
+    return lift(lv => {
+      if (t === 0) { const i = typeof lv === "string" && /[*?]/.test(lv) ? items.findIndex(v => typeof v === "string" && wild(lv).test(v)) : lookupIndex(lv, items, 0, 1); return i < 0 ? ERR("#N/A") : i + 1; }
+      let best = -1; items.forEach((v, i) => { if (typeof v === typeof lv && (t === 1 ? cmpVals(v, lv) <= 0 : cmpVals(v, lv) >= 0)) best = i; });
+      return best < 0 ? ERR("#N/A") : best + 1;
+    })([a[0]]);
+  }
+};
+function toLine(a, col) {
+  const A = toArr(a[0]), ig = int(scal(opt(a[1], 0))), byCol = bool(scal(opt(a[2], false)));
+  const vals = [];
+  const push = v => { if ((ig === 1 || ig === 3) && v === null) return; if ((ig === 2 || ig === 3) && v instanceof XErr) return; vals.push(v); };
+  if (byCol) { for (let c = 0; c < A.cols; c++) for (let r = 0; r < A.rows; r++) push(A.get(r, c)); }
+  else A.d.forEach(push);
+  if (!vals.length) return ERR("#CALC!");
+  return col ? new Arr(vals.length, 1, vals) : new Arr(1, vals.length, vals);
+}
+function wrap(a, rowsFirst) {
+  const v = toArr(a[0]).d, n = int(scal(a[1])), pad = opt(a[2], ERR("#N/A"));
+  if (n < 1) return ERR("#NUM!");
+  const k = Math.ceil(v.length / n);
+  const o = rowsFirst ? new Arr(k, n) : new Arr(n, k);
+  for (let i = 0; i < k * n; i++) {
+    const val = i < v.length ? v[i] : scal(pad);
+    if (rowsFirst) o.d[i] = val; else o.set(i % n, Math.floor(i / n), val);
+  }
+  return o;
+}
+function takeDrop(a, take) {
+  const A = toArr(a[0]);
+  const rArg = opt(a[1], OMIT), cArg = opt(a[2], OMIT);
+  const span = (n, arg) => {
+    if (arg === OMIT) return [0, n];
+    const k = int(scal(arg));
+    if (take) { if (k === 0) return null; return k > 0 ? [0, Math.min(k, n)] : [Math.max(0, n + k), n]; }
+    return k >= 0 ? [Math.min(k, n), n] : [0, Math.max(0, n + k)];
+  };
+  const rs = span(A.rows, rArg), cs = span(A.cols, cArg);
+  if (!rs || !cs || rs[1] - rs[0] < 1 || cs[1] - cs[0] < 1) return ERR("#CALC!");
+  const rows = [], cols = [];
+  for (let r = rs[0]; r < rs[1]; r++) rows.push(r);
+  for (let c = cs[0]; c < cs[1]; c++) cols.push(c);
+  return pickCols(pickRows(A, rows), cols);
+}
+
+/* ------------------------------------------------------------ résultat -- */
+
+function finalizeValue(v) {
+  const fix = x => (x === null || x === undefined || x === OMIT) ? 0 : x instanceof Fn ? ERR("#CALC!") : isArr(x) ? ERR("#CALC!") : x;
+  if (isArr(v)) return new Arr(v.rows, v.cols, v.d.map(fix));
+  return fix(v);
+}
+function runFormula(src, sheet) {
+  try {
+    const ast = parseFormula(src);
+    const ctx = makeCtx(sheet || {});
+    return { ok: true, value: finalizeValue(ev(ast, new Env(null), ctx)) };
+  } catch (e) {
+    if (e instanceof FormulaError) return { ok: false, msg: e.message };
+    if (e instanceof Bail) return { ok: true, value: e.e };
+    if (e instanceof RangeError) return { ok: false, msg: "Calcul trop profond." };
+    return { ok: false, msg: "Formule non reconnue : " + e.message };
+  }
+}
+function cellEq(x, y) {
+  if (x instanceof XErr || y instanceof XErr) return x instanceof XErr && y instanceof XErr && x.code === y.code;
+  if (typeof x === "number" && typeof y === "number") return Math.abs(x - y) <= 1e-9 * Math.max(1, Math.abs(x), Math.abs(y));
+  if (typeof x === "number" && typeof y === "string") return fmtNum(x) === y;
+  if (typeof y === "number" && typeof x === "string") return fmtNum(y) === x;
+  return x === y;
+}
+function sameResult(a, b) {
+  const A = toArr(a), B = toArr(b);
+  const vec = X => X.rows === 1 || X.cols === 1;
+  if (!(A.rows === B.rows && A.cols === B.cols) && !(vec(A) && vec(B) && A.d.length === B.d.length)) return false;
+  return A.d.every((x, i) => cellEq(x, B.d[i]));
+}
+function sheetFromRows(rows) {
+  const sheet = {};
+  rows.forEach((row, r) => row.forEach((v, c) => { if (v !== null && v !== undefined && v !== "") sheet[colName(c + 1) + (r + 1)] = v; }));
+  return sheet;
+}
+
+/* =========================================================================
+   Exercices vérifiés par calcul : tableaux dynamiques (difficiles) et REGEX
+   sheet : lignes à partir de A1 ; sol : solutions (la première sert de référence)
+   ========================================================================= */
+
+const DYN = [
+  { id: "d1", lvl: 1, title: "Multiplication table", q: "Return a 5 × 5 multiplication table (row number × column number) with MAKEARRAY.",
+    sheet: [], out: "A1", sol: ["=MAKEARRAY(5,5,LAMBDA(i,j,i*j))", "=SEQUENCE(5)*SEQUENCE(,5)"], tip: "MAKEARRAY(rows, cols, LAMBDA(i, j, …)) — n'utilisez pas r ni c comme noms." },
+  { id: "d2", lvl: 1, title: "Identity matrix", q: "Return a 4 × 4 identity matrix: 1 on the diagonal, 0 elsewhere.",
+    sheet: [], out: "A1", sol: ["=MAKEARRAY(4,4,LAMBDA(i,j,IF(i=j,1,0)))", "=MAKEARRAY(4,4,LAMBDA(i,j,--(i=j)))", "=--(SEQUENCE(4)=SEQUENCE(,4))"], tip: "Comparez le numéro de ligne et le numéro de colonne." },
+  { id: "d3", lvl: 1, title: "Running total", q: "Running total of the sales in A2:A8, with SCAN.",
+    sheet: [["Sales"], [120], [80], [150], [60], [200], [90], [110]], out: "C2", sol: ["=SCAN(0,A2:A8,LAMBDA(a,v,a+v))"], tip: "SCAN(initial, array, LAMBDA(acc, value, …))." },
+  { id: "d4", lvl: 2, title: "Running maximum", q: "For each row, the best score seen so far (A2:A8).",
+    sheet: [["Score"], [5], [3], [9], [2], [11], [4], [7]], out: "C2", sol: ["=SCAN(0,A2:A8,LAMBDA(a,v,MAX(a,v)))"], tip: "SCAN avec MAX entre l'accumulateur et la valeur." },
+  { id: "d5", lvl: 1, title: "Product with REDUCE", q: "Product of all the values in A2:A6, with REDUCE.",
+    sheet: [["Factor"], [2], [3], [4], [5], [1.5]], out: "C2", sol: ["=REDUCE(1,A2:A6,LAMBDA(a,v,a*v))", "=PRODUCT(A2:A6)"], tip: "Partez de 1, pas de 0." },
+  { id: "d6", lvl: 2, title: "Growing word", q: "Concatenate the letters of A2:A6 step by step: E, EX, EXC, EXCE, EXCEL.",
+    sheet: [["Letter"], ["E"], ["X"], ["C"], ["E"], ["L"]], out: "C2", sol: ['=SCAN("",A2:A6,LAMBDA(a,v,a&v))'], tip: "SCAN avec un accumulateur texte vide \"\"." },
+  { id: "d7", lvl: 3, title: "Repeat each item", q: "List each item of A2:A4 as many times as its quantity in B2:B4, in one column.",
+    sheet: [["Item", "Qty"], ["Apple", 2], ["Pear", 3], ["Plum", 1]], out: "D2",
+    sol: ["=TOCOL(IF(SEQUENCE(,MAX(B2:B4))<=B2:B4,A2:A4,NA()),3)",
+      '=DROP(REDUCE("",SEQUENCE(ROWS(A2:A4)),LAMBDA(acc,i,VSTACK(acc,EXPAND(INDEX(A2:A4,i),INDEX(B2:B4,i),,INDEX(A2:A4,i))))),1)'],
+    tip: "Deux pistes : une grille IF(SEQUENCE…) puis TOCOL(…,3), ou REDUCE + VSTACK + EXPAND puis DROP de la première ligne." },
+  { id: "d8", lvl: 3, title: "Fibonacci", q: "The first 10 Fibonacci numbers (1, 1, 2, 3, 5…) in a column, with REDUCE.",
+    sheet: [], out: "A1", sol: ["=REDUCE({1;1},SEQUENCE(8),LAMBDA(a,i,VSTACK(a,SUM(TAKE(a,-2)))))"], tip: "Accumulateur = tableau {1;1} ; à chaque tour, VSTACK de la somme des deux derniers (TAKE(a,-2))." },
+  { id: "d9", lvl: 1, title: "Best round per player", q: "Maximum of each row of B2:E5, with BYROW.",
+    sheet: [["Player", "R1", "R2", "R3", "R4"], ["Ana", 71, 84, 66, 90], ["Ben", 88, 79, 93, 81], ["Chloé", 64, 72, 70, 69], ["Dev", 95, 61, 88, 77]], out: "G2",
+    sol: ["=BYROW(B2:E5,LAMBDA(rw,MAX(rw)))"], tip: "BYROW(array, LAMBDA(row, …)) — le nom row est permis, r ne l'est pas." },
+  { id: "d10", lvl: 2, title: "Round averages", q: "Average of each round (column of B2:E5), rounded to 1 decimal, with BYCOL.",
+    sheet: [["Player", "R1", "R2", "R3", "R4"], ["Ana", 71, 84, 66, 90], ["Ben", 88, 79, 93, 81], ["Chloé", 64, 72, 70, 69], ["Dev", 95, 61, 88, 77]], out: "B7",
+    sol: ["=BYCOL(B2:E5,LAMBDA(col,ROUND(AVERAGE(col),1)))", "=ROUND(BYCOL(B2:E5,LAMBDA(col,AVERAGE(col))),1)"], tip: "BYCOL renvoie une ligne." },
+  { id: "d11", lvl: 1, title: "Pairwise maximum", q: "For each row, the larger of A and B (A2:B6), with MAP.",
+    sheet: [["A", "B"], [4, 9], [12, 7], [5, 5], [20, 21], [3, 1]], out: "D2",
+    sol: ["=MAP(A2:A6,B2:B6,LAMBDA(p,q,MAX(p,q)))", "=IF(A2:A6>B2:B6,A2:A6,B2:B6)"], tip: "MAP accepte plusieurs tableaux : LAMBDA reçoit un paramètre par tableau." },
+  { id: "d12", lvl: 2, title: "Word count", q: "Number of words in each sentence of A2:A5.",
+    sheet: [["Sentence"], ["Excel is fast"], ["Practice every single day"], ["Win"], ["Lambda functions are powerful tools"]], out: "C2",
+    sol: ['=MAP(A2:A5,LAMBDA(t,COUNTA(TEXTSPLIT(t," "))))', '=LEN(A2:A5)-LEN(SUBSTITUTE(A2:A5," ",""))+1'], tip: "TEXTSPLIT dans un MAP, ou la différence de longueur avec SUBSTITUTE." },
+  { id: "d13", lvl: 2, title: "Every other row", q: "Keep rows 1, 3, 5, 7 and 9 of A2:A11.",
+    sheet: [["Code"], ["K1"], ["K2"], ["K3"], ["K4"], ["K5"], ["K6"], ["K7"], ["K8"], ["K9"], ["K10"]], out: "C2",
+    sol: ["=CHOOSEROWS(A2:A11,SEQUENCE(5,,1,2))", "=FILTER(A2:A11,ISODD(SEQUENCE(10)))"], tip: "SEQUENCE(5,,1,2) donne 1;3;5;7;9." },
+  { id: "d14", lvl: 1, title: "Reverse a list", q: "Return A2:A7 in reverse order.",
+    sheet: [["Rank"], ["Gold"], ["Silver"], ["Bronze"], ["4th"], ["5th"], ["6th"]], out: "C2",
+    sol: ["=SORTBY(A2:A7,SEQUENCE(6),-1)", "=CHOOSEROWS(A2:A7,SEQUENCE(6,,-1,-1))", "=INDEX(A2:A7,SEQUENCE(6,,6,-1))"], tip: "SORTBY sur une séquence décroissante, ou CHOOSEROWS avec des indices négatifs." },
+  { id: "d15", lvl: 2, title: "Digit sum", q: "Sum of the digits of the number in A2.",
+    sheet: [["Number"], [9475]], out: "C2", sol: ["=SUM(--MID(A2,SEQUENCE(LEN(A2)),1))", "=REDUCE(0,MID(A2,SEQUENCE(LEN(A2)),1),LAMBDA(a,d,a+d))"], tip: "MID(A2, SEQUENCE(LEN(A2)), 1) découpe le nombre en chiffres (texte) : convertissez avec --." },
+  { id: "d16", lvl: 3, title: "Moving average", q: "3-value moving average of A2:A9 (6 results).",
+    sheet: [["Value"], [10], [12], [9], [15], [18], [14], [20], [22]], out: "C2",
+    sol: ["=MAP(SEQUENCE(6),LAMBDA(i,AVERAGE(INDEX(A2:A9,SEQUENCE(3,,i)))))", "=(DROP(A2:A9,-2)+DROP(DROP(A2:A9,1),-1)+DROP(A2:A9,2))/3"],
+    tip: "Pour chaque i, la moyenne de INDEX(plage, SEQUENCE(3,,i)) ; ou trois DROP décalés." },
+  { id: "d17", lvl: 3, title: "Occurrence number", q: "For each value of A2:A9, how many times it has appeared so far (including itself).",
+    sheet: [["Team"], ["a"], ["b"], ["a"], ["c"], ["b"], ["a"], ["c"], ["a"]], out: "C2",
+    sol: ["=MAP(SEQUENCE(8),LAMBDA(i,SUM(--(TAKE(A2:A9,i)=INDEX(A2:A9,i)))))"], tip: "Comparez TAKE(plage, i) à la i-ème valeur." },
+  { id: "d18", lvl: 2, title: "Transpose by hand", q: "Transpose B2:D3 without TRANSPOSE, using MAKEARRAY.",
+    sheet: [["", "Q1", "Q2", "Q3"], ["East", 10, 20, 30], ["West", 40, 50, 60]], out: "F2",
+    sol: ["=MAKEARRAY(3,2,LAMBDA(i,j,INDEX(B2:D3,j,i)))", "=TRANSPOSE(B2:D3)"], tip: "Inversez i et j dans INDEX." },
+  { id: "d19", lvl: 1, title: "Column by column", q: "Put B2:D4 into one column, reading column by column.",
+    sheet: [["", "X", "Y", "Z"], ["r1", 1, 4, 7], ["r2", 2, 5, 8], ["r3", 3, 6, 9]], out: "F2", sol: ["=TOCOL(B2:D4,,TRUE)"], tip: "Troisième argument de TOCOL : scan_by_column." },
+  { id: "d20", lvl: 1, title: "Four columns", q: "Wrap the 12 names of A2:A13 into rows of 4.",
+    sheet: [["Name"], ["Ada"], ["Bo"], ["Cy"], ["Di"], ["Ed"], ["Fa"], ["Gil"], ["Hu"], ["Ivy"], ["Jo"], ["Kai"], ["Lu"]], out: "C2", sol: ["=WRAPROWS(A2:A13,4)"], tip: "WRAPROWS(vector, wrap_count)." },
+  { id: "d21", lvl: 3, title: "Vowel counter", q: "Number of vowels (a, e, i, o, u, any case) in A2, with REDUCE.",
+    sheet: [["Text"], ["Spreadsheet Olympics"]], out: "C2",
+    sol: ['=REDUCE(0,MID(A2,SEQUENCE(LEN(A2)),1),LAMBDA(a,ch,a+ISNUMBER(SEARCH(ch,"aeiou"))))', '=COLUMNS(REGEXEXTRACT(A2,"[aeiou]",1,1))', '=SUM(--ISNUMBER(SEARCH(MID(A2,SEQUENCE(LEN(A2)),1),"aeiou")))'],
+    tip: "Découpez le texte en caractères, testez chacun avec SEARCH." },
+  { id: "d22", lvl: 2, title: "Staircase", q: "5 × 5 grid: the column number when it is ≤ the row number, otherwise empty text \"\".",
+    sheet: [], out: "A1", sol: ['=MAKEARRAY(5,5,LAMBDA(i,j,IF(j<=i,j,"")))', '=IF(SEQUENCE(,5)<=SEQUENCE(5),SEQUENCE(,5),"")'], tip: "IF dans MAKEARRAY." },
+  { id: "d23", lvl: 3, title: "Rank without RANK", q: "Rank of each score of A2:A7 (1 = highest), without RANK functions.",
+    sheet: [["Score"], [88], [95], [70], [95], [82], [60]], out: "C2",
+    sol: ["=MAP(A2:A7,LAMBDA(s,SUM(--(A2:A7>s))+1))", "=MAP(A2:A7,LAMBDA(s,COUNTIF(A2:A7,\">\"&s)+1))"], tip: "Rang = nombre de scores strictement supérieurs + 1." },
+  { id: "d24", lvl: 3, title: "Reverse a word", q: "Reverse the text in A2 (LAMBDA → ADBMAL).",
+    sheet: [["Word"], ["LAMBDA"]], out: "C2",
+    sol: ['=REDUCE("",MID(A2,SEQUENCE(LEN(A2)),1),LAMBDA(a,ch,ch&a))', "=CONCAT(MID(A2,SEQUENCE(LEN(A2),,LEN(A2),-1),1))"], tip: "REDUCE en ajoutant chaque caractère devant l'accumulateur." }
+];
+
+const REGX = [
+  { id: "r1", lvl: 1, title: "Valid codes", q: "TRUE when the code in A2:A7 is exactly 2 capital letters followed by 4 digits.",
+    sheet: [["Code"], ["AB1234"], ["ab1234"], ["ABC123"], ["XY9876"], ["AB12345"], ["QR0001"]], out: "C2", sol: ['=REGEXTEST(A2:A7,"^[A-Z]{2}\\d{4}$")', '=REGEXTEST(A2:A7,"^[A-Z]{2}[0-9]{4}$")'], tip: "Ancrez avec ^ et $." },
+  { id: "r2", lvl: 1, title: "First number", q: "Extract the first number found in A2 (as text).",
+    sheet: [["Message"], ["Order #4521 shipped on 2026-10-25"]], out: "C2", sol: ['=REGEXEXTRACT(A2,"\\d+")', '=REGEXEXTRACT(A2,"[0-9]+")'], tip: "\\d+ = un ou plusieurs chiffres ; return_mode 0 = premier résultat." },
+  { id: "r3", lvl: 1, title: "All numbers", q: "Extract every number of A2 (they spill to the right).",
+    sheet: [["Message"], ["Room 12, floor 3, seats 140"]], out: "C2", sol: ['=REGEXEXTRACT(A2,"\\d+",1)'], tip: "return_mode 1 = toutes les correspondances." },
+  { id: "r4", lvl: 2, title: "Date parts", q: "Return year, month and day of A2 as three values, using capture groups.",
+    sheet: [["Date"], ["2026-10-25"]], out: "C2", sol: ['=REGEXEXTRACT(A2,"(\\d{4})-(\\d{2})-(\\d{2})",2)', '=REGEXEXTRACT(A2,"(\\d+)-(\\d+)-(\\d+)",2)'], tip: "return_mode 2 = groupes de capture (…)." },
+  { id: "r5", lvl: 1, title: "Digits only", q: "Keep only the digits of each phone number in A2:A5.",
+    sheet: [["Phone"], ["(555) 123-4567"], ["555.987.6543"], ["+1 555 222 3333"], ["555-0000"]], out: "C2", sol: ['=REGEXREPLACE(A2:A5,"\\D","")', '=REGEXREPLACE(A2:A5,"[^0-9]","")', '=REGEXREPLACE(A2:A5,"[^\\d]+","")'], tip: "\\D = tout sauf un chiffre." },
+  { id: "r6", lvl: 2, title: "Swap names", q: "Turn \"Last, First\" into \"First Last\" for A2:A5.",
+    sheet: [["Name"], ["Smith, Anna"], ["Brown, Leo"], ["Garcia, Maria"], ["Lee, Tom"]], out: "C2", sol: ['=REGEXREPLACE(A2:A5,"(\\w+), (\\w+)","$2 $1")', '=REGEXREPLACE(A2:A5,"^(.+), (.+)$","$2 $1")'], tip: "Capturez les deux parties, puis $2 $1 dans le remplacement." },
+  { id: "r7", lvl: 1, title: "Starts with error", q: "TRUE when A2:A6 starts with the word error, whatever the case.",
+    sheet: [["Log"], ["ERROR: disk full"], ["Warning: low battery"], ["error 404"], ["All good"], ["Error"]], out: "C2", sol: ['=REGEXTEST(A2:A6,"^error",1)', '=REGEXTEST(A2:A6,"(?i)^error")'], tip: "case_sensitivity = 1 pour ignorer la casse." },
+  { id: "r8", lvl: 2, title: "Keep valid emails", q: "Return only the valid email addresses of A2:A8.",
+    sheet: [["Email"], ["ana@mail.com"], ["bad.address"], ["leo.martin@club-xl.fr"], ["@nouser.com"], ["sam@site"], ["mia_99@excel.io"], ["two@@signs.com"]], out: "C2",
+    sol: ['=FILTER(A2:A8,REGEXTEST(A2:A8,"^[\\w.]+@[\\w-]+\\.[a-z]{2,}$"))', '=FILTER(A2:A8,REGEXTEST(A2:A8,"^[^@\\s]+@[^@\\s]+\\.[a-z]+$"))'], tip: "FILTER + REGEXTEST : une partie avant @, un domaine, un point, une extension." },
+  { id: "r9", lvl: 2, title: "First invoice", q: "Amount (B) of the first ID of A2:A6 that starts with INV-, using XLOOKUP in regex mode.",
+    sheet: [["ID", "Amount"], ["PO-17", 120], ["INV-2031", 845], ["CR-44", 60], ["INV-77", 300], ["PO-9", 75]], out: "D2", sol: ['=XLOOKUP("^INV-",A2:A6,B2:B6,,3)'], tip: "match_mode 3 = expression régulière." },
+  { id: "r10", lvl: 2, title: "Clean spaces", q: "Remove leading/trailing spaces in A2 and collapse inner runs of spaces to one.",
+    sheet: [["Text"], ["  Excel   esports    rocks  "]], out: "C2", sol: ['=REGEXREPLACE(REGEXREPLACE(A2,"^\\s+|\\s+$","")," {2,}"," ")', "=TRIM(A2)"], tip: "Deux remplacements imbriqués, ou TRIM si vous le connaissez." },
+  { id: "r11", lvl: 1, title: "Domain name", q: "Return the domain (after @) of each email in A2:A5.",
+    sheet: [["Email"], ["ana@mail.com"], ["leo@club-xl.fr"], ["mia@excel.io"], ["sam@data.org"]], out: "C2", sol: ['=REGEXREPLACE(A2:A5,"^.*@","")', '=TEXTAFTER(A2:A5,"@")', '=REGEXEXTRACT(A2:A5,"[^@]+$")'], tip: "Supprimez tout jusqu'au @ inclus." },
+  { id: "r12", lvl: 2, title: "Capitalised words", q: "Count the words of A2 that start with a capital letter.",
+    sheet: [["Text"], ["Excel World Championship in Las Vegas"]], out: "C2", sol: ['=COLUMNS(REGEXEXTRACT(A2,"\\b[A-Z]\\w*",1))', '=COUNTA(REGEXEXTRACT(A2,"\\b[A-Z]\\w*",1))'], tip: "\\b = limite de mot ; comptez les résultats du mode 1." },
+  { id: "r13", lvl: 3, title: "Mask a card", q: "Replace every digit of A2 by * except the last four.",
+    sheet: [["Card"], ["4111222233334444"]], out: "C2", sol: ['=REGEXREPLACE(A2,"\\d(?=\\d{4})","*")', '=REPT("*",LEN(A2)-4)&RIGHT(A2,4)'], tip: "Anticipation (lookahead) : \\d(?=\\d{4})." },
+  { id: "r14", lvl: 1, title: "Hashtags", q: "Extract all the hashtags of A2.",
+    sheet: [["Post"], ["Training #excel #esports today #MEWC"]], out: "C2", sol: ['=REGEXEXTRACT(A2,"#\\w+",1)'], tip: "# suivi de caractères de mot." },
+  { id: "r15", lvl: 3, title: "24-hour times", q: "TRUE when A2:A7 is a valid 24-hour time hh:mm (00:00 to 23:59).",
+    sheet: [["Time"], ["09:30"], ["23:59"], ["24:00"], ["7:05"], ["12:60"], ["00:00"]], out: "C2", sol: ['=REGEXTEST(A2:A7,"^([01]\\d|2[0-3]):[0-5]\\d$")'], tip: "Heures : 00-19 ou 20-23 ; minutes : 00-59." }
+];
+
+const PATTERNS = [
+  { id: "p1", lvl: 1, task: "Only digits (at least one)", yes: ["2026", "7", "0042"], no: ["20a6", "", "12 3"], sol: "^\\d+$" },
+  { id: "p2", lvl: 1, task: "A 5-digit ZIP code", yes: ["90210", "10001"], no: ["9021", "902100", "9O210"], sol: "^\\d{5}$" },
+  { id: "p3", lvl: 1, task: "An ISO date yyyy-mm-dd", yes: ["2026-10-25", "1999-01-01"], no: ["2026/10/25", "26-10-25", "2026-1-5"], sol: "^\\d{4}-\\d{2}-\\d{2}$" },
+  { id: "p4", lvl: 2, task: "A hex color: # then 3 or 6 hex digits", yes: ["#1B6B3F", "#fff", "#00aaFF"], no: ["1B6B3F", "#12345", "#GGGGGG"], sol: "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+  { id: "p5", lvl: 1, task: "Product code: 2 capitals, a hyphen, 3 or 4 digits", yes: ["AB-123", "XL-2026"], no: ["ab-123", "ABC-123", "AB-12", "AB123"], sol: "^[A-Z]{2}-\\d{3,4}$" },
+  { id: "p6", lvl: 1, task: "A single word: one capital then lowercase letters", yes: ["Excel", "Lambda"], no: ["excel", "EXcel", "Excel 365"], sol: "^[A-Z][a-z]+$" },
+  { id: "p7", lvl: 2, task: "US phone written (555) 123-4567", yes: ["(555) 123-4567", "(212) 555-0199"], no: ["555-123-4567", "(555)123-4567", "(55) 123-4567"], sol: "^\\(\\d{3}\\) \\d{3}-\\d{4}$" },
+  { id: "p8", lvl: 1, task: "Contains no digit at all", yes: ["Excel", "Speed run!", ""], no: ["Excel 365", "R2D2"], sol: "^\\D*$" },
+  { id: "p9", lvl: 1, task: "A file ending in .xlsx or .xlsm", yes: ["budget.xlsx", "Macro.Book.xlsm"], no: ["data.csv", "file.xlsx.bak", "xlsx"], sol: "\\.xls[xm]$" },
+  { id: "p10", lvl: 2, task: "Contains a word written twice in a row", yes: ["the the end", "go go"], no: ["the then", "go to"], sol: "\\b(\\w+) \\1\\b" },
+  { id: "p11", lvl: 2, task: "A 24-hour time hh:mm", yes: ["00:00", "09:30", "23:59"], no: ["24:00", "7:05", "12:60"], sol: "^([01]\\d|2[0-3]):[0-5]\\d$" },
+  { id: "p12", lvl: 2, task: "A simple email address", yes: ["ana@mail.com", "leo.m@club-xl.fr"], no: ["ana@mail", "@mail.com", "ana mail@x.com"], sol: "^[\\w.]+@[\\w-]+\\.[a-z]{2,}$" },
+  { id: "p13", lvl: 3, task: "Password: 8+ characters with at least one digit and one capital", yes: ["Excel2026", "Abcdefg1"], no: ["excel2026", "Abcdefgh", "Ab1"], sol: "^(?=.*\\d)(?=.*[A-Z]).{8,}$" },
+  { id: "p14", lvl: 3, task: "An A1 cell reference ($ allowed, row ≥ 1, 1 to 3 letters)", yes: ["A1", "$B$2", "XFD1048576", "c10"], no: ["1A", "A0", "ABCD1", "A$"], sol: "^\\$?[A-Za-z]{1,3}\\$?[1-9]\\d*$" },
+  { id: "p15", lvl: 3, task: "An IPv4 address (each number 0-255)", yes: ["192.168.1.1", "10.0.0.255"], no: ["256.1.1.1", "1.2.3", "1.2.3.4.5"], sol: "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$" }
+];
+
+/* Formules à recopier pour la frappe, par niveau */
+const TYPING = {
+  base: [
+    "=SUM(C2:C100)", "=AVERAGE(B2:B50)", "=MAX(C2:C100)-MIN(C2:C100)", "=ROUND(C2*1.2,2)", '=IF(C2>=500,"Pass","Fail")',
+    "=$A$2*B$1", '=LEFT(A2,3)&"-"&RIGHT(A2,4)', "=UPPER(TRIM(B2))", "=YEAR(A2)", '=SUMIF(B2:B100,"East",C2:C100)',
+    "=VLOOKUP(H2,A2:D100,4,FALSE)", '=COUNTIF(B2:B100,">=50")', '=TEXT(A2,"yyyy-mm-dd")', "=SEQUENCE(10)", "=SORT(UNIQUE(B2:B100))",
+    "=EOMONTH(A2,0)", "=COUNTA(A2:A500)", "=MONTH(A2)", "=INDEX(C2:C100,5)", "=IFERROR(C2/D2,0)"
+  ],
+  mid: [
+    '=XLOOKUP(H2,A2:A100,C2:C100,"Not found")', '=SUMIFS(C2:C100,B2:B100,"East",A2:A100,">="&DATE(2026,1,1))',
+    '=FILTER(A2:E100,(B2:B100="East")*(C2:C100>1000),"None")', "=INDEX(C2:C100,MATCH(H2,A2:A100,0))",
+    '=TEXTJOIN(", ",TRUE,UNIQUE(B2:B100))', "=TAKE(SORTBY(A2:A100,C2:C100,-1),5)", "=CHOOSECOLS(A2:E100,1,3,5)",
+    "=VSTACK(A1:E1,FILTER(A2:E100,C2:C100>1000))", '=TEXTSPLIT(A2,",",";")', '=COUNTIFS(B2:B100,"East",C2:C100,">500")',
+    "=EOMONTH(A2,0)-EOMONTH(A2,-1)", "=SUMPRODUCT(C2:C100,E2:E100)", "=HSTACK(UNIQUE(B2:B100),SUMIFS(C2:C100,B2:B100,UNIQUE(B2:B100)))",
+    "=GROUPBY(B2:B100,C2:C100,SUM)", '=IFERROR(INDEX(D2:D100,XMATCH(MAX(C2:C100),C2:C100)),"")', "=DROP(SORT(A2:C100,3,-1),1)",
+    '=REGEXEXTRACT(A2,"\\d+",1)', '=REGEXREPLACE(A2,"\\s+"," ")', '=REGEXTEST(A2,"^[A-Z]{2}\\d{4}$")', '=TEXTAFTER(A2,"@")'
+  ],
+  hard: [
+    "=LET(d,A2:E100,s,CHOOSECOLS(d,3),FILTER(d,s>AVERAGE(s)))", "=LAMBDA(x,y,SQRT(x^2+y^2))(3,4)",
+    "=REDUCE(0,SEQUENCE(10),LAMBDA(a,i,a+i^2))", "=MAKEARRAY(3,4,LAMBDA(i,j,ADDRESS(i,j,4)))",
+    '=BYROW(B2:E10,LAMBDA(rw,TEXTJOIN("|",,rw)))', '=DROP(REDUCE("",A2:A10,LAMBDA(a,v,VSTACK(a,TEXTSPLIT(v,",")))),1)',
+    '=LET(t,A2,n,LEN(t),CONCAT(MID(t,SEQUENCE(n,,n,-1),1)))', "=SCAN(0,C2:C100,LAMBDA(a,v,IF(v>a,v,a)))",
+    "=MAP(A2:A10,B2:B10,LAMBDA(p,q,IF(p>q,p-q,0)))", "=LET(s,SEQUENCE(12),WRAPROWS(s,3))",
+    '=TOCOL(IF(SEQUENCE(,MAX(B2:B4))<=B2:B4,A2:A4,NA()),3)', "=REDUCE({1;1},SEQUENCE(8),LAMBDA(a,i,VSTACK(a,SUM(TAKE(a,-2)))))",
+    '=LET(u,UNIQUE(B2:B100),HSTACK(u,MAP(u,LAMBDA(x,SUM(FILTER(C2:C100,B2:B100=x))))))', '=MAKEARRAY(5,5,LAMBDA(i,j,IF(j<=i,j,"")))',
+    '=REGEXREPLACE(A2:A5,"(\\w+), (\\w+)","$2 $1")', '=FILTER(A2:A8,REGEXTEST(A2:A8,"^[\\w.]+@[\\w-]+\\.[a-z]{2,}$"))',
+    "=LET(x,A2:A100,y,B2:B100,SUMPRODUCT((x-AVERAGE(x))*(y-AVERAGE(y)))/SQRT(SUMPRODUCT((x-AVERAGE(x))^2)*SUMPRODUCT((y-AVERAGE(y))^2)))",
+    "=SORTBY(UNIQUE(A2:A100),COUNTIFS(A2:A100,UNIQUE(A2:A100)),-1)", '=XLOOKUP("^INV-",A2:A6,B2:B6,,3)',
+    "=BYCOL(B2:E5,LAMBDA(col,ROUND(AVERAGE(col),1)))"
+  ]
+};
+
+/* ---------------------------------------------------------- cours Regex -- */
+const COURSE_HTML = `<div class="course">
+  <section>
+    <h3>1. Les trois fonctions REGEX d'Excel</h3>
+    <p>Office 365 propose trois fonctions qui utilisent des expressions régulières (moteur PCRE2). Le motif s'écrit entre guillemets, comme un texte.</p>
+    <div class="xscroll"><table class="tbl">
+      <thead><tr><th>Fonction</th><th>Renvoie</th><th>Arguments utiles</th></tr></thead>
+      <tbody>
+        <tr><td><code>REGEXTEST(text, pattern, [case_sensitivity])</code></td><td>TRUE / FALSE</td><td>Le motif est cherché <b>n'importe où</b> dans le texte.</td></tr>
+        <tr><td><code>REGEXEXTRACT(text, pattern, [return_mode], [case_sensitivity])</code></td><td>du texte</td><td><code>return_mode</code> : 0 = première correspondance (défaut), 1 = toutes (déversées vers la droite), 2 = groupes de capture de la première. <code>#N/A</code> si rien n'est trouvé.</td></tr>
+        <tr><td><code>REGEXREPLACE(text, pattern, replacement, [occurrence], [case_sensitivity])</code></td><td>du texte</td><td><code>occurrence</code> : 0 = toutes (défaut), 2 = la deuxième, -1 = la dernière. <code>$1</code>, <code>$2</code>… reprennent les groupes.</td></tr>
+      </tbody></table></div>
+    <p><code>case_sensitivity</code> : 0 = respecte la casse (défaut), 1 = ignore la casse. Ces fonctions acceptent une plage : <code>=REGEXTEST(A2:A100,"^\\d+$")</code> déverse un résultat par cellule.</p>
+    <p>XLOOKUP et XMATCH ont aussi un mode regex : <code>match_mode = 3</code>, par exemple <code>=XLOOKUP("^INV-",A2:A100,B2:B100,,3)</code>.</p>
+    <p>Les résultats de REGEXEXTRACT sont du <b>texte</b> : <code>=--REGEXEXTRACT(A2,"\\d+")</code> ou <code>VALUE(…)</code> pour obtenir un nombre.</p>
+  </section>
+
+  <section>
+    <h3>2. Caractères et classes</h3>
+    <div class="xscroll"><table class="tbl">
+      <thead><tr><th>Motif</th><th>Correspond à</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td><code>abc</code></td><td>le texte exact « abc »</td><td><code>"INV"</code></td></tr>
+        <tr><td><code>.</code></td><td>n'importe quel caractère (sauf retour à la ligne)</td><td><code>"A.C"</code> → ABC, A-C</td></tr>
+        <tr><td><code>\\d</code> / <code>\\D</code></td><td>un chiffre / tout sauf un chiffre</td><td><code>"\\d\\d"</code> → 42</td></tr>
+        <tr><td><code>\\w</code> / <code>\\W</code></td><td>lettre, chiffre ou _ / le contraire</td><td><code>"\\w+"</code> → un mot</td></tr>
+        <tr><td><code>\\s</code> / <code>\\S</code></td><td>un espace (espace, tabulation…) / le contraire</td><td><code>"\\s+"</code></td></tr>
+        <tr><td><code>[aeiou]</code></td><td>un caractère de la liste</td><td>une voyelle</td></tr>
+        <tr><td><code>[A-Z0-9]</code></td><td>un caractère d'un intervalle</td><td>majuscule ou chiffre</td></tr>
+        <tr><td><code>[^0-9]</code></td><td>tout caractère <b>hors</b> de la liste</td><td>équivaut à <code>\\D</code></td></tr>
+      </tbody></table></div>
+    <p>Pour chercher un caractère spécial tel quel, précédez-le d'un antislash : <code>\\.</code> <code>\\(</code> <code>\\$</code> <code>\\?</code> <code>\\+</code> <code>\\*</code> <code>\\[</code> <code>\\\\</code>. Dans une formule Excel, le guillemet se double : <code>"\\d+"""</code> cherche des chiffres suivis d'un guillemet.</p>
+  </section>
+
+  <section>
+    <h3>3. Quantificateurs</h3>
+    <div class="xscroll"><table class="tbl">
+      <thead><tr><th>Motif</th><th>Nombre de répétitions</th></tr></thead>
+      <tbody>
+        <tr><td><code>*</code></td><td>0 ou plus</td></tr>
+        <tr><td><code>+</code></td><td>1 ou plus</td></tr>
+        <tr><td><code>?</code></td><td>0 ou 1 (facultatif) : <code>colou?r</code> → color, colour</td></tr>
+        <tr><td><code>{4}</code></td><td>exactement 4 : <code>\\d{4}</code> → une année</td></tr>
+        <tr><td><code>{2,}</code> / <code>{3,5}</code></td><td>au moins 2 / entre 3 et 5</td></tr>
+      </tbody></table></div>
+    <p>Par défaut un quantificateur est <b>gourmand</b> : il prend le plus possible. Ajoutez <code>?</code> pour le rendre <b>paresseux</b>. Sur <code>&lt;b&gt;Win&lt;/b&gt; and &lt;b&gt;Lose&lt;/b&gt;</code>, <code>&lt;b&gt;.*&lt;/b&gt;</code> prend toute la ligne, alors que <code>&lt;b&gt;.*?&lt;/b&gt;</code> s'arrête à la première balise fermante.</p>
+  </section>
+
+  <section>
+    <h3>4. Ancres et limites</h3>
+    <p><code>^</code> = début du texte, <code>$</code> = fin du texte, <code>\\b</code> = limite de mot. Comme REGEXTEST cherche n'importe où, il faut ancrer pour valider une cellule entière :</p>
+    <pre>=REGEXTEST(A2,"\\d{5}")      → TRUE pour "ABC123456" (5 chiffres trouvés quelque part)
+=REGEXTEST(A2,"^\\d{5}$")    → TRUE uniquement si la cellule contient exactement 5 chiffres</pre>
+  </section>
+
+  <section>
+    <h3>5. Groupes, alternatives et remplacements</h3>
+    <p><code>(…)</code> capture une partie, <code>(?:…)</code> groupe sans capturer, <code>a|b</code> = a ou b, <code>\\1</code> répète ce que le groupe 1 a trouvé.</p>
+    <pre>=REGEXEXTRACT("2026-10-25","(\\d{4})-(\\d{2})-(\\d{2})",2)   → 2026 | 10 | 25
+=REGEXREPLACE("Smith, Anna","(\\w+), (\\w+)","$2 $1")        → Anna Smith
+=REGEXTEST(A2,"^(?:INV|CR)-\\d+$")                         → codes INV-… ou CR-…
+=REGEXTEST(A2,"\\b(\\w+) \\1\\b")                            → mot répété : "the the"</pre>
+  </section>
+
+  <section>
+    <h3>6. Anticipation et rétrospection (lookarounds)</h3>
+    <p>Ils vérifient ce qui entoure la correspondance sans le capturer.</p>
+    <div class="xscroll"><table class="tbl">
+      <thead><tr><th>Motif</th><th>Sens</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td><code>X(?=Y)</code></td><td>X suivi de Y</td><td><code>\\d(?=\\d{4})</code> : chiffres sauf les 4 derniers</td></tr>
+        <tr><td><code>X(?!Y)</code></td><td>X non suivi de Y</td><td><code>\\bINV(?!-0)</code></td></tr>
+        <tr><td><code>(?&lt;=Y)X</code></td><td>X précédé de Y</td><td><code>(?&lt;=\\$)\\d+</code> : le montant après $</td></tr>
+        <tr><td><code>(?&lt;!Y)X</code></td><td>X non précédé de Y</td><td><code>(?&lt;!-)\\b\\d+</code></td></tr>
+      </tbody></table></div>
+    <pre>=REGEXREPLACE("4111222233334444","\\d(?=\\d{4})","*")   → ************4444
+=REGEXTEST(A2,"^(?=.*\\d)(?=.*[A-Z]).{8,}$")              → mot de passe : 8+ caractères, un chiffre, une majuscule</pre>
+  </section>
+
+  <section>
+    <h3>7. Recettes pour l'Excel esports</h3>
+    <div class="xscroll"><table class="tbl">
+      <thead><tr><th>Besoin</th><th>Formule</th></tr></thead>
+      <tbody>
+        <tr><td>Tous les nombres (décimaux compris)</td><td><code>=REGEXEXTRACT(A2,"\\d+(?:\\.\\d+)?",1)</code></td></tr>
+        <tr><td>Somme des nombres d'un texte</td><td><code>=SUM(--REGEXEXTRACT(A2,"\\d+",1))</code></td></tr>
+        <tr><td>Garder les chiffres</td><td><code>=REGEXREPLACE(A2,"\\D","")</code></td></tr>
+        <tr><td>Espaces multiples → un seul</td><td><code>=REGEXREPLACE(A2,"\\s{2,}"," ")</code></td></tr>
+        <tr><td>Texte entre parenthèses</td><td><code>=REGEXEXTRACT(A2,"\\(([^)]*)\\)",2)</code></td></tr>
+        <tr><td>Premier mot / dernier mot</td><td><code>=REGEXEXTRACT(A2,"^\\S+")</code> · <code>=REGEXEXTRACT(A2,"\\S+$")</code></td></tr>
+        <tr><td>Filtrer les lignes qui correspondent</td><td><code>=FILTER(A2:C100,REGEXTEST(B2:B100,"^[A-Z]{2}-\\d+$"))</code></td></tr>
+        <tr><td>Compter les correspondances dans une cellule</td><td><code>=IFERROR(COLUMNS(REGEXEXTRACT(A2,"[aeiou]",1,1)),0)</code></td></tr>
+        <tr><td>Appliquer le mode 1 ou 2 à chaque cellule</td><td><code>=MAP(A2:A10,LAMBDA(t,TEXTJOIN(",",,REGEXEXTRACT(t,"\\d+",1))))</code></td></tr>
+      </tbody></table></div>
+  </section>
+
+  <section>
+    <h3>8. Pièges fréquents</h3>
+    <p>Oublier <code>^</code> et <code>$</code> quand on valide une cellule entière. Oublier d'échapper le point (<code>\\.</code>) dans une adresse ou une extension de fichier. Comparer le résultat texte de REGEXEXTRACT à un nombre sans le convertir. Oublier qu'une extraction sans correspondance renvoie <code>#N/A</code> : enveloppez avec <code>IFERROR</code> ou <code>IFNA</code>.</p>
+    <p>Ce site teste vos motifs avec le moteur du navigateur (JavaScript). Pour la syntaxe de ce cours, il se comporte comme PCRE2 dans Excel ; le préfixe <code>(?i)</code> est accepté en début de motif. Les constructions propres à PCRE2 (groupes atomiques, quantificateurs possessifs, <code>\\A</code>, <code>\\z</code>) ne sont pas reconnues ici.</p>
+  </section>
+
+  <div class="controls"><button class="btn" data-goto="testeur">Ouvrir le testeur</button><button class="btn primary" data-goto="train">S'entraîner</button></div>
+</div>`;
+
+/* Étapes du parcours.
+   better : "low" = une valeur plus basse est meilleure (secondes), "high" = plus haute (caractères/min). */
+const STEPS = [
+  { id: "nav", n: 1, title: "Navigation et saisie", kind: "keys", pool: NAV, sizes: [10, 20, 40], size: 20,
+    intro: "Les déplacements, sélections et saisies que l'on fait des centaines de fois par cas : Ctrl+flèches, F2, Ctrl+D, Alt+=…",
+    goal: { metric: 1.5, acc: 90 }, per: "par raccourci", better: "low" },
+  { id: "fmt", n: 2, title: "Mise en forme et ruban", kind: "keys", pool: FMT, sizes: [10, 20, 40], size: 20,
+    intro: "Formats de nombre, bordures, couleurs et séquences du ruban (Alt H H, Alt H B A…). Relâchez Alt avant de taper les lettres, comme dans Excel.",
+    goal: { metric: 2.0, acc: 90 }, per: "par raccourci", better: "low" },
+  { id: "typing", n: 3, title: "Frappe de formules", kind: "typing", isNew: true, sizes: [5, 10, 20], size: 10,
+    intro: "Recopiez des formules caractère par caractère : parenthèses, virgules, guillemets, $ et noms de fonctions. Avec Tab activé, vous travaillez aussi la complétion des fonctions comme dans Excel.",
+    goal: { metric: 180, acc: 95 }, per: "caractères / min", better: "high" },
+  { id: "formula", n: 4, title: "Écrire des formules", kind: "formula", pool: FORMULAS, sizes: [5, 10, 20], size: 10,
+    intro: "Écrivez la formule demandée dans la barre de formule, sur la feuille d'exemple. Tab complète le nom de fonction et vous pouvez omettre les parenthèses finales, comme dans Excel.",
+    goal: { metric: 12, acc: 90 }, per: "par formule", better: "low" },
+  { id: "dyn", n: 5, title: "Tableaux dynamiques (difficile)", kind: "eval", isNew: true, pool: DYN, sizes: [3, 5, 10], size: 5,
+    intro: "MAKEARRAY, SCAN, REDUCE, MAP, BYROW, BYCOL, TOCOL, WRAPROWS, EXPAND… Votre formule est réellement calculée : toute solution qui donne le résultat attendu est acceptée.",
+    goal: { metric: 90, acc: 70 }, per: "par exercice", better: "low" },
+  { id: "regex", n: 6, title: "Regex", kind: "regex", isNew: true, pool: PATTERNS, sizes: [5, 10, 15], size: 5,
+    intro: "Les expressions régulières de REGEXTEST, REGEXEXTRACT et REGEXREPLACE : un cours, un testeur en direct, des exercices de motifs et des formules REGEX calculées.",
+    goal: { metric: 40, acc: 80 }, per: "par motif", better: "low" },
+  { id: "vba", n: 7, title: "VBA", kind: "vba", pool: VBA, sizes: [1, 3, 5], size: 3,
+    intro: "Recopiez des macros courantes le plus vite possible. L'indentation est ajoutée pour vous et la casse est libre : l'éditeur VBA la corrige.",
+    goal: { metric: 200, acc: 95 }, per: "caractères / min", better: "high" },
+  { id: "case", n: 8, title: "Mini-cas chronométrés", kind: "case", pool: null, sizes: [1, 3, 5], size: 3,
+    intro: "Copiez le jeu de données, collez-le en A1 dans votre Excel, résolvez la question et tapez le résultat ici. C'est l'exercice le plus proche d'un vrai cas de compétition.",
+    goal: { metric: 120, acc: 80 }, per: "par cas", better: "low" }
+];
+
+/* =========================================================================
+   Stockage de la progression : compte (capacité db) ou navigateur
+   ========================================================================= */
+
+const LS_KEY = "xlsprint.progress.v1";
+const MAX_SESSIONS = 400;
+let progress = { v: 1, sessions: [], weak: {} };
+const store = { mode: "local", ref: null, queue: Promise.resolve() };
+
+function readLocal() {
+  try { const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+}
+function writeLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(progress)); } catch (e) { /* stockage indisponible */ }
+}
+function mergeProgress(a, b) {
+  const seen = new Set(), sessions = [];
+  for (const s of [...(a.sessions || []), ...(b.sessions || [])]) {
+    const key = s.s + "|" + s.t;
+    if (!seen.has(key)) { seen.add(key); sessions.push(s); }
+  }
+  sessions.sort((x, y) => x.t - y.t);
+  const weak = { ...(a.weak || {}) };
+  for (const [k, v] of Object.entries(b.weak || {})) weak[k] = Math.max(weak[k] || 0, v);
+  return { v: 1, sessions: sessions.slice(-MAX_SESSIONS), weak };
+}
+function setChip() {
+  const chip = document.getElementById("storeChip");
+  if (store.mode === "cloud") { chip.textContent = "Progression enregistrée sur votre compte"; chip.classList.add("ok"); }
+  else { chip.textContent = "Progression enregistrée dans ce navigateur"; chip.classList.remove("ok"); }
+}
+async function initStore() {
+  const local = readLocal();
+  if (local) progress = mergeProgress({ sessions: [], weak: {} }, local);
+  setChip();
+  renderAll();
+  if (!window.claude || typeof window.claude.use !== "function") return;
+  try {
+    const [user, db] = await Promise.all([window.claude.use("user"), window.claude.use("db")]);
+    const uid = user ? await user.id() : null;
+    if (!db || !uid) return;
+    const ref = db.doc("data/users/" + uid + "/progress");
+    const snap = await ref.get();
+    if (snap.exists) progress = mergeProgress(snap.data(), progress);
+    store.ref = ref;
+    store.mode = "cloud";
+    setChip();
+    renderAll();
+  } catch (e) { /* on reste en local */ }
+}
+function saveProgress() {
+  progress.sessions = progress.sessions.slice(-MAX_SESSIONS);
+  writeLocal();
+  if (store.mode !== "cloud" || !store.ref) return;
+  const body = JSON.parse(JSON.stringify(progress));
+  store.queue = store.queue.then(() => store.ref.set(body)).catch(err => {
+    if (err && (err.code === "invalid_argument" || err.code === "revoked" || err.code === "not_granted")) {
+      store.mode = "local"; setChip();
+    }
+  });
+}
+
+/* =========================================================================
+   Outils
+   ========================================================================= */
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const now = () => performance.now();
+const fmtSec = ms => (ms / 1000).toFixed(ms < 10000 ? 2 : 1) + " s";
+const fmtClock = ms => { const s = ms / 1000; const m = Math.floor(s / 60); return m + ":" + (s - m * 60).toFixed(1).padStart(4, "0"); };
+const stepById = id => STEPS.find(s => s.id === id);
+
+function weightedSample(pool, n) {
+  const items = pool.map(it => ({ it, w: 1 + 2 * Math.min(progress.weak[it.id] || 0, 5) }));
+  const out = [];
+  while (out.length < n && items.length) {
+    const total = items.reduce((a, b) => a + b.w, 0);
+    let r = Math.random() * total, i = 0;
+    while (r > items[i].w) { r -= items[i].w; i++; }
+    out.push(items[i].it);
+    items.splice(i, 1);
+  }
+  while (out.length < n) out.push(pool[Math.floor(Math.random() * pool.length)]);
+  return out;
+}
+function bumpWeak(id, delta) {
+  progress.weak[id] = Math.max(0, (progress.weak[id] || 0) + delta);
+  if (progress.weak[id] === 0) delete progress.weak[id];
+}
+
+/* ---------- touches ---------- */
+const NAMED = { "=": "Equal", "-": "Minus", ";": "Semicolon", "'": "Quote", "`": "Backquote", ",": "Comma", ".": "Period", "/": "Slash",
+  Space: "Space", Enter: "Enter", Tab: "Tab", Esc: "Escape", Up: "ArrowUp", Down: "ArrowDown", Left: "ArrowLeft", Right: "ArrowRight",
+  Home: "Home", End: "End", PageUp: "PageUp", PageDown: "PageDown", Delete: "Delete" };
+const LABEL = { Equal: "=", Minus: "-", Semicolon: ";", Quote: "'", Backquote: "`", Comma: ",", Period: ".", Slash: "/", Space: "Space",
+  Enter: "Enter", Tab: "Tab", Escape: "Esc", ArrowUp: "↑", ArrowDown: "↓", ArrowLeft: "←", ArrowRight: "→", Home: "Home", End: "End",
+  PageUp: "PgUp", PageDown: "PgDn", Delete: "Del", Backspace: "Backspace", BracketLeft: "[", BracketRight: "]", Backslash: "\\",
+  NumpadAdd: "Num +", NumpadSubtract: "Num -", NumpadEnter: "Enter" };
+const MODCODES = new Set(["ControlLeft", "ControlRight", "ShiftLeft", "ShiftRight", "AltLeft", "AltRight", "MetaLeft", "MetaRight", "OSLeft", "OSRight", "CapsLock"]);
+
+function tokToCode(t) {
+  if (/^[A-Z]$/.test(t)) return "Key" + t;
+  if (/^[0-9]$/.test(t)) return "Digit" + t;
+  if (/^F\d{1,2}$/.test(t)) return t;
+  return NAMED[t] || t;
+}
+function codeToTok(code) {
+  if (/^Key[A-Z]$/.test(code)) return code.slice(3);
+  if (/^Digit\d$/.test(code)) return code.slice(5);
+  if (/^Numpad\d$/.test(code)) return code.slice(6);
+  return code;
+}
+function codeLabel(code) {
+  if (/^Key[A-Z]$/.test(code)) return code.slice(3);
+  if (/^(Digit|Numpad)\d$/.test(code)) return code.slice(-1);
+  return LABEL[code] || code;
+}
+function parseChord(s) {
+  const c = { ctrl: false, shift: false, alt: false, code: null };
+  for (const p of s.split("+").map(x => x || "+")) {
+    if (p === "Ctrl") c.ctrl = true; else if (p === "Shift") c.shift = true; else if (p === "Alt") c.alt = true; else c.code = tokToCode(p);
+  }
+  return c;
+}
+function keyLabels(item) {
+  if (item.seq) return item.keys.split(" ");
+  const c = parseChord(item.keys), out = [];
+  if (c.ctrl) out.push("Ctrl"); if (c.shift) out.push("Shift"); if (c.alt) out.push("Alt");
+  out.push(codeLabel(c.code));
+  return out;
+}
+function keysHtml(labels, seq) {
+  return '<span class="keys">' + labels.map(l => "<kbd>" + esc(l) + "</kbd>").join(seq ? '<span class="then">›</span>' : '<span class="plus">+</span>') + "</span>";
+}
+function itemKeysHtml(item) { return keysHtml(keyLabels(item), !!item.seq); }
+function eventLabels(e) {
+  const out = [];
+  if (e.ctrlKey) out.push("Ctrl"); if (e.shiftKey) out.push("Shift"); if (e.altKey) out.push("Alt");
+  if (!MODCODES.has(e.code)) out.push(codeLabel(e.code));
+  return out;
+}
+function codeMatches(code, expected, shift) {
+  if (code === expected) return true;
+  if (code === "NumpadEnter" && expected === "Enter") return true;
+  if (code === "NumpadAdd" && expected === "Equal" && shift) return true;      // Ctrl+Num+ = insérer
+  if (code === "NumpadSubtract" && expected === "Minus") return true;
+  return false;
+}
+
+/* ---------- formules ---------- */
+function normFormula(s) {
+  s = String(s).trim();
+  if (s.startsWith("=")) s = s.slice(1);
+  let out = "", inQ = false, depth = 0;
+  for (const ch of s) {
+    if (ch === '"') { inQ = !inQ; out += ch; continue; }
+    if (inQ) { out += ch; continue; }
+    if (/\s/.test(ch) || ch === "$") continue;
+    if (ch === "(") depth++;
+    if (ch === ")") depth--;
+    out += ch.toUpperCase();
+  }
+  if (!inQ && depth > 0) out += ")".repeat(depth);   // Excel referme les parenthèses à la validation
+  return "=" + out;
+}
+function formulaOk(item, typed) {
+  const n = normFormula(typed);
+  if (item.a.some(a => normFormula(a) === n)) return true;
+  if (item.re && new RegExp(item.re).test(n)) return true;
+  return false;
+}
+
+/* ---------- mini-cas ---------- */
+function rng(seed) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const REGIONS = ["North", "South", "East", "West"];
+const PRODUCTS = [["Laptop", 899], ["Monitor", 219], ["Keyboard", 49], ["Mouse", 25], ["Headset", 79], ["Dock", 149]];
+const MONTHS = ["January", "February", "March", "April", "May", "June"];
+
+function makeCase(seed) {
+  const r = rng(seed), pick = a => a[Math.floor(r() * a.length)];
+  const rows = [];
+  for (let i = 0; i < 60; i++) {
+    const m = Math.floor(r() * 6), d = 1 + Math.floor(r() * 28);
+    const [p, price] = pick(PRODUCTS);
+    rows.push({ id: "ORD-" + (1001 + i), m, date: "2026-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0"),
+      region: pick(REGIONS), product: p, units: 1 + Math.floor(r() * 20), price });
+  }
+  rows.sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+  const rev = x => x.units * x.price;
+  const sum = (arr, f) => arr.reduce((a, x) => a + f(x), 0);
+  const R = pick(REGIONS), P = pick(PRODUCTS)[0], M = Math.floor(r() * 6), N = 5 + Math.floor(r() * 10);
+  const templates = [
+    () => ({ q: `Total revenue (Units × Unit Price) for the ${R} region`, ans: sum(rows.filter(x => x.region === R), rev),
+      how: `=SUMPRODUCT((C2:C61="${R}")*E2:E61*F2:F61)` }),
+    () => ({ q: `Number of ${P} orders with at least ${N} units`, ans: rows.filter(x => x.product === P && x.units >= N).length,
+      how: `=COUNTIFS(D2:D61,"${P}",E2:E61,">=${N}")` }),
+    () => ({ q: `Total units sold in ${MONTHS[M]} 2026`, ans: sum(rows.filter(x => x.m === M), x => x.units),
+      how: `=SUMIFS(E2:E61,B2:B61,">="&DATE(2026,${M + 1},1),B2:B61,"<="&EOMONTH(DATE(2026,${M + 1},1),0))` }),
+    () => {
+      const tot = REGIONS.map(g => [g, sum(rows.filter(x => x.region === g), rev)]).sort((a, b) => b[1] - a[1]);
+      return { q: "Which region has the highest total revenue? (type the region name)", ans: tot[0][0], text: true,
+        how: "=TAKE(SORTBY(UNIQUE(C2:C61),SUMIFS(…),-1),1) — ou un GROUPBY" };
+    },
+    () => {
+      const sel = rows.filter(x => x.region === R);
+      return { q: `Average units per order in the ${R} region, rounded to 2 decimals`,
+        ans: sel.length ? Math.round(sum(sel, x => x.units) / sel.length * 100) / 100 : 0, how: `=ROUND(AVERAGEIFS(E2:E61,C2:C61,"${R}"),2)` };
+    },
+    () => {
+      let prod = P, sel = rows.filter(x => x.product === prod);
+      if (!sel.length) { prod = rows[0].product; sel = rows.filter(x => x.product === prod); }
+      return { q: `Largest single-order revenue for ${prod}`, ans: Math.max(...sel.map(rev)), how: `=MAX(FILTER(E2:E61*F2:F61,D2:D61="${prod}"))` };
+    },
+    () => ({ q: `Revenue of ${P} in ${MONTHS[M]} 2026`, ans: sum(rows.filter(x => x.product === P && x.m === M), rev),
+      how: `=SUMPRODUCT((D2:D61="${P}")*(MONTH(B2:B61)=${M + 1})*E2:E61*F2:F61)` })
+  ];
+  const t = templates[Math.floor(r() * templates.length)]();
+  const tsv = ["Order ID\tDate\tRegion\tProduct\tUnits\tUnit Price"]
+    .concat(rows.map(x => [x.id, x.date, x.region, x.product, x.units, x.price].join("\t"))).join("\n");
+  return { seed, rows, tsv, ...t };
+}
+function parseAnswer(s) {
+  let t = String(s).trim().replace(/[\s$€  ]/g, "");
+  if (/^-?[\d,]*\.?\d+$/.test(t)) t = t.replace(/,/g, "");
+  else if (/^-?\d+,\d+$/.test(t)) t = t.replace(",", ".");
+  const v = Number(t);
+  return Number.isFinite(v) && t !== "" ? v : null;
+}
+
+/* =========================================================================
+   Interface
+   ========================================================================= */
+
+let current = "nav";
+let drill = null;            // exercice en cours
+let lastResult = null;       // résultat affiché
+const settings = { nav: 20, fmt: 20, typing: 10, formula: 10, dyn: 5, regex: 5, vba: 3, case: 3,
+  formulaMode: "write", typingLevel: "base", typingTab: true, dynLevel: "all", regexMode: "pattern", regexTab: "cours" };
+try { Object.assign(settings, JSON.parse(localStorage.getItem("xlsprint.settings") || "{}")); } catch (e) { }
+function saveSettings() { try { localStorage.setItem("xlsprint.settings", JSON.stringify(settings)); } catch (e) { } }
+
+const TYPING_LEVELS = [["base", "Bases"], ["mid", "Intermédiaire"], ["hard", "Avancé"], ["all", "Tout"]];
+const DYN_LEVELS = [["all", "Tous"], ["1", "★"], ["2", "★★"], ["3", "★★★"]];
+const stars = n => "★".repeat(n) + "☆".repeat(3 - n);
+
+function defaultMode(st) {
+  if (st.kind === "formula") return settings.formulaMode;
+  if (st.kind === "typing") return settings.typingLevel;
+  if (st.kind === "regex") return settings.regexMode;
+  return null;
+}
+function sessionsOf(stepId, mode) {
+  return progress.sessions.filter(s => s.s === stepId && (!mode || (s.mode || "write") === mode));
+}
+/* Mesure suivie pour une étape (et un mode) */
+function spec(st, mode) {
+  if (st.kind === "formula" && mode === "copy") return { better: "high", goal: 200, acc: 95, per: "caractères / min", mode };
+  if (st.kind === "regex" && mode === "excel") return { better: "low", goal: 60, acc: 70, per: "par formule", mode };
+  if (st.kind === "regex") return { better: "low", goal: 40, acc: 80, per: "par motif", mode: "pattern" };
+  if (st.kind === "typing") return { better: "high", goal: st.goal.metric, acc: st.goal.acc, per: st.per, mode: mode || "base" };
+  return { better: st.better, goal: st.goal.metric, acc: st.goal.acc, per: st.per, mode: st.kind === "formula" ? "write" : null };
+}
+function fmtVal(sp, v) {
+  if (v == null) return "—";
+  return sp.better === "low" ? v.toFixed(v < 10 ? 2 : 1) + " s" : String(Math.round(v));
+}
+function bestOf(sp, list) {
+  if (!list.length) return null;
+  return sp.better === "low" ? Math.min(...list.map(s => s.metric)) : Math.max(...list.map(s => s.metric));
+}
+function meetsGoal(sp, s) {
+  const okM = sp.better === "low" ? s.metric <= sp.goal : s.metric >= sp.goal;
+  return okM && s.acc >= sp.acc;
+}
+function stepStatus(st) {
+  const list = sessionsOf(st.id);
+  if (list.some(s => !(st.kind === "formula" && s.mode === "copy") && meetsGoal(spec(st, s.mode), s))) return ["done", "Objectif atteint"];
+  if (list.length) return ["going", "En cours"];
+  return ["", "À commencer"];
+}
+
+function renderSteps() {
+  const ol = $("#steps");
+  ol.innerHTML = STEPS.map(st => {
+    const [cls, label] = stepStatus(st);
+    const sp = spec(st, defaultMode(st));
+    const best = bestOf(sp, sessionsOf(st.id, sp.mode));
+    return `<li><button class="step" data-step="${st.id}" aria-current="${st.id === current}">
+      <span class="rowhead">${st.n}</span>
+      <span class="cellbody"><span class="name">${esc(st.title)}</span>
+      <span class="meta"><span class="status ${cls}">${label}</span>${best != null ? `<span class="num">Record ${fmtVal(sp, best)}${sp.better === "high" ? " car./min" : ""}</span>` : ""}${st.isNew ? '<span class="status new">Nouveau</span>' : ""}</span></span>
+    </button></li>`;
+  }).join("");
+}
+
+function sparkline(sp, list) {
+  const pts = list.slice(-14).map(s => s.metric);
+  if (pts.length < 2) return '<p class="note">La courbe de progression apparaît après deux séances.</p>';
+  const w = 600, h = 64, pad = 8;
+  const goal = sp.goal;
+  const lo = Math.min(...pts, goal), hi = Math.max(...pts, goal), span = hi - lo || 1;
+  const x = i => pad + i * (w - 2 * pad) / (pts.length - 1);
+  const y = v => pad + (sp.better === "low" ? (v - lo) / span : (hi - v) / span) * (h - 2 * pad);
+  const line = pts.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const area = `${x(0)},${h - pad} ${line} ${x(pts.length - 1)},${h - pad}`;
+  const last = pts[pts.length - 1];
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Progression des ${pts.length} dernières séances">
+    <line x1="${pad}" x2="${w - pad}" y1="${y(goal)}" y2="${y(goal)}" stroke="var(--amber)" stroke-dasharray="4 4" stroke-width="1"/>
+    <polygon points="${area}" fill="var(--accent-soft)"/>
+    <polyline points="${line}" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    <circle cx="${x(pts.length - 1)}" cy="${y(last)}" r="4" fill="var(--accent)"/>
+  </svg><p class="note">Ligne pointillée : objectif (${fmtVal(sp, goal)}${sp.better === "high" ? " car./min" : ""}). Plus haut sur la courbe = meilleur.</p>`;
+}
+
+function segHtml(attr, options, value, label) {
+  return `<span class="seg" role="group" aria-label="${esc(label)}">${options.map(([v, t]) =>
+    `<button data-${attr}="${v}" aria-pressed="${String(value) === String(v)}">${esc(t)}</button>`).join("")}</span>`;
+}
+
+function renderIntro() {
+  const st = stepById(current);
+  if (st.kind === "regex" && settings.regexTab !== "train") return renderRegexPage(st);
+  const mode = defaultMode(st);
+  const sp = spec(st, mode);
+  const list = sessionsOf(st.id, sp.mode);
+  const best = bestOf(sp, list);
+  const lastS = list[list.length - 1];
+  const sizes = segHtml("size", st.sizes.map(n => [n, String(n)]), settings[st.id], "Longueur de la séance");
+  const goalTxt = `Objectif : <b>${sp.better === "low" ? "≤ " + fmtVal(sp, sp.goal) + " " + sp.per : "≥ " + sp.goal + " " + sp.per}</b> avec <b>≥ ${sp.acc} %</b> de précision.`
+    + (sp.mode === "copy" ? " L'objectif de l'étape se valide en mode écriture." : "");
+  const what = { vba: "Macros", case: "Cas", formula: "Formules", typing: "Formules", dyn: "Exercices", regex: "Exercices", keys: "Raccourcis" }[st.kind] || "Exercices";
+  let extra = "";
+  if (st.kind === "formula") extra = segHtml("fmode", [["write", "Écrire"], ["copy", "Recopier"]], sp.mode, "Mode");
+  if (st.kind === "typing") extra = segHtml("tlevel", TYPING_LEVELS, settings.typingLevel, "Niveau")
+    + segHtml("ttab", [["1", "Tab activé"], ["0", "Sans Tab"]], settings.typingTab ? "1" : "0", "Complétion");
+  if (st.kind === "eval") extra = segHtml("dlevel", DYN_LEVELS, settings.dynLevel, "Difficulté");
+  if (st.kind === "regex") extra = segHtml("rmode", [["pattern", "Motifs"], ["excel", "Formules REGEX"]], settings.regexMode, "Type d'exercice");
+  const modeLabel = st.kind === "typing" ? "niveau " + TYPING_LEVELS.find(l => l[0] === sp.mode)[1].toLowerCase()
+    : sp.mode === "copy" ? "en recopie" : sp.mode === "write" ? "en écriture" : sp.mode === "excel" ? "formules REGEX" : sp.mode === "pattern" ? "motifs" : "terminées";
+  $("#work").innerHTML = `
+    <div class="work-head">
+      <div><span class="eyebrow">Étape ${st.n} sur ${STEPS.length}</span><h2>${esc(st.title)}</h2><p>${esc(st.intro)}</p></div>
+    </div>
+    ${st.kind === "regex" ? regexTabs() : ""}
+    <div class="goal">${goalTxt}</div>
+    <div class="controls">
+      <span class="label">${what} par séance</span>${sizes}${extra}
+      <button class="btn primary" id="startBtn">Commencer</button>
+    </div>
+    <p class="note kbdnote">Ces exercices demandent un clavier physique.</p>
+    <div class="stats">
+      <div class="stat best"><span class="k">Record</span><span class="v">${fmtVal(sp, best)}</span><span class="label">${sp.per}</span></div>
+      <div class="stat"><span class="k">Dernière séance</span><span class="v">${lastS ? fmtVal(sp, lastS.metric) : "—"}</span><span class="label">${lastS ? "précision " + Math.round(lastS.acc) + " %" : "aucune séance"}</span></div>
+      <div class="stat"><span class="k">Séances</span><span class="v num">${list.length}</span><span class="label">${modeLabel}</span></div>
+    </div>
+    ${sparkline(sp, list)}
+    ${weakList(st)}
+  `;
+  const W = $("#work");
+  $("#startBtn").addEventListener("click", startDrill);
+  const bind = (attr, fn) => W.querySelectorAll(`[data-${attr}]`).forEach(b => b.addEventListener("click", () => { fn(b.dataset[attr]); saveSettings(); renderAll(); }));
+  bind("size", v => { settings[st.id] = Number(v); });
+  bind("fmode", v => { settings.formulaMode = v; });
+  bind("tlevel", v => { settings.typingLevel = v; });
+  bind("ttab", v => { settings.typingTab = v === "1"; });
+  bind("dlevel", v => { settings.dynLevel = v; });
+  bind("rmode", v => { settings.regexMode = v; });
+  bindRegexTabs();
+}
+
+function poolOf(st) {
+  if (st.kind === "regex") return settings.regexMode === "excel" ? REGX : PATTERNS;
+  if (st.kind === "eval") return settings.dynLevel === "all" ? DYN : DYN.filter(d => String(d.lvl) === settings.dynLevel);
+  if (st.kind === "typing") return null;
+  return st.pool;
+}
+function weakList(st) {
+  const pool = poolOf(st);
+  if (!pool) return "";
+  const weak = pool.filter(it => progress.weak[it.id]).sort((a, b) => progress.weak[b.id] - progress.weak[a.id]).slice(0, 6);
+  if (!weak.length) return "";
+  const right = it => st.kind === "keys" ? itemKeysHtml(it)
+    : st.kind === "formula" ? `<span class="answer">${esc(it.a[0])}</span>`
+    : it.sol ? `<span class="answer">${esc(Array.isArray(it.sol) ? it.sol[0] : it.sol)}</span>` : "";
+  return `<div><span class="eyebrow">Points faibles revus plus souvent</span><ul class="misses">${weak.map(it =>
+    `<li><span>${esc(it.act || it.title || it.task || it.q || (it.code || "").split("\n")[0])}</span>${right(it)}</li>`).join("")}</ul></div>`;
+}
+
+/* ---------------------------------------------------------- page Regex -- */
+
+function regexTabs() {
+  const t = settings.regexTab;
+  return `<div class="tabs" role="tablist">${[["cours", "Cours"], ["testeur", "Testeur"], ["train", "Entraînement"]].map(([k, l]) =>
+    `<button role="tab" data-rtab="${k}" aria-selected="${t === k}">${l}</button>`).join("")}</div>`;
+}
+function bindRegexTabs() {
+  $("#work").querySelectorAll("[data-rtab]").forEach(b => b.addEventListener("click", () => { settings.regexTab = b.dataset.rtab; saveSettings(); renderAll(); }));
+}
+function renderRegexPage(st) {
+  $("#work").innerHTML = `
+    <div class="work-head"><div><span class="eyebrow">Étape ${st.n} sur ${STEPS.length}</span><h2>${esc(st.title)}</h2><p>${esc(st.intro)}</p></div></div>
+    ${regexTabs()}
+    <div id="rbody">${settings.regexTab === "cours" ? COURSE_HTML : testerHtml()}</div>`;
+  bindRegexTabs();
+  if (settings.regexTab === "testeur") bindTester();
+  $("#work").querySelectorAll("[data-goto]").forEach(b => b.addEventListener("click", () => { settings.regexTab = b.dataset.goto; saveSettings(); renderAll(); }));
+}
+
+const tester = {
+  pat: "\\b([A-Z]{2})-(\\d{3,4})\\b",
+  ci: false,
+  text: "Orders today: AB-123, XL-2026 and ab-999.\nRefunds: CR-44, ZZ-10000, QA-0007\nContact: ana@mail.com / (555) 123-4567"
+};
+function testerHtml() {
+  return `<div class="tester">
+    <label class="label" for="tPat">Motif (pattern)</label>
+    <div class="patbar"><span>"</span><input id="tPat" spellcheck="false" autocomplete="off" value="${esc(tester.pat)}"><span>"</span></div>
+    <label class="check"><input type="checkbox" id="tCi" ${tester.ci ? "checked" : ""}> Ignorer la casse (case_sensitivity = 1)</label>
+    <label class="label" for="tText">Texte à tester (une cellule par ligne)</label>
+    <textarea id="tText" spellcheck="false">${esc(tester.text)}</textarea>
+    <div class="feedback" id="tMsg"></div>
+    <div><span class="eyebrow">Correspondances surlignées</span><div class="hl" id="tOut"></div></div>
+    <div><span class="eyebrow">Détail</span><div class="xscroll" id="tList"></div></div>
+    <div><span class="eyebrow">Formules Excel équivalentes (cellule A1)</span><div id="tFx" class="fxlist"></div></div>
+  </div>`;
+}
+function excelStr(s) { return '"' + s.replace(/"/g, '""') + '"'; }
+function bindTester() {
+  const upd = () => {
+    tester.pat = $("#tPat").value; tester.ci = $("#tCi").checked; tester.text = $("#tText").value;
+    let re = null, msg = "";
+    try {
+      let p = tester.pat, f = "g";
+      if (p.startsWith("(?i)")) { p = p.slice(4); f += "i"; }
+      if (tester.ci && !f.includes("i")) f += "i";
+      if (p) re = new RegExp(p, f);
+    } catch (e) { msg = "Motif invalide : " + e.message; }
+    $("#tMsg").className = "feedback " + (msg ? "bad" : "");
+    $("#tMsg").textContent = msg;
+    const lines = tester.text.split("\n");
+    let html = "", rows = "";
+    lines.forEach((ln, i) => {
+      if (!re) { html += esc(ln) + "\n"; return; }
+      let out = "", last = 0, any = false;
+      for (const m of ln.matchAll(re)) {
+        if (m[0] === "") { continue; }
+        any = true;
+        out += esc(ln.slice(last, m.index)) + "<mark>" + esc(m[0]) + "</mark>";
+        last = m.index + m[0].length;
+        rows += `<tr><td class="num">A${i + 1}</td><td><code>${esc(m[0])}</code></td><td>${m.length > 1 ? m.slice(1).map((g, k) => `<code>$${k + 1}</code> ${esc(g === undefined ? "" : g)}`).join(" · ") : "—"}</td></tr>`;
+      }
+      out += esc(ln.slice(last));
+      html += out + (any ? "" : "") + "\n";
+    });
+    $("#tOut").innerHTML = html;
+    $("#tList").innerHTML = rows ? `<table class="tbl"><thead><tr><th>Cellule</th><th>Correspondance</th><th>Groupes</th></tr></thead><tbody>${rows}</tbody></table>`
+      : '<p class="note">Aucune correspondance.</p>';
+    const p = excelStr(tester.pat), cs = tester.ci ? ",1" : "";
+    const fx = [
+      [`=REGEXTEST(A1,${p}${cs})`, "VRAI si le motif est trouvé"],
+      [`=REGEXEXTRACT(A1,${p}${tester.ci ? ",0,1" : ""})`, "première correspondance"],
+      [`=REGEXEXTRACT(A1,${p},1${cs})`, "toutes les correspondances (vers la droite)"],
+      [`=REGEXEXTRACT(A1,${p},2${cs})`, "groupes de capture de la première correspondance"],
+      [`=REGEXREPLACE(A1,${p},""${tester.ci ? ",0,1" : ""})`, "supprime les correspondances"]
+    ];
+    $("#tFx").innerHTML = fx.map(([f, d], k) => `<div class="fxrow"><code>${esc(f)}</code><span class="note">${d}</span><button class="btn" data-copy="${k}">Copier</button></div>`).join("");
+    $("#tFx").querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+      const f = fx[+b.dataset.copy][0];
+      try { navigator.clipboard.writeText(f).then(() => { b.textContent = "Copié"; }, () => { b.textContent = "Sélectionnez le texte"; }); } catch (e) { b.textContent = "Sélectionnez le texte"; }
+    }));
+  };
+  ["tPat", "tText"].forEach(id => $("#" + id).addEventListener("input", upd));
+  $("#tCi").addEventListener("change", upd);
+  upd();
+}
+
+function renderAll() {
+  renderSteps();
+  if (drill) return;
+  if (lastResult && lastResult.step === current) renderResult(lastResult); else renderIntro();
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-step]");
+  if (!b) return;
+  if (drill) drill.stop(false);
+  current = b.dataset.step;
+  lastResult = null;
+  renderAll();
+  if (window.matchMedia("(max-width: 900px)").matches) $("#work").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+/* =========================================================================
+   Moteur commun d'exercice
+   ========================================================================= */
+
+class BaseDrill {
+  constructor(step, n) {
+    this.step = step; this.n = n; this.i = 0; this.t0 = 0; this.itemStart = 0;
+    this.misses = []; this.errorsOnItem = 0; this.itemsWithError = 0; this.timerId = null; this.paused = false;
+    this.onKey = this.onKey.bind(this); this.onKeyUp = this.onKeyUp.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+  }
+  shell(inner, title) {
+    $("#work").innerHTML = `
+      <div class="work-head"><div><span class="eyebrow">Étape ${this.step.n} · ${esc(this.step.title)}</span><h2>${esc(title)}</h2></div>
+        <button class="btn ghost" id="stopBtn">Arrêter</button></div>
+      <div class="stage" id="stage" tabindex="0">
+        <div class="runbar"><span class="num" id="counter"></span><span class="timer" id="timer">0:00.0</span></div>
+        <div class="progress"><i id="bar" style="width:0%"></i></div>
+        ${inner}
+      </div>`;
+    $("#stopBtn").addEventListener("click", () => this.stop(true));
+  }
+  begin() {
+    this.t0 = now(); this.itemStart = this.t0;
+    this.timerId = setInterval(() => { const t = $("#timer"); if (t) t.textContent = fmtClock(now() - this.t0); }, 100);
+    document.addEventListener("keydown", this.onKey, true);
+    document.addEventListener("keyup", this.onKeyUp, true);
+    window.addEventListener("blur", this.onBlur);
+  }
+  counter() {
+    const c = $("#counter"); if (c) c.textContent = `${Math.min(this.i + 1, this.n)} / ${this.n}`;
+    const b = $("#bar"); if (b) b.style.width = (this.i / this.n * 100) + "%";
+  }
+  onKeyUp(e) { if (e.key === "Alt") e.preventDefault(); }
+  onBlur() {
+    if (!drill || !["keys", "typing", "vba"].includes(this.kind)) return;
+    this.paused = true;
+    const stage = $("#stage");
+    if (stage && !$("#pausedOverlay")) {
+      const d = document.createElement("div");
+      d.className = "paused"; d.id = "pausedOverlay"; d.textContent = "Cliquez ici pour reprendre (le clavier n'est plus capté)";
+      d.addEventListener("click", () => { d.remove(); this.paused = false; stage.focus(); });
+      stage.appendChild(d);
+    }
+  }
+  detach() {
+    clearInterval(this.timerId);
+    document.removeEventListener("keydown", this.onKey, true);
+    document.removeEventListener("keyup", this.onKeyUp, true);
+    window.removeEventListener("blur", this.onBlur);
+  }
+  stop(showIntro) {
+    this.detach(); drill = null;
+    if (showIntro) renderAll();
+  }
+  feedback(msg, cls) {
+    const f = $("#feedback"); if (!f) return;
+    f.className = "feedback " + (cls || ""); f.innerHTML = msg;
+  }
+  shake() { const s = $("#stage"); if (!s) return; s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); }
+  flash() { const s = $("#stage"); if (!s) return; s.classList.remove("flash"); void s.offsetWidth; s.classList.add("flash"); }
+  finish(metric, acc, extra) {
+    const totalMs = now() - this.t0;
+    this.detach(); drill = null;
+    const st = this.step;
+    const mode = this.mode || null;
+    const sp = spec(st, mode);
+    const prevBest = bestOf(sp, sessionsOf(st.id, sp.mode));
+    const better = sp.better === "low" ? (prevBest == null || metric < prevBest) : (prevBest == null || metric > prevBest);
+    const session = { s: st.id, t: Date.now(), n: this.n, ms: Math.round(totalMs), metric: Math.round(metric * 100) / 100, acc: Math.round(acc * 10) / 10 };
+    if (mode) session.mode = mode;
+    progress.sessions.push(session);
+    saveProgress();
+    lastResult = { step: st.id, session, record: better && prevBest != null, first: prevBest == null, misses: this.misses, extra, mode };
+    renderSteps();
+    renderResult(lastResult);
+  }
+}
+
+function renderResult(res) {
+  const st = stepById(res.step), s = res.session;
+  const sp = spec(st, res.mode);
+  const metricTxt = fmtVal(sp, s.metric);
+  const goalMet = meetsGoal(sp, s);
+  $("#work").innerHTML = `
+    <div class="work-head"><div><span class="eyebrow">Étape ${st.n} · Résultat</span><h2>${esc(st.title)}</h2></div>
+      ${res.record ? '<span class="record">Nouveau record</span>' : ""}</div>
+    <div class="stats">
+      <div class="stat best"><span class="k">${sp.better === "high" ? "Vitesse" : "Temps moyen"}</span><span class="v">${metricTxt}</span><span class="label">${sp.per}${goalMet ? " · objectif atteint" : ""}</span></div>
+      <div class="stat"><span class="k">Précision</span><span class="v num">${Math.round(s.acc)} %</span><span class="label">objectif ≥ ${sp.acc} %</span></div>
+      <div class="stat"><span class="k">Temps total</span><span class="v num">${fmtClock(s.ms)}</span><span class="label">${s.n} ${st.kind === "case" ? "cas" : "exercices"}</span></div>
+    </div>
+    ${res.misses.length ? `<div><span class="eyebrow">À revoir</span><ul class="misses">${res.misses.map(m => `<li><span>${esc(m.label)}</span>${m.html}</li>`).join("")}</ul></div>`
+      : '<p class="note">Aucune erreur sur cette séance.</p>'}
+    <div class="controls"><button class="btn primary" id="againBtn">Rejouer</button><button class="btn" id="backBtn">Voir la progression</button></div>`;
+  $("#againBtn").addEventListener("click", () => { lastResult = null; startDrill(); });
+  $("#backBtn").addEventListener("click", () => { lastResult = null; renderIntro(); });
+  $("#againBtn").focus();
+}
+
+/* =========================================================================
+   Étapes 1 et 2 : raccourcis clavier
+   ========================================================================= */
+
+class KeysDrill extends BaseDrill {
+  constructor(step, n) { super(step, n); this.kind = "keys"; this.items = weightedSample(step.pool, n); this.seq = null; }
+  start() {
+    this.shell(`
+      <div><div class="ctx" id="ctx"></div><div class="prompt" id="prompt"></div></div>
+      <div class="pressed" id="pressed"></div>
+      <div id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="inline"><button class="btn ghost" id="hintBtn">Afficher la réponse</button><span class="note">Esc annule une séquence Alt en cours.</span></div>`,
+      "Faites le raccourci");
+    $("#hintBtn").addEventListener("click", () => this.reveal());
+    this.show();
+    this.begin();
+    $("#stage").focus();
+  }
+  get item() { return this.items[this.i]; }
+  show() {
+    const it = this.item;
+    this.errorsOnItem = 0; this.seq = null; this.itemStart = now();
+    $("#ctx").textContent = it.ctx;
+    $("#prompt").textContent = it.act;
+    $("#pressed").innerHTML = "";
+    this.feedback("");
+    const ch = $("#choices");
+    if (it.reserved) {
+      const others = this.step.pool.filter(x => x.id !== it.id && !x.seq);
+      const opts = [it, ...weightedSample(others, 2)].sort(() => Math.random() - 0.5);
+      this.opts = opts;
+      ch.innerHTML = `<p class="note">Raccourci réservé par le navigateur : choisissez la bonne combinaison (touche 1, 2 ou 3).</p>
+        <div class="choices">${opts.map((o, k) => `<button class="choice" data-opt="${k}"><span class="idx">${k + 1}</span>${itemKeysHtml(o)}</button>`).join("")}</div>`;
+      ch.querySelectorAll("[data-opt]").forEach(b => b.addEventListener("click", () => this.choose(Number(b.dataset.opt))));
+    } else {
+      ch.innerHTML = "";
+    }
+    this.counter();
+  }
+  showPressed(labels, seq) { $("#pressed").innerHTML = labels.length ? keysHtml(labels, seq) : ""; }
+  reveal() {
+    if (!this.errorsOnItem) this.markError();
+    this.feedback("Réponse : " + itemKeysHtml(this.item), "bad");
+    $("#stage").focus();
+  }
+  markError() {
+    this.errorsOnItem++;
+    if (this.errorsOnItem === 1) {
+      this.itemsWithError++;
+      bumpWeak(this.item.id, 1);
+      this.misses.push({ label: this.item.act, html: itemKeysHtml(this.item) });
+    }
+  }
+  miss(labels, seq) {
+    this.markError();
+    this.showPressed(labels, seq);
+    this.shake();
+    const hint = this.errorsOnItem >= 2 ? " Réponse : " + itemKeysHtml(this.item) : "";
+    this.feedback("Pas ce raccourci." + hint, "bad");
+  }
+  hit() {
+    if (!this.errorsOnItem) bumpWeak(this.item.id, -1);
+    this.flash();
+    this.i++;
+    if (this.i >= this.n) {
+      const total = now() - this.t0;
+      return this.finish(total / 1000 / this.n, 100 * (this.n - this.itemsWithError) / this.n);
+    }
+    this.show();
+  }
+  choose(k) {
+    if (this.opts[k] === this.item) this.hit();
+    else { this.markError(); this.shake(); this.feedback("Non. Réponse : " + itemKeysHtml(this.item), "bad"); }
+  }
+  onKey(e) {
+    if (this.paused) return;
+    const it = this.item;
+    if (!it) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (MODCODES.has(e.code)) {
+      if ((e.code === "AltLeft" || e.code === "AltRight") && !e.ctrlKey && !e.shiftKey && !e.repeat && it.seq) {
+        this.seq = [];
+        this.showPressed(["Alt"], true);
+      }
+      return;
+    }
+    if (e.repeat) return;
+    if (it.reserved) {
+      const d = /^(Digit|Numpad)([1-3])$/.exec(e.code);
+      if (d) this.choose(Number(d[2]) - 1);
+      return;
+    }
+    if (it.seq) {
+      const expected = it.keys.split(" ").slice(1);
+      if (e.code === "Escape") { this.seq = null; this.showPressed([]); return; }
+      if (this.seq === null || e.ctrlKey || e.shiftKey) { this.seq = null; return this.miss(eventLabels(e), false); }
+      const tok = codeToTok(e.code);
+      this.seq.push(tok);
+      const labels = ["Alt", ...this.seq];
+      if (tok !== expected[this.seq.length - 1]) { this.seq = null; return this.miss(labels, true); }
+      this.showPressed(labels, true);
+      if (this.seq.length === expected.length) { this.seq = null; this.hit(); }
+      return;
+    }
+    const c = parseChord(it.keys);
+    const ok = e.ctrlKey === c.ctrl && e.shiftKey === c.shift && e.altKey === c.alt && codeMatches(e.code, c.code, e.shiftKey);
+    if (ok) { this.showPressed(eventLabels(e), false); this.hit(); }
+    else this.miss(eventLabels(e), false);
+  }
+}
+
+/* =========================================================================
+   Barre de formule avec complétion (Tab), comme dans Excel
+   ========================================================================= */
+
+/* Noms déclarés plus tôt dans la formule : variables de LET et paramètres de LAMBDA.
+   Comme dans Excel 365, ils apparaissent dans la liste de complétion. */
+function declaredNames(text) {
+  const names = [], seen = new Set(), stack = [];
+  const tokRe = /"(?:[^"]|"")*"?|\[[A-Za-z_\\][A-Za-z0-9_.]*\]|[A-Za-z_\\][A-Za-z0-9_.]*|\d+(?:\.\d+)?|\S/g;
+  let prev = null, m;
+  while ((m = tokRe.exec(text))) {
+    const t = m[0];
+    if (t === "(") {
+      stack.push({ fn: prev && /^[A-Za-z_]/.test(prev) ? prev.toUpperCase() : "", idx: 0, arg: [] });
+      prev = t; continue;
+    }
+    const top = stack[stack.length - 1];
+    if (t === "," && top) {
+      if (top.arg.length === 1) {
+        let id = top.arg[0];
+        if (top.fn === "LAMBDA" && /^\[.*\]$/.test(id)) id = id.slice(1, -1);
+        const ok = /^[A-Za-z_\\][A-Za-z0-9_.]*$/.test(id) && !/^\$?[A-Za-z]{1,3}\$?\d+$/.test(id) && !/^(TRUE|FALSE)$/i.test(id);
+        if (ok && ((top.fn === "LET" && top.idx % 2 === 0) || top.fn === "LAMBDA")) {
+          const k = id.toUpperCase();
+          if (!seen.has(k)) { seen.add(k); names.push(id); }
+        }
+      }
+      top.idx++; top.arg = []; prev = t; continue;
+    }
+    if (t === ")") { stack.pop(); prev = t; continue; }
+    if (top) top.arg.push(t);
+    prev = t;
+  }
+  return names;
+}
+/* Liste de complétion : d'abord les noms déclarés (LET / LAMBDA), puis les fonctions,
+   chaque groupe dans l'ordre alphabétique */
+function completions(prefix, before) {
+  const up = prefix.toUpperCase(), out = [];
+  const names = declaredNames(before).filter(n => n.toUpperCase().startsWith(up))
+    .sort((x, y) => x.toUpperCase() < y.toUpperCase() ? -1 : 1);
+  for (const n of names) out.push({ label: n, insert: n, fn: false });
+  for (const f of FUNCS_SORTED) if (f.startsWith(up)) out.push({ label: f, insert: f + "(", fn: true });
+  return out;
+}
+
+class FxBar {
+  constructor(input, box) {
+    this.input = input; this.box = box; this.sugg = []; this.sel = 0; this.tok = null;
+    input.addEventListener("input", () => { this.sel = 0; this.update(); });
+    input.addEventListener("click", () => this.update());
+  }
+  token() {
+    const fx = this.input, caret = fx.selectionStart, left = fx.value.slice(0, caret);
+    if ((left.match(/"/g) || []).length % 2) return null;
+    const m = /([A-Za-z][A-Za-z0-9.]*)$/.exec(left);
+    if (!m) return null;
+    const before = left.slice(0, left.length - m[1].length);
+    if (!/[=(,+\-*/&^<>:{;\s]$/.test(before)) return null;
+    if (fx.value.charAt(caret) === "(") return null;
+    return { start: caret - m[1].length, end: caret, text: m[1] };
+  }
+  update() {
+    const t = this.token();
+    if (!t) return this.hide();
+    this.sugg = completions(t.text, this.input.value.slice(0, t.start)).slice(0, 8);
+    if (!this.sugg.length) return this.hide();
+    this.sel = Math.min(this.sel, this.sugg.length - 1);
+    this.tok = t;
+    this.paint();
+    this.box.hidden = false;
+  }
+  paint() {
+    this.box.innerHTML = this.sugg.map((o, k) => `<div aria-selected="${k === this.sel}">${esc(o.label)}${o.fn ? "" : '<span class="tag">nom</span>'}</div>`).join("");
+  }
+  hide() { this.sugg = []; this.sel = 0; this.box.hidden = true; }
+  accept() {
+    const fx = this.input, o = this.sugg[this.sel], t = this.tok;
+    fx.value = fx.value.slice(0, t.start) + o.insert + fx.value.slice(t.end);
+    const pos = t.start + o.insert.length;
+    fx.setSelectionRange(pos, pos);
+    this.hide();
+  }
+  handleKey(e) {
+    const open = this.sugg.length > 0 && !this.box.hidden;
+    if (e.key === "Tab") { e.preventDefault(); if (open) this.accept(); return true; }
+    if (open && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      e.preventDefault();
+      this.sel = (this.sel + (e.key === "ArrowDown" ? 1 : this.sugg.length - 1)) % this.sugg.length;
+      this.paint();
+      return true;
+    }
+    if (e.key === "Escape") { e.preventDefault(); this.hide(); return true; }
+    if (e.ctrlKey && ["s", "p", "d", "r", "f", "g", "h", "k", "l", "u", "b", "i", "n"].includes(e.key.toLowerCase())) e.preventDefault();
+    return false;
+  }
+}
+const FXBAR_HTML = (nb) => `<div class="fbar"><span class="namebox" id="nb">${nb}</span><span class="fx">fx</span>
+  <input id="fx" autocomplete="off" spellcheck="false" aria-label="Barre de formule">
+  <div class="suggest" id="suggest" hidden></div></div>`;
+
+/* Affichage d'un tableau de valeurs façon feuille Excel */
+function dispVal(v) {
+  if (v instanceof XErr) return { t: v.code, cls: "err" };
+  if (typeof v === "boolean") return { t: v ? "TRUE" : "FALSE", cls: "bool" };
+  if (typeof v === "number") return { t: Number.isInteger(v) ? String(v) : String(+v.toPrecision(10)), cls: "r" };
+  if (v === null || v === undefined) return { t: "", cls: "" };
+  return { t: String(v), cls: "" };
+}
+function gridHtml(value, origin, label) {
+  const A = toArr(value);
+  const m = /^([A-Z]+)(\d+)$/.exec(origin || "A1");
+  const c0 = colNum(m[1]), r0 = +m[2];
+  const R = Math.min(A.rows, 40), C = Math.min(A.cols, 20);
+  let h = `<div class="xscroll"><table class="sheet" aria-label="${esc(label)}"><thead><tr><th></th>`;
+  for (let c = 0; c < C; c++) h += `<th>${colName(c0 + c)}</th>`;
+  h += "</tr></thead><tbody>";
+  for (let r = 0; r < R; r++) {
+    h += `<tr><th>${r0 + r}</th>`;
+    for (let c = 0; c < C; c++) { const d = dispVal(A.get(r, c)); h += `<td class="${d.cls}">${esc(d.t)}</td>`; }
+    h += "</tr>";
+  }
+  h += "</tbody></table></div>";
+  if (A.rows > R || A.cols > C) h += `<p class="note">Aperçu limité : ${A.rows} × ${A.cols} au total.</p>`;
+  return h;
+}
+function dataGridHtml(rows) {
+  if (!rows.length) return '<p class="note">Aucune donnée : la formule part d\'une feuille vide.</p>';
+  const C = Math.max(...rows.map(r => r.length));
+  const A = new Arr(rows.length, C);
+  rows.forEach((row, r) => row.forEach((v, c) => A.set(r, c, v === "" ? null : v)));
+  return gridHtml(A, "A1", "Données");
+}
+
+/* =========================================================================
+   Étape 3 : frappe de formules (vitesse pure, avec complétion Tab)
+   ========================================================================= */
+
+class TypingDrill extends BaseDrill {
+  constructor(step, n, level, tab) {
+    super(step, n);
+    this.kind = "typing"; this.mode = level; this.tab = tab;
+    const pool = level === "all" ? [...TYPING.base, ...TYPING.mid, ...TYPING.hard] : TYPING[level];
+    const items = pool.map((f, i) => ({ id: "t-" + level + "-" + i, f }));
+    this.items = weightedSample(items, n);
+    this.keystrokes = 0; this.badKeys = 0; this.chars = 0;
+  }
+  start() {
+    this.shell(`
+      <div class="ctx">Tapez la formule exactement${this.tab ? " · Tab complète la fonction ou le nom LET / LAMBDA proposé, comme dans Excel" : ""}</div>
+      <pre class="code formula-target" id="code" aria-label="Formule à taper"></pre>
+      <div class="hintchip" id="hint"></div>
+      <div class="feedback" id="feedback"></div>
+      <span class="note">La casse est libre. Retour arrière corrige. Les noms de LET et de LAMBDA sont proposés en premier, puis les fonctions dans l'ordre alphabétique d'Excel : tapez assez de lettres pour viser la bonne.</span>`,
+      "Frappe de formules");
+    this.show();
+    this.begin();
+    $("#stage").focus();
+  }
+  get item() { return this.items[this.i]; }
+  show() { this.target = this.item.f; this.typed = ""; this.errorsOnItem = 0; this.render(); this.counter(); this.feedback(""); }
+  candidate() {
+    const m = /([A-Za-z][A-Za-z0-9.]*)$/.exec(this.typed);
+    if (!m) return null;
+    const before = this.typed.slice(0, this.typed.length - m[1].length);
+    if (before && !/[=(,+\-*/&^<>:{;\s]$/.test(before)) return null;
+    if ((before.match(/"/g) || []).length % 2) return null;
+    const opts = completions(m[1], before);
+    return opts.length ? { prefix: m[1], o: opts[0] } : null;
+  }
+  render() {
+    const t = this.target, ty = this.typed;
+    let html = "";
+    for (let k = 0; k < t.length; k++) {
+      let cls = "p";
+      if (k < ty.length) cls = ty[k].toLowerCase() === t[k].toLowerCase() ? "k" : "x";
+      if (k === ty.length) cls += " cur";
+      html += `<span class="${cls}">${esc(t[k])}</span>`;
+    }
+    for (let k = t.length; k < ty.length; k++) html += `<span class="x">${esc(ty[k])}</span>`;
+    if (ty.length >= t.length) html += '<span class="cur"> </span>';
+    $("#code").innerHTML = html;
+    const c = this.tab ? this.candidate() : null;
+    $("#hint").innerHTML = c ? `<kbd>Tab</kbd> → ${esc(c.o.insert)}${c.o.fn ? "" : ' <span class="tag">nom</span>'}` : "&nbsp;";
+  }
+  put(ch) {
+    const pos = this.typed.length;
+    if (pos >= this.target.length + 3) return;
+    const expected = this.target[pos];
+    if (expected === undefined || expected.toLowerCase() !== ch.toLowerCase()) {
+      this.badKeys++;
+      if (!this.errorsOnItem) { this.misses.push({ label: this.target, html: "" }); bumpWeak(this.item.id, 1); }
+      this.errorsOnItem++;
+    }
+    this.typed += ch;
+  }
+  onKey(e) {
+    if (this.paused) return;
+    if (e.ctrlKey || e.altKey || e.metaKey) { e.preventDefault(); return; }
+    if (e.key === "Backspace") { e.preventDefault(); this.typed = this.typed.slice(0, -1); this.render(); return; }
+    if (e.key === "Tab") {
+      e.preventDefault();
+      if (!this.tab) return;
+      const c = this.candidate();
+      if (!c) return;
+      this.keystrokes++;
+      const before = this.badKeys;
+      for (const ch of c.o.insert.slice(c.prefix.length)) this.put(ch);
+      if (this.badKeys > before) this.badKeys = before + 1;
+    } else if (e.key.length === 1) {
+      e.preventDefault();
+      this.keystrokes++;
+      this.put(e.key);
+    } else return;
+    this.render();
+    if (this.typed.toLowerCase() === this.target.toLowerCase()) {
+      if (!this.errorsOnItem) bumpWeak(this.item.id, -1);
+      this.chars += this.target.length;
+      this.flash();
+      this.i++;
+      if (this.i >= this.n) {
+        const total = now() - this.t0;
+        return this.finish(this.chars / (total / 60000), 100 * (this.keystrokes - this.badKeys) / Math.max(1, this.keystrokes));
+      }
+      this.show();
+    }
+  }
+}
+
+/* =========================================================================
+   Étape 4 : écrire des formules (validation par le texte)
+   ========================================================================= */
+
+const SAMPLE = [
+  ["Date", "Region", "Sales", "Product", "Units"],
+  ["2026-03-02", "East", "1,250", "Laptop-Pro", "3"],
+  ["2026-03-05", "West", "480", "Mouse-Basic", "12"],
+  ["2026-03-09", "North", "760", "Monitor-27", "4"],
+  ["2026-03-14", "East", "315", "Dock-USB-C", "2"]
+];
+function sheetHtml() {
+  const cols = ["A", "B", "C", "D", "E"];
+  const rows = SAMPLE.map((r, i) => `<tr><th>${i + 1}</th>${r.map((v, j) => `<td class="${i === 0 ? "hdr" : ""} ${(j === 2 || j === 4) && i ? "r" : ""}">${esc(v)}</td>`).join("")}</tr>`).join("");
+  return `<div class="sheetwrap">
+    <div class="xscroll"><table class="sheet" aria-label="Feuille d'exemple"><thead><tr><th></th>${cols.map(c => `<th>${c}</th>`).join("")}</tr></thead>
+      <tbody>${rows}<tr><th>⋮</th><td colspan="5" class="note">données jusqu'à la ligne 100</td></tr></tbody></table></div>
+    <div class="side">
+      <div class="box"><code>H2</code> = <b>Monitor-27</b> <span class="note">(produit recherché)</span></div>
+      <div class="box">Tableau <code>Products</code><br>colonnes <code>[Product]</code> et <code>[Price]</code></div>
+    </div></div>`;
+}
+
+class FormulaDrill extends BaseDrill {
+  constructor(step, n, mode) {
+    super(step, n); this.kind = "formula"; this.mode = mode;
+    this.items = weightedSample(step.pool, n); this.chars = 0;
+  }
+  start() {
+    this.shell(`
+      ${sheetHtml()}
+      <div><div class="ctx" id="ctx"></div><div class="prompt" id="prompt" style="font-size: clamp(20px, 3vw, 28px)"></div></div>
+      <div id="targetWrap"></div>
+      ${FXBAR_HTML("G2")}
+      <div class="feedback" id="feedback"></div>
+      <div class="inline"><button class="btn ghost" id="hintBtn">Afficher la réponse</button>
+        <span class="note">Entrée valide · Tab complète une fonction ou un nom · ↑ ↓ choisissent dans la liste</span></div>`,
+      this.mode === "copy" ? "Recopiez la formule" : "Écrivez la formule");
+    this.bar = new FxBar($("#fx"), $("#suggest"));
+    $("#hintBtn").addEventListener("click", () => this.reveal());
+    this.show();
+    this.begin();
+    $("#fx").focus();
+  }
+  get item() { return this.items[this.i]; }
+  show() {
+    const it = this.item;
+    this.errorsOnItem = 0;
+    $("#ctx").textContent = "Cellule G2";
+    $("#prompt").textContent = it.q;
+    $("#targetWrap").innerHTML = this.mode === "copy" ? `<div class="target">${esc(it.a[0])}</div>` : "";
+    const fx = $("#fx"); fx.value = "="; fx.focus(); fx.setSelectionRange(1, 1);
+    this.bar.hide();
+    this.feedback("");
+    this.counter();
+  }
+  reveal() {
+    if (!this.errorsOnItem) this.markError();
+    this.feedback(`Réponse : <span class="answer">${esc(this.item.a[0])}</span> — tapez-la pour continuer.`, "bad");
+    $("#fx").focus();
+  }
+  markError() {
+    this.errorsOnItem++;
+    if (this.errorsOnItem === 1) {
+      this.itemsWithError++;
+      bumpWeak(this.item.id, 1);
+      this.misses.push({ label: this.item.q, html: `<span class="answer">${esc(this.item.a.join("   ou   "))}</span>` });
+    }
+  }
+  submit() {
+    const val = $("#fx").value;
+    if (normFormula(val) === "=") return;
+    const ok = this.mode === "copy" ? normFormula(val) === normFormula(this.item.a[0]) : formulaOk(this.item, val);
+    if (ok) {
+      if (!this.errorsOnItem) bumpWeak(this.item.id, -1);
+      this.chars += this.item.a[0].length;
+      this.flash();
+      this.i++;
+      if (this.i >= this.n) {
+        const total = now() - this.t0;
+        const acc = 100 * (this.n - this.itemsWithError) / this.n;
+        if (this.mode === "copy") return this.finish(this.chars / (total / 60000), acc);
+        return this.finish(total / 1000 / this.n, acc);
+      }
+      this.show();
+    } else {
+      this.markError(); this.shake();
+      const hint = this.errorsOnItem >= 2 ? ` Réponse : <span class="answer">${esc(this.item.a[0])}</span>` : "";
+      this.feedback("Formule différente de celle attendue." + hint, "bad");
+    }
+  }
+  onKey(e) {
+    if (e.target.id !== "fx") {
+      if (e.key.length === 1 || e.key === "Backspace") $("#fx").focus();
+      return;
+    }
+    if (this.bar.handleKey(e)) return;
+    if (e.key === "Enter") { e.preventDefault(); this.bar.hide(); this.submit(); }
+  }
+}
+
+/* =========================================================================
+   Étapes 5 et 6 : exercices vérifiés par calcul (tableaux dynamiques, REGEX)
+   ========================================================================= */
+
+class EvalDrill extends BaseDrill {
+  constructor(step, n, pool, mode) {
+    super(step, n); this.kind = "eval"; this.mode = mode;
+    this.items = weightedSample(pool, Math.min(n, pool.length));
+    this.n = this.items.length;
+    this.busy = false;
+  }
+  start() {
+    this.shell(`
+      <div class="inline"><span class="stars" id="stars"></span><span class="ctx" id="ctx"></span></div>
+      <div class="prompt" id="prompt" style="font-size: clamp(20px, 3vw, 26px)"></div>
+      <div class="grids">
+        <div class="gridbox"><span class="eyebrow">Données</span><div id="dataGrid"></div></div>
+        <div class="gridbox"><span class="eyebrow">Résultat attendu</span><div id="expGrid"></div></div>
+        <div class="gridbox" id="gotBox" hidden><span class="eyebrow">Votre résultat</span><div id="gotGrid"></div></div>
+      </div>
+      ${FXBAR_HTML("C2")}
+      <div class="feedback" id="feedback"></div>
+      <div class="inline"><button class="btn ghost" id="tipBtn">Indice</button><button class="btn ghost" id="solBtn">Voir une solution</button>
+        <span class="note">Entrée calcule votre formule · Tab complète une fonction ou un nom · toute formule qui donne le bon résultat est acceptée</span></div>`,
+      "Écrivez la formule");
+    this.bar = new FxBar($("#fx"), $("#suggest"));
+    $("#tipBtn").addEventListener("click", () => { this.feedback("Indice : " + esc(this.item.tip), ""); $("#fx").focus(); });
+    $("#solBtn").addEventListener("click", () => this.reveal());
+    this.show();
+    this.begin();
+    $("#fx").focus();
+  }
+  get item() { return this.items[this.i]; }
+  show() {
+    const it = this.item;
+    this.errorsOnItem = 0; this.busy = false;
+    this.sheet = sheetFromRows(it.sheet);
+    this.expected = runFormula(it.sol[0], this.sheet).value;
+    $("#stars").textContent = stars(it.lvl);
+    $("#ctx").textContent = it.title;
+    $("#prompt").textContent = it.q;
+    $("#dataGrid").innerHTML = dataGridHtml(it.sheet);
+    $("#expGrid").innerHTML = gridHtml(this.expected, it.out, "Résultat attendu");
+    $("#gotBox").hidden = true;
+    $("#gotBox").className = "gridbox";
+    $("#nb").textContent = it.out;
+    const fx = $("#fx"); fx.value = "="; fx.focus(); fx.setSelectionRange(1, 1);
+    this.bar.hide();
+    this.feedback("");
+    this.counter();
+  }
+  markError() {
+    this.errorsOnItem++;
+    if (this.errorsOnItem === 1) {
+      this.itemsWithError++;
+      bumpWeak(this.item.id, 1);
+      this.misses.push({ label: this.item.title, html: `<span class="answer">${esc(this.item.sol[0])}</span>` });
+    }
+  }
+  reveal() {
+    if (!this.errorsOnItem) this.markError();
+    this.feedback("Solutions possibles :<br>" + this.item.sol.map(s => `<span class="answer">${esc(s)}</span>`).join("<br>") + "<br>Tapez une formule qui fonctionne pour continuer.", "bad");
+    $("#fx").focus();
+  }
+  submit() {
+    if (this.busy) return;
+    const val = $("#fx").value;
+    if (normFormula(val) === "=") return;
+    const r = runFormula(val, this.sheet);
+    if (!r.ok) { this.markError(); this.shake(); this.feedback("Formule non valide : " + esc(r.msg), "bad"); return; }
+    const box = $("#gotBox");
+    box.hidden = false;
+    $("#gotGrid").innerHTML = gridHtml(r.value, this.item.out, "Votre résultat");
+    if (sameResult(this.expected, r.value)) {
+      box.className = "gridbox result-ok";
+      if (!this.errorsOnItem) bumpWeak(this.item.id, -1);
+      this.feedback("Exact.", "good");
+      this.flash();
+      this.busy = true;
+      setTimeout(() => {
+        if (drill !== this) return;
+        this.i++;
+        if (this.i >= this.n) { const total = now() - this.t0; return this.finish(total / 1000 / this.n, 100 * (this.n - this.itemsWithError) / this.n); }
+        this.show();
+      }, 450);
+    } else {
+      box.className = "gridbox result-bad";
+      this.markError(); this.shake();
+      this.feedback("Le résultat ne correspond pas encore : comparez avec le résultat attendu.", "bad");
+    }
+  }
+  onKey(e) {
+    if (e.target.id !== "fx") {
+      if (e.key.length === 1 || e.key === "Backspace") $("#fx").focus();
+      return;
+    }
+    if (this.bar.handleKey(e)) return;
+    if (e.key === "Enter") { e.preventDefault(); this.bar.hide(); this.submit(); }
+  }
+}
+
+/* =========================================================================
+   Étape 6 : motifs regex
+   ========================================================================= */
+
+class PatternDrill extends BaseDrill {
+  constructor(step, n) {
+    super(step, n); this.kind = "pattern"; this.mode = "pattern";
+    this.items = weightedSample(PATTERNS, Math.min(n, PATTERNS.length));
+    this.n = this.items.length; this.busy = false;
+  }
+  start() {
+    this.shell(`
+      <div class="inline"><span class="stars" id="stars"></span><span class="ctx">Motif regex</span></div>
+      <div class="prompt" id="prompt" style="font-size: clamp(20px, 3vw, 26px)"></div>
+      <div class="patbar"><span>"</span><input id="pat" spellcheck="false" autocomplete="off" aria-label="Motif"><span>"</span></div>
+      <div class="grids">
+        <div class="gridbox"><span class="eyebrow">Doit correspondre (TRUE)</span><ul class="plist" id="yes"></ul></div>
+        <div class="gridbox"><span class="eyebrow">Ne doit pas correspondre (FALSE)</span><ul class="plist" id="no"></ul></div>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="inline"><button class="btn ghost" id="solBtn">Voir une solution</button>
+        <span class="note">Comme REGEXTEST : le motif est cherché n'importe où, pensez aux ancres ^ et $. L'exercice se valide tout seul quand tout est vert.</span></div>`,
+      "Écrivez le motif");
+    $("#pat").addEventListener("input", () => this.check(false));
+    $("#solBtn").addEventListener("click", () => this.reveal());
+    this.show();
+    this.begin();
+  }
+  get item() { return this.items[this.i]; }
+  show() {
+    this.errorsOnItem = 0; this.busy = false;
+    $("#stars").textContent = stars(this.item.lvl);
+    $("#prompt").textContent = this.item.task;
+    const p = $("#pat"); p.value = ""; p.focus();
+    this.check(false);
+    this.feedback("");
+    this.counter();
+  }
+  compile(p) { let f = ""; if (p.startsWith("(?i)")) { p = p.slice(4); f = "i"; } return new RegExp(p, f); }
+  rowHtml(s, re, want) {
+    let shown = s === "" ? '<span class="note">(cellule vide)</span>' : esc(s), state = "";
+    if (re) {
+      const m = s.match(re), got = !!m;
+      if (m && m[0] !== "") shown = esc(s.slice(0, m.index)) + "<mark>" + esc(m[0]) + "</mark>" + esc(s.slice(m.index + m[0].length));
+      state = got === want ? "pass" : "fail";
+    }
+    return `<li class="${state}"><span class="mark">${state === "pass" ? "✓" : state === "fail" ? "✗" : "·"}</span><span>${shown}</span></li>`;
+  }
+  check(final) {
+    const it = this.item, p = $("#pat").value;
+    let re = null;
+    if (p) { try { re = this.compile(p); } catch (e) { this.feedback("Motif invalide : " + esc(e.message), "bad"); } }
+    if (re && $("#feedback").textContent.startsWith("Motif invalide")) this.feedback("");
+    $("#yes").innerHTML = it.yes.map(s => this.rowHtml(s, re, true)).join("");
+    $("#no").innerHTML = it.no.map(s => this.rowHtml(s, re, false)).join("");
+    const all = re && it.yes.every(s => re.test(s)) && it.no.every(s => !re.test(s));
+    if (all && !this.busy) {
+      if (!this.errorsOnItem) bumpWeak(it.id, -1);
+      this.feedback("Exact.", "good");
+      this.flash();
+      this.busy = true;
+      setTimeout(() => {
+        if (drill !== this) return;
+        this.i++;
+        if (this.i >= this.n) { const total = now() - this.t0; return this.finish(total / 1000 / this.n, 100 * (this.n - this.itemsWithError) / this.n); }
+        this.show();
+      }, 450);
+    } else if (final && p) {
+      this.markError(); this.shake();
+      this.feedback("Pas encore : les lignes en rouge ne sont pas bien classées.", "bad");
+    }
+  }
+  markError() {
+    this.errorsOnItem++;
+    if (this.errorsOnItem === 1) {
+      this.itemsWithError++;
+      bumpWeak(this.item.id, 1);
+      this.misses.push({ label: this.item.task, html: `<span class="answer">${esc(this.item.sol)}</span>` });
+    }
+  }
+  reveal() {
+    if (!this.errorsOnItem) this.markError();
+    this.feedback(`Une solution : <span class="answer">${esc(this.item.sol)}</span> — tapez-la (ou la vôtre) pour continuer.`, "bad");
+    $("#pat").focus();
+  }
+  onKey(e) {
+    if (e.target.id !== "pat") {
+      if (e.key.length === 1 || e.key === "Backspace") $("#pat").focus();
+      return;
+    }
+    if (e.key === "Enter") { e.preventDefault(); this.check(true); }
+  }
+}
+
+function startDrill() {
+  const st = stepById(current);
+  const n = settings[st.id];
+  if (st.kind === "keys") drill = new KeysDrill(st, n);
+  else if (st.kind === "typing") drill = new TypingDrill(st, n, settings.typingLevel, settings.typingTab);
+  else if (st.kind === "formula") drill = new FormulaDrill(st, n, settings.formulaMode);
+  else if (st.kind === "eval") drill = new EvalDrill(st, n, poolOf(st), null);
+  else if (st.kind === "regex") drill = settings.regexMode === "excel" ? new EvalDrill(st, n, REGX, "excel") : new PatternDrill(st, n);
+  else if (st.kind === "vba") drill = new VbaDrill(st, n);
+  else drill = new CaseDrill(st, n);
+  drill.start();
+}
+
+/* =========================================================================
+   Étape 7 : VBA
+   ========================================================================= */
+
+class VbaDrill extends BaseDrill {
+  constructor(step, n) {
+    super(step, n); this.kind = "vba"; this.items = weightedSample(step.pool, n);
+    this.keystrokes = 0; this.badKeys = 0; this.chars = 0;
+  }
+  start() {
+    this.shell(`<pre class="code" id="code" aria-label="Code à recopier"></pre>
+      <div class="feedback" id="feedback"></div>
+      <span class="note">Tapez directement : Entrée passe à la ligne (indentation automatique), Retour arrière corrige.</span>`, "Recopiez la macro");
+    this.show();
+    this.begin();
+    $("#stage").focus();
+  }
+  get item() { return this.items[this.i]; }
+  show() {
+    this.target = this.item.code; this.typed = ""; this.errorsOnItem = 0; this.itemStart = now();
+    this.render(); this.counter(); this.feedback("");
+  }
+  render() {
+    const t = this.target, ty = this.typed;
+    let html = "";
+    for (let k = 0; k < t.length; k++) {
+      const ch = t[k];
+      let cls = "p";
+      if (k < ty.length) cls = ty[k].toLowerCase() === ch.toLowerCase() ? "k" : "x";
+      if (k === ty.length) cls += " cur";
+      if (ch === "\n") html += `<span class="${cls} nl"></span>\n`;
+      else html += `<span class="${cls}">${esc(ch)}</span>`;
+    }
+    if (ty.length >= t.length) html += '<span class="cur"> </span>';
+    $("#code").innerHTML = html;
+  }
+  type(ch) {
+    const pos = this.typed.length;
+    if (pos >= this.target.length + 3) return;
+    this.keystrokes++;
+    const expected = this.target[pos];
+    if (expected === undefined || expected.toLowerCase() !== ch.toLowerCase()) {
+      this.badKeys++;
+      if (!this.errorsOnItem) { this.misses.push({ label: this.item.code.split("\n")[0], html: "" }); bumpWeak(this.item.id, 1); }
+      this.errorsOnItem++;
+    }
+    this.typed += ch;
+    if (ch === "\n" && expected === "\n") {
+      while (this.target[this.typed.length] === " ") this.typed += " ";
+    }
+  }
+  onKey(e) {
+    if (this.paused) return;
+    if (e.ctrlKey || e.altKey || e.metaKey) { e.preventDefault(); return; }
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      // une indentation automatique s'efface avec son retour à la ligne
+      if (/\n +$/.test(this.typed)) this.typed = this.typed.replace(/\n +$/, "");
+      else this.typed = this.typed.slice(0, -1);
+      this.render(); return;
+    }
+    let ch = null;
+    if (e.key === "Enter") ch = "\n";
+    else if (e.key === "Tab") { e.preventDefault(); return; }
+    else if (e.key.length === 1) ch = e.key;
+    if (ch === null) return;
+    e.preventDefault();
+    this.type(ch);
+    this.render();
+    if (this.typed.toLowerCase() === this.target.toLowerCase()) {
+      if (!this.errorsOnItem) bumpWeak(this.item.id, -1);
+      this.chars += this.target.replace(/^ +/gm, "").length;
+      this.flash();
+      this.i++;
+      if (this.i >= this.n) {
+        const total = now() - this.t0;
+        return this.finish(this.chars / (total / 60000), 100 * (this.keystrokes - this.badKeys) / Math.max(1, this.keystrokes));
+      }
+      this.show();
+    }
+  }
+}
+
+/* =========================================================================
+   Étape 8 : mini-cas
+   ========================================================================= */
+
+class CaseDrill extends BaseDrill {
+  constructor(step, n) { super(step, n); this.kind = "case"; this.correctFirst = 0; this.times = []; }
+  start() {
+    this.shell(`<div id="caseBody"></div><div class="feedback" id="feedback"></div>`, "Résolvez le cas dans Excel");
+    this.begin();
+    this.show();
+  }
+  show() {
+    this.c = makeCase((Date.now() ^ (this.i * 7919)) >>> 0);
+    this.errorsOnItem = 0; this.itemStart = now();
+    $("#caseBody").innerHTML = `
+      <div class="case-q">${esc(this.c.q)}</div>
+      <div class="inline">
+        <button class="btn primary" id="copyBtn">Copier les données</button>
+        <span class="note">Collez en A1 (Ctrl+V) : 60 commandes, colonnes A à F.</span>
+      </div>
+      <div id="copyFallback"></div>
+      <div class="datatable"><table class="sheet"><thead><tr><th></th><th>A · Order ID</th><th>B · Date</th><th>C · Region</th><th>D · Product</th><th>E · Units</th><th>F · Unit Price</th></tr></thead>
+        <tbody>${this.c.rows.map((x, k) => `<tr><th>${k + 2}</th><td>${x.id}</td><td>${x.date}</td><td>${x.region}</td><td>${x.product}</td><td class="r">${x.units}</td><td class="r">${x.price}</td></tr>`).join("")}</tbody></table></div>
+      <form class="inline" id="ansForm">
+        <label class="label" for="ans">Votre résultat</label>
+        <input type="text" id="ans" autocomplete="off" inputmode="${this.c.text ? "text" : "decimal"}">
+        <button class="btn primary" type="submit">Valider</button>
+        <button class="btn ghost" type="button" id="giveUp">Voir la réponse</button>
+      </form>`;
+    $("#copyBtn").addEventListener("click", () => this.copy());
+    $("#ansForm").addEventListener("submit", ev => { ev.preventDefault(); this.check(); });
+    $("#giveUp").addEventListener("click", () => this.giveUp());
+    this.feedback("");
+    this.counter();
+  }
+  copy() {
+    const tsv = this.c.tsv;
+    const done = () => this.feedback("Données copiées : collez-les en A1 de votre classeur.", "good");
+    const fallback = () => {
+      $("#copyFallback").innerHTML = '<textarea class="copybox" id="copyBox" readonly aria-label="Données à copier"></textarea><p class="note">Copie automatique refusée : le texte est sélectionné, faites Ctrl+C.</p>';
+      const ta = $("#copyBox"); ta.value = tsv; ta.focus(); ta.select();
+    };
+    try { navigator.clipboard.writeText(tsv).then(done, fallback); } catch (e) { fallback(); }
+  }
+  check() {
+    const raw = $("#ans").value;
+    if (!raw.trim()) return;
+    let ok;
+    if (this.c.text) ok = raw.trim().toLowerCase() === String(this.c.ans).toLowerCase();
+    else { const v = parseAnswer(raw); ok = v !== null && Math.abs(v - this.c.ans) < 0.011; }
+    if (ok) this.next(true);
+    else {
+      this.errorsOnItem++; this.shake();
+      this.feedback("Ce n'est pas le bon résultat. Vérifiez vos plages et vos critères.", "bad");
+    }
+  }
+  giveUp() {
+    this.errorsOnItem++;
+    const ansTxt = this.c.text ? this.c.ans : Number(this.c.ans).toLocaleString("en-US");
+    this.misses.push({ label: this.c.q, html: `<span class="answer">${esc(ansTxt)}</span>` });
+    this.feedback(`Réponse : <b class="num">${esc(ansTxt)}</b> · piste : <span class="answer">${esc(this.c.how)}</span>
+      <button class="btn" type="button" id="nextCase">Cas suivant</button>`, "bad");
+    $("#nextCase").addEventListener("click", () => this.next(false));
+  }
+  next(solved) {
+    if (solved && !this.errorsOnItem) this.correctFirst++;
+    if (solved && this.errorsOnItem) this.misses.push({ label: this.c.q, html: `<span class="answer">${esc(String(this.c.ans))}</span>` });
+    this.flash();
+    this.i++;
+    if (this.i >= this.n) {
+      const total = now() - this.t0;
+      return this.finish(total / 1000 / this.n, 100 * this.correctFirst / this.n);
+    }
+    this.show();
+  }
+  onKey() { }
+}
+
+initStore();
+</script>
+</body>
+</html>

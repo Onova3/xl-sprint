@@ -1,0 +1,500 @@
+{
+  "note": "Exercices validés par comparaison de texte normalisé (v1). En v2, les convertir en formula-eval avec une feuille de données. Références à la feuille d'exemple A1:E100 + H2 + table Products.",
+  "items": [
+    {
+      "id": "x1",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Total of all Sales"
+      },
+      "accepted": [
+        "=SUM(C2:C100)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "SUM"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x2",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Sales total for the East region"
+      },
+      "accepted": [
+        "=SUMIFS(C2:C100,B2:B100,\"East\")",
+        "=SUMIF(B2:B100,\"East\",C2:C100)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "SUMIFS",
+        "SUMIF"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x3",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Number of East orders with Sales above 500"
+      },
+      "accepted": [
+        "=COUNTIFS(B2:B100,\"East\",C2:C100,\">500\")"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "COUNTIFS"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x4",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Largest sale in the West region"
+      },
+      "accepted": [
+        "=MAXIFS(C2:C100,B2:B100,\"West\")"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "MAXIFS"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x5",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Price of the product in H2, from the Products table"
+      },
+      "accepted": [
+        "=XLOOKUP(H2,Products[Product],Products[Price])",
+        "=VLOOKUP(H2,Products,2,FALSE)",
+        "=VLOOKUP(H2,Products,2,0)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "XLOOKUP",
+        "VLOOKUP"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "x6",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Units of the first order of the product in H2 (INDEX + MATCH)"
+      },
+      "accepted": [
+        "=INDEX(E2:E100,MATCH(H2,D2:D100,0))",
+        "=XLOOKUP(H2,D2:D100,E2:E100)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "INDEX",
+        "MATCH",
+        "XLOOKUP"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "x7",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Sorted list of unique regions"
+      },
+      "accepted": [
+        "=SORT(UNIQUE(B2:B100))"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "SORT",
+        "UNIQUE"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "x8",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Every row of A2:E100 where Sales exceed 1000"
+      },
+      "accepted": [
+        "=FILTER(A2:E100,C2:C100>1000)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "FILTER"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "x9",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Number of distinct products"
+      },
+      "accepted": [
+        "=COUNTA(UNIQUE(D2:D100))",
+        "=ROWS(UNIQUE(D2:D100))"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "COUNTA",
+        "UNIQUE",
+        "ROWS"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "x10",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Top 3 sales, largest first"
+      },
+      "accepted": [
+        "=TAKE(SORT(C2:C100,,-1),3)",
+        "=LARGE(C2:C100,{1;2;3})",
+        "=LARGE(C2:C100,SEQUENCE(3))"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "TAKE",
+        "SORT",
+        "LARGE",
+        "SEQUENCE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "x11",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Sum of Sales × Units, row by row"
+      },
+      "accepted": [
+        "=SUMPRODUCT(C2:C100,E2:E100)",
+        "=SUMPRODUCT(C2:C100*E2:E100)",
+        "=SUM(C2:C100*E2:E100)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "SUMPRODUCT",
+        "SUM"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x12",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Month number of the date in A2"
+      },
+      "accepted": [
+        "=MONTH(A2)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "MONTH"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x13",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Last day of the month of the date in A2"
+      },
+      "accepted": [
+        "=EOMONTH(A2,0)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "EOMONTH"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x14",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Day name of the date in A2 (e.g. Monday)"
+      },
+      "accepted": [
+        "=TEXT(A2,\"dddd\")"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "TEXT"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x15",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Sales total for March 2026"
+      },
+      "accepted": [
+        "=SUMIFS(C2:C100,A2:A100,\">=\"&DATE(2026,3,1),A2:A100,\"<\"&DATE(2026,4,1))",
+        "=SUMIFS(C2:C100,A2:A100,\">=\"&DATE(2026,3,1),A2:A100,\"<=\"&DATE(2026,3,31))",
+        "=SUMIFS(C2:C100,A2:A100,\">=\"&DATE(2026,3,1),A2:A100,\"<=\"&EOMONTH(DATE(2026,3,1),0))"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "SUMIFS",
+        "DATE",
+        "EOMONTH"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x16",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Return \"Pass\" if C2 is at least 500, otherwise \"Fail\""
+      },
+      "accepted": [
+        "=IF(C2>=500,\"Pass\",\"Fail\")",
+        "=IF(C2<500,\"Fail\",\"Pass\")"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "IF"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x17",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Region in B2 in capitals, without extra spaces"
+      },
+      "accepted": [
+        "=UPPER(TRIM(B2))",
+        "=TRIM(UPPER(B2))"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "UPPER",
+        "TRIM"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x18",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Text after the last hyphen in D2"
+      },
+      "accepted": [
+        "=TEXTAFTER(D2,\"-\",-1)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "TEXTAFTER"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "x19",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Split D2 into columns at each hyphen"
+      },
+      "accepted": [
+        "=TEXTSPLIT(D2,\"-\")"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "TEXTSPLIT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "x20",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Rank of C2 among all Sales (1 = largest)"
+      },
+      "accepted": [
+        "=RANK.EQ(C2,C2:C100)",
+        "=RANK(C2,C2:C100)",
+        "=RANK.EQ(C2,C2:C100,0)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "RANK.EQ",
+        "RANK"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x21",
+      "type": "formula-text",
+      "prompt": {
+        "en": "C2 rounded to the nearest hundred"
+      },
+      "accepted": [
+        "=ROUND(C2,-2)",
+        "=MROUND(C2,100)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "ROUND",
+        "MROUND"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x22",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Numbers 1 to 12 in a column"
+      },
+      "accepted": [
+        "=SEQUENCE(12)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "SEQUENCE"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "x23",
+      "type": "formula-text",
+      "prompt": {
+        "en": "With LET, store C2*1.2 in a name and return it rounded to 2 decimals"
+      },
+      "accepted": [
+        "=LET(x,C2*1.2,ROUND(x,2))"
+      ],
+      "acceptRegex": "^=LET\\(([A-Z_][A-Z0-9_.]*),(C2\\*1\\.2|1\\.2\\*C2),ROUND\\(\\1,2\\)\\)$",
+      "functions": [
+        "LET",
+        "ROUND"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "x24",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Running total of C2:C100 with SCAN"
+      },
+      "accepted": [
+        "=SCAN(0,C2:C100,LAMBDA(a,b,a+b))"
+      ],
+      "acceptRegex": "^=SCAN\\(0,C2:C100,LAMBDA\\(([A-Z_][A-Z0-9_.]*),([A-Z_][A-Z0-9_.]*),(\\1\\+\\2|\\2\\+\\1)\\)\\)$",
+      "functions": [
+        "SCAN",
+        "LAMBDA"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "x25",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Total of each row of C2:E100 with BYROW"
+      },
+      "accepted": [
+        "=BYROW(C2:E100,LAMBDA(rw,SUM(rw)))"
+      ],
+      "acceptRegex": "^=BYROW\\(C2:E100,LAMBDA\\(([A-Z_][A-Z0-9_.]*),SUM\\(\\1\\)\\)\\)$",
+      "functions": [
+        "BYROW",
+        "LAMBDA",
+        "SUM"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "x26",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Number of empty cells in E2:E100"
+      },
+      "accepted": [
+        "=COUNTBLANK(E2:E100)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "COUNTBLANK"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x27",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Average sale in the North region, 0 if there is none"
+      },
+      "accepted": [
+        "=IFERROR(AVERAGEIFS(C2:C100,B2:B100,\"North\"),0)",
+        "=IFERROR(AVERAGEIF(B2:B100,\"North\",C2:C100),0)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "IFERROR",
+        "AVERAGEIFS",
+        "AVERAGEIF"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x28",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Region and Product joined with \" - \" (row 2)"
+      },
+      "accepted": [
+        "=B2&\" - \"&D2",
+        "=CONCAT(B2,\" - \",D2)",
+        "=TEXTJOIN(\" - \",,B2,D2)",
+        "=TEXTJOIN(\" - \",TRUE,B2,D2)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "CONCAT",
+        "TEXTJOIN"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "x29",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Sales total for each region with GROUPBY"
+      },
+      "accepted": [
+        "=GROUPBY(B2:B100,C2:C100,SUM)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "GROUPBY"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "x30",
+      "type": "formula-text",
+      "prompt": {
+        "en": "Position of the \"Sales\" header in A1:E1"
+      },
+      "accepted": [
+        "=MATCH(\"Sales\",A1:E1,0)",
+        "=XMATCH(\"Sales\",A1:E1)"
+      ],
+      "acceptRegex": null,
+      "functions": [
+        "MATCH",
+        "XMATCH"
+      ],
+      "minExcel": "2021"
+    }
+  ]
+}

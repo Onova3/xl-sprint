@@ -1,0 +1,977 @@
+{
+  "note": "Raccourcis Excel 365 pour Windows, interface ANGLAISE, clavier QWERTY US. Notation : Ctrl/Shift/Alt + nom de touche ; 'Alt H H' = séquence du ruban (relâcher Alt). Champ 'localized' = ce qu'il faut vérifier pour les autres langues/claviers.",
+  "items": [
+    {
+      "id": "n1",
+      "group": "navigation",
+      "action": {
+        "en": "Jump to the last filled cell below"
+      },
+      "context": "Navigation",
+      "keys": "Ctrl+Down",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n2",
+      "group": "navigation",
+      "action": {
+        "en": "Jump to the last filled cell on the right"
+      },
+      "context": "Navigation",
+      "keys": "Ctrl+Right",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n3",
+      "group": "navigation",
+      "action": {
+        "en": "Extend the selection down to the end of the data"
+      },
+      "context": "Selection",
+      "keys": "Ctrl+Shift+Down",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n4",
+      "group": "navigation",
+      "action": {
+        "en": "Extend the selection right to the end of the data"
+      },
+      "context": "Selection",
+      "keys": "Ctrl+Shift+Right",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n5",
+      "group": "navigation",
+      "action": {
+        "en": "Go to cell A1"
+      },
+      "context": "Navigation",
+      "keys": "Ctrl+Home",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n6",
+      "group": "navigation",
+      "action": {
+        "en": "Go to the last used cell"
+      },
+      "context": "Navigation",
+      "keys": "Ctrl+End",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n7",
+      "group": "navigation",
+      "action": {
+        "en": "Select the entire row"
+      },
+      "context": "Selection",
+      "keys": "Shift+Space",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n8",
+      "group": "navigation",
+      "action": {
+        "en": "Select the entire column"
+      },
+      "context": "Selection",
+      "keys": "Ctrl+Space",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n9",
+      "group": "navigation",
+      "action": {
+        "en": "Select the current region (Ctrl+*)"
+      },
+      "context": "Selection",
+      "keys": "Ctrl+Shift+8",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n10",
+      "group": "navigation",
+      "action": {
+        "en": "Edit the active cell"
+      },
+      "context": "Editing",
+      "keys": "F2",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n11",
+      "group": "navigation",
+      "action": {
+        "en": "Fill Down"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+D",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n12",
+      "group": "navigation",
+      "action": {
+        "en": "Fill Right"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+R",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n13",
+      "group": "navigation",
+      "action": {
+        "en": "Enter the same entry in every selected cell"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+Enter",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n14",
+      "group": "navigation",
+      "action": {
+        "en": "Start a new line inside a cell"
+      },
+      "context": "Editing",
+      "keys": "Alt+Enter",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n15",
+      "group": "navigation",
+      "action": {
+        "en": "AutoSum"
+      },
+      "context": "Formulas",
+      "keys": "Alt+=",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n16",
+      "group": "navigation",
+      "action": {
+        "en": "Insert today's date"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+;",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n17",
+      "group": "navigation",
+      "action": {
+        "en": "Insert the current time"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+Shift+;",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n18",
+      "group": "navigation",
+      "action": {
+        "en": "Show Formulas"
+      },
+      "context": "Formulas",
+      "keys": "Ctrl+`",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n19",
+      "group": "navigation",
+      "action": {
+        "en": "Toggle absolute / relative reference"
+      },
+      "context": "Formulas",
+      "keys": "F4",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n20",
+      "group": "navigation",
+      "action": {
+        "en": "Turn Filter on or off"
+      },
+      "context": "Data",
+      "keys": "Ctrl+Shift+L",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n21",
+      "group": "navigation",
+      "action": {
+        "en": "Insert cells, rows or columns"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+Shift+=",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n22",
+      "group": "navigation",
+      "action": {
+        "en": "Delete cells, rows or columns"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+-",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n23",
+      "group": "navigation",
+      "action": {
+        "en": "Hide the selected rows"
+      },
+      "context": "Format",
+      "keys": "Ctrl+9",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n24",
+      "group": "navigation",
+      "action": {
+        "en": "Hide the selected columns"
+      },
+      "context": "Format",
+      "keys": "Ctrl+0",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n25",
+      "group": "navigation",
+      "action": {
+        "en": "Undo"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+Z",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n26",
+      "group": "navigation",
+      "action": {
+        "en": "Redo"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+Y",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n27",
+      "group": "navigation",
+      "action": {
+        "en": "Go To"
+      },
+      "context": "Navigation",
+      "keys": "Ctrl+G",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n28",
+      "group": "navigation",
+      "action": {
+        "en": "Find and Replace"
+      },
+      "context": "Editing",
+      "keys": "Ctrl+H",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n29",
+      "group": "navigation",
+      "action": {
+        "en": "Paste Special"
+      },
+      "context": "Clipboard",
+      "keys": "Ctrl+Alt+V",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n30",
+      "group": "navigation",
+      "action": {
+        "en": "Calculate Now"
+      },
+      "context": "Formulas",
+      "keys": "F9",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n31",
+      "group": "navigation",
+      "action": {
+        "en": "Name Manager"
+      },
+      "context": "Formulas",
+      "keys": "Ctrl+F3",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "n32",
+      "group": "navigation",
+      "action": {
+        "en": "Expand or collapse the formula bar"
+      },
+      "context": "Formulas",
+      "keys": "Ctrl+Shift+U",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n33",
+      "group": "navigation",
+      "action": {
+        "en": "Open the Visual Basic Editor"
+      },
+      "context": "Developer",
+      "keys": "Alt+F11",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n34",
+      "group": "navigation",
+      "action": {
+        "en": "Open the Macro dialog"
+      },
+      "context": "Developer",
+      "keys": "Alt+F8",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n35",
+      "group": "navigation",
+      "action": {
+        "en": "Insert a new worksheet"
+      },
+      "context": "Sheets",
+      "keys": "Shift+F11",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": null
+    },
+    {
+      "id": "n36",
+      "group": "navigation",
+      "action": {
+        "en": "Next worksheet"
+      },
+      "context": "Sheets",
+      "keys": "Ctrl+PageDown",
+      "kind": "chord",
+      "browserReserved": true,
+      "localized": null
+    },
+    {
+      "id": "n37",
+      "group": "navigation",
+      "action": {
+        "en": "Previous worksheet"
+      },
+      "context": "Sheets",
+      "keys": "Ctrl+PageUp",
+      "kind": "chord",
+      "browserReserved": true,
+      "localized": null
+    },
+    {
+      "id": "n38",
+      "group": "navigation",
+      "action": {
+        "en": "Create a Table"
+      },
+      "context": "Insert",
+      "keys": "Ctrl+T",
+      "kind": "chord",
+      "browserReserved": true,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n39",
+      "group": "navigation",
+      "action": {
+        "en": "New workbook"
+      },
+      "context": "File",
+      "keys": "Ctrl+N",
+      "kind": "chord",
+      "browserReserved": true,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n40",
+      "group": "navigation",
+      "action": {
+        "en": "Close the workbook"
+      },
+      "context": "File",
+      "keys": "Ctrl+W",
+      "kind": "chord",
+      "browserReserved": true,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "n41",
+      "group": "navigation",
+      "action": {
+        "en": "Save As"
+      },
+      "context": "File",
+      "keys": "F12",
+      "kind": "chord",
+      "browserReserved": true,
+      "localized": null
+    },
+    {
+      "id": "f1",
+      "group": "format",
+      "action": {
+        "en": "Bold"
+      },
+      "context": "Home › Font",
+      "keys": "Ctrl+B",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "f2",
+      "group": "format",
+      "action": {
+        "en": "Italic"
+      },
+      "context": "Home › Font",
+      "keys": "Ctrl+I",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "f3",
+      "group": "format",
+      "action": {
+        "en": "Underline"
+      },
+      "context": "Home › Font",
+      "keys": "Ctrl+U",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "letter may change with Excel UI language (e.g. Bold = Ctrl+G in French Excel) – verify"
+    },
+    {
+      "id": "f4",
+      "group": "format",
+      "action": {
+        "en": "Strikethrough"
+      },
+      "context": "Home › Font",
+      "keys": "Ctrl+5",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f5",
+      "group": "format",
+      "action": {
+        "en": "Format Cells dialog"
+      },
+      "context": "Home › Format",
+      "keys": "Ctrl+1",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f6",
+      "group": "format",
+      "action": {
+        "en": "Number format (2 decimals, thousands separator)"
+      },
+      "context": "Number format",
+      "keys": "Ctrl+Shift+1",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f7",
+      "group": "format",
+      "action": {
+        "en": "Time format"
+      },
+      "context": "Number format",
+      "keys": "Ctrl+Shift+2",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f8",
+      "group": "format",
+      "action": {
+        "en": "Date format"
+      },
+      "context": "Number format",
+      "keys": "Ctrl+Shift+3",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f9",
+      "group": "format",
+      "action": {
+        "en": "Currency format"
+      },
+      "context": "Number format",
+      "keys": "Ctrl+Shift+4",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f10",
+      "group": "format",
+      "action": {
+        "en": "Percentage format"
+      },
+      "context": "Number format",
+      "keys": "Ctrl+Shift+5",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f11",
+      "group": "format",
+      "action": {
+        "en": "Scientific format"
+      },
+      "context": "Number format",
+      "keys": "Ctrl+Shift+6",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f12",
+      "group": "format",
+      "action": {
+        "en": "General format"
+      },
+      "context": "Number format",
+      "keys": "Ctrl+Shift+`",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f13",
+      "group": "format",
+      "action": {
+        "en": "Outline border"
+      },
+      "context": "Borders",
+      "keys": "Ctrl+Shift+7",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f14",
+      "group": "format",
+      "action": {
+        "en": "Remove all borders"
+      },
+      "context": "Borders",
+      "keys": "Ctrl+Shift+-",
+      "kind": "chord",
+      "browserReserved": false,
+      "localized": "uses a symbol/digit key – check physical key on non-US layouts"
+    },
+    {
+      "id": "f15",
+      "group": "format",
+      "action": {
+        "en": "Fill Color"
+      },
+      "context": "Home › Font",
+      "keys": "Alt H H",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f16",
+      "group": "format",
+      "action": {
+        "en": "Font Color"
+      },
+      "context": "Home › Font",
+      "keys": "Alt H F C",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f17",
+      "group": "format",
+      "action": {
+        "en": "All Borders"
+      },
+      "context": "Home › Font › Borders",
+      "keys": "Alt H B A",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f18",
+      "group": "format",
+      "action": {
+        "en": "Thick Outside Borders"
+      },
+      "context": "Home › Font › Borders",
+      "keys": "Alt H B T",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f19",
+      "group": "format",
+      "action": {
+        "en": "No Border"
+      },
+      "context": "Home › Font › Borders",
+      "keys": "Alt H B N",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f20",
+      "group": "format",
+      "action": {
+        "en": "Bottom Border"
+      },
+      "context": "Home › Font › Borders",
+      "keys": "Alt H B O",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f21",
+      "group": "format",
+      "action": {
+        "en": "Center"
+      },
+      "context": "Home › Alignment",
+      "keys": "Alt H A C",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f22",
+      "group": "format",
+      "action": {
+        "en": "Align Left"
+      },
+      "context": "Home › Alignment",
+      "keys": "Alt H A L",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f23",
+      "group": "format",
+      "action": {
+        "en": "Align Right"
+      },
+      "context": "Home › Alignment",
+      "keys": "Alt H A R",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f24",
+      "group": "format",
+      "action": {
+        "en": "Merge & Center"
+      },
+      "context": "Home › Alignment",
+      "keys": "Alt H M C",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f25",
+      "group": "format",
+      "action": {
+        "en": "Wrap Text"
+      },
+      "context": "Home › Alignment",
+      "keys": "Alt H W",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f26",
+      "group": "format",
+      "action": {
+        "en": "AutoFit Column Width"
+      },
+      "context": "Home › Cells › Format",
+      "keys": "Alt H O I",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f27",
+      "group": "format",
+      "action": {
+        "en": "AutoFit Row Height"
+      },
+      "context": "Home › Cells › Format",
+      "keys": "Alt H O A",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f28",
+      "group": "format",
+      "action": {
+        "en": "Increase Decimal"
+      },
+      "context": "Home › Number",
+      "keys": "Alt H 0",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f29",
+      "group": "format",
+      "action": {
+        "en": "Decrease Decimal"
+      },
+      "context": "Home › Number",
+      "keys": "Alt H 9",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f30",
+      "group": "format",
+      "action": {
+        "en": "Comma Style"
+      },
+      "context": "Home › Number",
+      "keys": "Alt H K",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f31",
+      "group": "format",
+      "action": {
+        "en": "Percent Style"
+      },
+      "context": "Home › Number",
+      "keys": "Alt H P",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f32",
+      "group": "format",
+      "action": {
+        "en": "Conditional Formatting menu"
+      },
+      "context": "Home › Styles",
+      "keys": "Alt H L",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f33",
+      "group": "format",
+      "action": {
+        "en": "Format Painter"
+      },
+      "context": "Home › Clipboard",
+      "keys": "Alt H F P",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f34",
+      "group": "format",
+      "action": {
+        "en": "Paste Values"
+      },
+      "context": "Home › Clipboard",
+      "keys": "Alt H V V",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f35",
+      "group": "format",
+      "action": {
+        "en": "Clear All"
+      },
+      "context": "Home › Editing",
+      "keys": "Alt H E A",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f36",
+      "group": "format",
+      "action": {
+        "en": "Insert Sheet Rows"
+      },
+      "context": "Home › Cells",
+      "keys": "Alt H I R",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f37",
+      "group": "format",
+      "action": {
+        "en": "Delete Sheet Columns"
+      },
+      "context": "Home › Cells",
+      "keys": "Alt H D C",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f38",
+      "group": "format",
+      "action": {
+        "en": "Freeze Panes"
+      },
+      "context": "View › Window",
+      "keys": "Alt W F F",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f39",
+      "group": "format",
+      "action": {
+        "en": "Sort dialog"
+      },
+      "context": "Data › Sort & Filter",
+      "keys": "Alt A S S",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    },
+    {
+      "id": "f40",
+      "group": "format",
+      "action": {
+        "en": "Filter"
+      },
+      "context": "Data › Sort & Filter",
+      "keys": "Alt A T",
+      "kind": "ribbon-sequence",
+      "browserReserved": false,
+      "localized": "ribbon KeyTips change with Excel UI language"
+    }
+  ]
+}

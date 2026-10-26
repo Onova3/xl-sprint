@@ -1,0 +1,582 @@
+{
+  "note": "Exercices REGEX vérifiés par calcul. Syntaxe canonique en-US.",
+  "items": [
+    {
+      "id": "r1",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Valid codes"
+      },
+      "prompt": {
+        "en": "TRUE when the code in A2:A7 is exactly 2 capital letters followed by 4 digits."
+      },
+      "hint": {
+        "fr": "Ancrez avec ^ et $."
+      },
+      "sheet": [
+        [
+          "Code"
+        ],
+        [
+          "AB1234"
+        ],
+        [
+          "ab1234"
+        ],
+        [
+          "ABC123"
+        ],
+        [
+          "XY9876"
+        ],
+        [
+          "AB12345"
+        ],
+        [
+          "QR0001"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXTEST(A2:A7,\"^[A-Z]{2}\\d{4}$\")",
+        "=REGEXTEST(A2:A7,\"^[A-Z]{2}[0-9]{4}$\")"
+      ],
+      "functions": [
+        "REGEXTEST"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r2",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "First number"
+      },
+      "prompt": {
+        "en": "Extract the first number found in A2 (as text)."
+      },
+      "hint": {
+        "fr": "\\d+ = un ou plusieurs chiffres ; return_mode 0 = premier résultat."
+      },
+      "sheet": [
+        [
+          "Message"
+        ],
+        [
+          "Order #4521 shipped on 2026-10-25"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXEXTRACT(A2,\"\\d+\")",
+        "=REGEXEXTRACT(A2,\"[0-9]+\")"
+      ],
+      "functions": [
+        "REGEXEXTRACT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r3",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "All numbers"
+      },
+      "prompt": {
+        "en": "Extract every number of A2 (they spill to the right)."
+      },
+      "hint": {
+        "fr": "return_mode 1 = toutes les correspondances."
+      },
+      "sheet": [
+        [
+          "Message"
+        ],
+        [
+          "Room 12, floor 3, seats 140"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXEXTRACT(A2,\"\\d+\",1)"
+      ],
+      "functions": [
+        "REGEXEXTRACT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r4",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Date parts"
+      },
+      "prompt": {
+        "en": "Return year, month and day of A2 as three values, using capture groups."
+      },
+      "hint": {
+        "fr": "return_mode 2 = groupes de capture (…)."
+      },
+      "sheet": [
+        [
+          "Date"
+        ],
+        [
+          "2026-10-25"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXEXTRACT(A2,\"(\\d{4})-(\\d{2})-(\\d{2})\",2)",
+        "=REGEXEXTRACT(A2,\"(\\d+)-(\\d+)-(\\d+)\",2)"
+      ],
+      "functions": [
+        "REGEXEXTRACT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r5",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Digits only"
+      },
+      "prompt": {
+        "en": "Keep only the digits of each phone number in A2:A5."
+      },
+      "hint": {
+        "fr": "\\D = tout sauf un chiffre."
+      },
+      "sheet": [
+        [
+          "Phone"
+        ],
+        [
+          "(555) 123-4567"
+        ],
+        [
+          "555.987.6543"
+        ],
+        [
+          "+1 555 222 3333"
+        ],
+        [
+          "555-0000"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXREPLACE(A2:A5,\"\\D\",\"\")",
+        "=REGEXREPLACE(A2:A5,\"[^0-9]\",\"\")",
+        "=REGEXREPLACE(A2:A5,\"[^\\d]+\",\"\")"
+      ],
+      "functions": [
+        "REGEXREPLACE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r6",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Swap names"
+      },
+      "prompt": {
+        "en": "Turn \"Last, First\" into \"First Last\" for A2:A5."
+      },
+      "hint": {
+        "fr": "Capturez les deux parties, puis $2 $1 dans le remplacement."
+      },
+      "sheet": [
+        [
+          "Name"
+        ],
+        [
+          "Smith, Anna"
+        ],
+        [
+          "Brown, Leo"
+        ],
+        [
+          "Garcia, Maria"
+        ],
+        [
+          "Lee, Tom"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXREPLACE(A2:A5,\"(\\w+), (\\w+)\",\"$2 $1\")",
+        "=REGEXREPLACE(A2:A5,\"^(.+), (.+)$\",\"$2 $1\")"
+      ],
+      "functions": [
+        "REGEXREPLACE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r7",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Starts with error"
+      },
+      "prompt": {
+        "en": "TRUE when A2:A6 starts with the word error, whatever the case."
+      },
+      "hint": {
+        "fr": "case_sensitivity = 1 pour ignorer la casse."
+      },
+      "sheet": [
+        [
+          "Log"
+        ],
+        [
+          "ERROR: disk full"
+        ],
+        [
+          "Warning: low battery"
+        ],
+        [
+          "error 404"
+        ],
+        [
+          "All good"
+        ],
+        [
+          "Error"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXTEST(A2:A6,\"^error\",1)",
+        "=REGEXTEST(A2:A6,\"(?i)^error\")"
+      ],
+      "functions": [
+        "REGEXTEST"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r8",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Keep valid emails"
+      },
+      "prompt": {
+        "en": "Return only the valid email addresses of A2:A8."
+      },
+      "hint": {
+        "fr": "FILTER + REGEXTEST : une partie avant @, un domaine, un point, une extension."
+      },
+      "sheet": [
+        [
+          "Email"
+        ],
+        [
+          "ana@mail.com"
+        ],
+        [
+          "bad.address"
+        ],
+        [
+          "leo.martin@club-xl.fr"
+        ],
+        [
+          "@nouser.com"
+        ],
+        [
+          "sam@site"
+        ],
+        [
+          "mia_99@excel.io"
+        ],
+        [
+          "two@@signs.com"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=FILTER(A2:A8,REGEXTEST(A2:A8,\"^[\\w.]+@[\\w-]+\\.[a-z]{2,}$\"))",
+        "=FILTER(A2:A8,REGEXTEST(A2:A8,\"^[^@\\s]+@[^@\\s]+\\.[a-z]+$\"))"
+      ],
+      "functions": [
+        "FILTER",
+        "REGEXTEST"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r9",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "First invoice"
+      },
+      "prompt": {
+        "en": "Amount (B) of the first ID of A2:A6 that starts with INV-, using XLOOKUP in regex mode."
+      },
+      "hint": {
+        "fr": "match_mode 3 = expression régulière."
+      },
+      "sheet": [
+        [
+          "ID",
+          "Amount"
+        ],
+        [
+          "PO-17",
+          120
+        ],
+        [
+          "INV-2031",
+          845
+        ],
+        [
+          "CR-44",
+          60
+        ],
+        [
+          "INV-77",
+          300
+        ],
+        [
+          "PO-9",
+          75
+        ]
+      ],
+      "output": "D2",
+      "solutions": [
+        "=XLOOKUP(\"^INV-\",A2:A6,B2:B6,,3)"
+      ],
+      "functions": [
+        "XLOOKUP"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "r10",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Clean spaces"
+      },
+      "prompt": {
+        "en": "Remove leading/trailing spaces in A2 and collapse inner runs of spaces to one."
+      },
+      "hint": {
+        "fr": "Deux remplacements imbriqués, ou TRIM si vous le connaissez."
+      },
+      "sheet": [
+        [
+          "Text"
+        ],
+        [
+          "  Excel   esports    rocks  "
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXREPLACE(REGEXREPLACE(A2,\"^\\s+|\\s+$\",\"\"),\" {2,}\",\" \")",
+        "=TRIM(A2)"
+      ],
+      "functions": [
+        "REGEXREPLACE",
+        "TRIM"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r11",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Domain name"
+      },
+      "prompt": {
+        "en": "Return the domain (after @) of each email in A2:A5."
+      },
+      "hint": {
+        "fr": "Supprimez tout jusqu'au @ inclus."
+      },
+      "sheet": [
+        [
+          "Email"
+        ],
+        [
+          "ana@mail.com"
+        ],
+        [
+          "leo@club-xl.fr"
+        ],
+        [
+          "mia@excel.io"
+        ],
+        [
+          "sam@data.org"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXREPLACE(A2:A5,\"^.*@\",\"\")",
+        "=TEXTAFTER(A2:A5,\"@\")",
+        "=REGEXEXTRACT(A2:A5,\"[^@]+$\")"
+      ],
+      "functions": [
+        "REGEXREPLACE",
+        "TEXTAFTER",
+        "REGEXEXTRACT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r12",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Capitalised words"
+      },
+      "prompt": {
+        "en": "Count the words of A2 that start with a capital letter."
+      },
+      "hint": {
+        "fr": "\\b = limite de mot ; comptez les résultats du mode 1."
+      },
+      "sheet": [
+        [
+          "Text"
+        ],
+        [
+          "Excel World Championship in Las Vegas"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=COLUMNS(REGEXEXTRACT(A2,\"\\b[A-Z]\\w*\",1))",
+        "=COUNTA(REGEXEXTRACT(A2,\"\\b[A-Z]\\w*\",1))"
+      ],
+      "functions": [
+        "COLUMNS",
+        "REGEXEXTRACT",
+        "COUNTA"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r13",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "Mask a card"
+      },
+      "prompt": {
+        "en": "Replace every digit of A2 by * except the last four."
+      },
+      "hint": {
+        "fr": "Anticipation (lookahead) : \\d(?=\\d{4})."
+      },
+      "sheet": [
+        [
+          "Card"
+        ],
+        [
+          "4111222233334444"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXREPLACE(A2,\"\\d(?=\\d{4})\",\"*\")",
+        "=REPT(\"*\",LEN(A2)-4)&RIGHT(A2,4)"
+      ],
+      "functions": [
+        "REGEXREPLACE",
+        "REPT",
+        "LEN",
+        "RIGHT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r14",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Hashtags"
+      },
+      "prompt": {
+        "en": "Extract all the hashtags of A2."
+      },
+      "hint": {
+        "fr": "# suivi de caractères de mot."
+      },
+      "sheet": [
+        [
+          "Post"
+        ],
+        [
+          "Training #excel #esports today #MEWC"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXEXTRACT(A2,\"#\\w+\",1)"
+      ],
+      "functions": [
+        "REGEXEXTRACT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "r15",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "24-hour times"
+      },
+      "prompt": {
+        "en": "TRUE when A2:A7 is a valid 24-hour time hh:mm (00:00 to 23:59)."
+      },
+      "hint": {
+        "fr": "Heures : 00-19 ou 20-23 ; minutes : 00-59."
+      },
+      "sheet": [
+        [
+          "Time"
+        ],
+        [
+          "09:30"
+        ],
+        [
+          "23:59"
+        ],
+        [
+          "24:00"
+        ],
+        [
+          "7:05"
+        ],
+        [
+          "12:60"
+        ],
+        [
+          "00:00"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REGEXTEST(A2:A7,\"^([01]\\d|2[0-3]):[0-5]\\d$\")"
+      ],
+      "functions": [
+        "REGEXTEST"
+      ],
+      "minExcel": "365"
+    }
+  ]
+}

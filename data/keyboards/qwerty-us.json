@@ -1,0 +1,251 @@
+{
+  "_note": "Caractère produit par chaque touche physique (KeyboardEvent.code). Sert au clavier affiché à l'écran, à l'analyse des symboles et au calcul de la difficulté de frappe.",
+  "layout": "QWERTY US",
+  "columns": [
+    "base",
+    "shift",
+    "altGr"
+  ],
+  "keys": {
+    "Digit1": [
+      "1",
+      "!",
+      null
+    ],
+    "Digit2": [
+      "2",
+      "@",
+      null
+    ],
+    "Digit3": [
+      "3",
+      "#",
+      null
+    ],
+    "Digit4": [
+      "4",
+      "$",
+      null
+    ],
+    "Digit5": [
+      "5",
+      "%",
+      null
+    ],
+    "Digit6": [
+      "6",
+      "^",
+      null
+    ],
+    "Digit7": [
+      "7",
+      "&",
+      null
+    ],
+    "Digit8": [
+      "8",
+      "*",
+      null
+    ],
+    "Digit9": [
+      "9",
+      "(",
+      null
+    ],
+    "Digit0": [
+      "0",
+      ")",
+      null
+    ],
+    "Backquote": [
+      "`",
+      "~",
+      null
+    ],
+    "Minus": [
+      "-",
+      "_",
+      null
+    ],
+    "Equal": [
+      "=",
+      "+",
+      null
+    ],
+    "BracketLeft": [
+      "[",
+      "{",
+      null
+    ],
+    "BracketRight": [
+      "]",
+      "}",
+      null
+    ],
+    "Backslash": [
+      "\\",
+      "|",
+      null
+    ],
+    "Semicolon": [
+      ";",
+      ":",
+      null
+    ],
+    "Quote": [
+      "'",
+      "\"",
+      null
+    ],
+    "Comma": [
+      ",",
+      "<",
+      null
+    ],
+    "Period": [
+      ".",
+      ">",
+      null
+    ],
+    "Slash": [
+      "/",
+      "?",
+      null
+    ],
+    "Space": [
+      " ",
+      " ",
+      null
+    ],
+    "KeyA": [
+      "a",
+      "A",
+      null
+    ],
+    "KeyB": [
+      "b",
+      "B",
+      null
+    ],
+    "KeyC": [
+      "c",
+      "C",
+      null
+    ],
+    "KeyD": [
+      "d",
+      "D",
+      null
+    ],
+    "KeyE": [
+      "e",
+      "E",
+      null
+    ],
+    "KeyF": [
+      "f",
+      "F",
+      null
+    ],
+    "KeyG": [
+      "g",
+      "G",
+      null
+    ],
+    "KeyH": [
+      "h",
+      "H",
+      null
+    ],
+    "KeyI": [
+      "i",
+      "I",
+      null
+    ],
+    "KeyJ": [
+      "j",
+      "J",
+      null
+    ],
+    "KeyK": [
+      "k",
+      "K",
+      null
+    ],
+    "KeyL": [
+      "l",
+      "L",
+      null
+    ],
+    "KeyM": [
+      "m",
+      "M",
+      null
+    ],
+    "KeyN": [
+      "n",
+      "N",
+      null
+    ],
+    "KeyO": [
+      "o",
+      "O",
+      null
+    ],
+    "KeyP": [
+      "p",
+      "P",
+      null
+    ],
+    "KeyQ": [
+      "q",
+      "Q",
+      null
+    ],
+    "KeyR": [
+      "r",
+      "R",
+      null
+    ],
+    "KeyS": [
+      "s",
+      "S",
+      null
+    ],
+    "KeyT": [
+      "t",
+      "T",
+      null
+    ],
+    "KeyU": [
+      "u",
+      "U",
+      null
+    ],
+    "KeyV": [
+      "v",
+      "V",
+      null
+    ],
+    "KeyW": [
+      "w",
+      "W",
+      null
+    ],
+    "KeyX": [
+      "x",
+      "X",
+      null
+    ],
+    "KeyY": [
+      "y",
+      "Y",
+      null
+    ],
+    "KeyZ": [
+      "z",
+      "Z",
+      null
+    ]
+  }
+}

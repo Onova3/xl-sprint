@@ -1,0 +1,46 @@
+{
+  "_note": "Paramètres de syntaxe par langue d'Excel / région. Les valeurs marquées TODO sont à vérifier dans un vrai Excel (Fichier > Options > Options avancées > séparateurs, et paramètres régionaux Windows).",
+  "en-US": {
+    "excelUi": "English",
+    "functionNames": "canonical",
+    "listSeparator": ",",
+    "decimalSeparator": ".",
+    "thousandsSeparator": ",",
+    "arrayColumnSeparator": ",",
+    "arrayRowSeparator": ";",
+    "true": "TRUE",
+    "false": "FALSE",
+    "dateExample": "10/25/2026 (m/d/yyyy)"
+  },
+  "fr-FR": {
+    "excelUi": "Français",
+    "functionNames": "functions.en-fr.json",
+    "listSeparator": ";",
+    "decimalSeparator": ",",
+    "thousandsSeparator": "  (espace fine insécable)",
+    "arrayColumnSeparator": "TODO: vérifier (souvent '.' ou '\\\\' selon les paramètres)",
+    "arrayRowSeparator": ";",
+    "true": "VRAI",
+    "false": "FAUX",
+    "dateExample": "25/10/2026 (jj/mm/aaaa)"
+  },
+  "en-GB": {
+    "excelUi": "English",
+    "functionNames": "canonical",
+    "listSeparator": ",",
+    "decimalSeparator": ".",
+    "thousandsSeparator": ",",
+    "arrayColumnSeparator": ",",
+    "arrayRowSeparator": ";",
+    "true": "TRUE",
+    "false": "FALSE",
+    "dateExample": "25/10/2026 (dd/mm/yyyy)"
+  },
+  "en-with-fr-regional-settings": {
+    "excelUi": "English",
+    "functionNames": "canonical",
+    "listSeparator": ";",
+    "decimalSeparator": ",",
+    "note": "Cas fréquent : Excel en anglais mais Windows en paramètres régionaux français -> noms anglais, séparateur ';'. Le profil doit séparer 'langue des fonctions' et 'séparateurs'."
+  }
+}

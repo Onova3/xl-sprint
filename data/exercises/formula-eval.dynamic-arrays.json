@@ -1,0 +1,1117 @@
+{
+  "note": "Vérifiés par calcul : la 1re solution donne le résultat de référence, les autres doivent donner le même. Formules en syntaxe canonique en-US (virgule, noms anglais).",
+  "items": [
+    {
+      "id": "d1",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Multiplication table"
+      },
+      "prompt": {
+        "en": "Return a 5 × 5 multiplication table (row number × column number) with MAKEARRAY."
+      },
+      "hint": {
+        "fr": "MAKEARRAY(rows, cols, LAMBDA(i, j, …)) — n'utilisez pas r ni c comme noms."
+      },
+      "sheet": [],
+      "output": "A1",
+      "solutions": [
+        "=MAKEARRAY(5,5,LAMBDA(i,j,i*j))",
+        "=SEQUENCE(5)*SEQUENCE(,5)"
+      ],
+      "functions": [
+        "MAKEARRAY",
+        "LAMBDA",
+        "SEQUENCE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d2",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Identity matrix"
+      },
+      "prompt": {
+        "en": "Return a 4 × 4 identity matrix: 1 on the diagonal, 0 elsewhere."
+      },
+      "hint": {
+        "fr": "Comparez le numéro de ligne et le numéro de colonne."
+      },
+      "sheet": [],
+      "output": "A1",
+      "solutions": [
+        "=MAKEARRAY(4,4,LAMBDA(i,j,IF(i=j,1,0)))",
+        "=MAKEARRAY(4,4,LAMBDA(i,j,--(i=j)))",
+        "=--(SEQUENCE(4)=SEQUENCE(,4))"
+      ],
+      "functions": [
+        "MAKEARRAY",
+        "LAMBDA",
+        "IF",
+        "SEQUENCE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d3",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Running total"
+      },
+      "prompt": {
+        "en": "Running total of the sales in A2:A8, with SCAN."
+      },
+      "hint": {
+        "fr": "SCAN(initial, array, LAMBDA(acc, value, …))."
+      },
+      "sheet": [
+        [
+          "Sales"
+        ],
+        [
+          120
+        ],
+        [
+          80
+        ],
+        [
+          150
+        ],
+        [
+          60
+        ],
+        [
+          200
+        ],
+        [
+          90
+        ],
+        [
+          110
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=SCAN(0,A2:A8,LAMBDA(a,v,a+v))"
+      ],
+      "functions": [
+        "SCAN",
+        "LAMBDA"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d4",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Running maximum"
+      },
+      "prompt": {
+        "en": "For each row, the best score seen so far (A2:A8)."
+      },
+      "hint": {
+        "fr": "SCAN avec MAX entre l'accumulateur et la valeur."
+      },
+      "sheet": [
+        [
+          "Score"
+        ],
+        [
+          5
+        ],
+        [
+          3
+        ],
+        [
+          9
+        ],
+        [
+          2
+        ],
+        [
+          11
+        ],
+        [
+          4
+        ],
+        [
+          7
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=SCAN(0,A2:A8,LAMBDA(a,v,MAX(a,v)))"
+      ],
+      "functions": [
+        "SCAN",
+        "LAMBDA",
+        "MAX"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d5",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Product with REDUCE"
+      },
+      "prompt": {
+        "en": "Product of all the values in A2:A6, with REDUCE."
+      },
+      "hint": {
+        "fr": "Partez de 1, pas de 0."
+      },
+      "sheet": [
+        [
+          "Factor"
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          1.5
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REDUCE(1,A2:A6,LAMBDA(a,v,a*v))",
+        "=PRODUCT(A2:A6)"
+      ],
+      "functions": [
+        "REDUCE",
+        "LAMBDA",
+        "PRODUCT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d6",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Growing word"
+      },
+      "prompt": {
+        "en": "Concatenate the letters of A2:A6 step by step: E, EX, EXC, EXCE, EXCEL."
+      },
+      "hint": {
+        "fr": "SCAN avec un accumulateur texte vide \"\"."
+      },
+      "sheet": [
+        [
+          "Letter"
+        ],
+        [
+          "E"
+        ],
+        [
+          "X"
+        ],
+        [
+          "C"
+        ],
+        [
+          "E"
+        ],
+        [
+          "L"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=SCAN(\"\",A2:A6,LAMBDA(a,v,a&v))"
+      ],
+      "functions": [
+        "SCAN",
+        "LAMBDA"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d7",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "Repeat each item"
+      },
+      "prompt": {
+        "en": "List each item of A2:A4 as many times as its quantity in B2:B4, in one column."
+      },
+      "hint": {
+        "fr": "Deux pistes : une grille IF(SEQUENCE…) puis TOCOL(…,3), ou REDUCE + VSTACK + EXPAND puis DROP de la première ligne."
+      },
+      "sheet": [
+        [
+          "Item",
+          "Qty"
+        ],
+        [
+          "Apple",
+          2
+        ],
+        [
+          "Pear",
+          3
+        ],
+        [
+          "Plum",
+          1
+        ]
+      ],
+      "output": "D2",
+      "solutions": [
+        "=TOCOL(IF(SEQUENCE(,MAX(B2:B4))<=B2:B4,A2:A4,NA()),3)",
+        "=DROP(REDUCE(\"\",SEQUENCE(ROWS(A2:A4)),LAMBDA(acc,i,VSTACK(acc,EXPAND(INDEX(A2:A4,i),INDEX(B2:B4,i),,INDEX(A2:A4,i))))),1)"
+      ],
+      "functions": [
+        "TOCOL",
+        "IF",
+        "SEQUENCE",
+        "MAX",
+        "NA",
+        "DROP",
+        "REDUCE",
+        "ROWS",
+        "LAMBDA",
+        "VSTACK",
+        "EXPAND",
+        "INDEX"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d8",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "Fibonacci"
+      },
+      "prompt": {
+        "en": "The first 10 Fibonacci numbers (1, 1, 2, 3, 5…) in a column, with REDUCE."
+      },
+      "hint": {
+        "fr": "Accumulateur = tableau {1;1} ; à chaque tour, VSTACK de la somme des deux derniers (TAKE(a,-2))."
+      },
+      "sheet": [],
+      "output": "A1",
+      "solutions": [
+        "=REDUCE({1;1},SEQUENCE(8),LAMBDA(a,i,VSTACK(a,SUM(TAKE(a,-2)))))"
+      ],
+      "functions": [
+        "REDUCE",
+        "SEQUENCE",
+        "LAMBDA",
+        "VSTACK",
+        "SUM",
+        "TAKE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d9",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Best round per player"
+      },
+      "prompt": {
+        "en": "Maximum of each row of B2:E5, with BYROW."
+      },
+      "hint": {
+        "fr": "BYROW(array, LAMBDA(row, …)) — le nom row est permis, r ne l'est pas."
+      },
+      "sheet": [
+        [
+          "Player",
+          "R1",
+          "R2",
+          "R3",
+          "R4"
+        ],
+        [
+          "Ana",
+          71,
+          84,
+          66,
+          90
+        ],
+        [
+          "Ben",
+          88,
+          79,
+          93,
+          81
+        ],
+        [
+          "Chloé",
+          64,
+          72,
+          70,
+          69
+        ],
+        [
+          "Dev",
+          95,
+          61,
+          88,
+          77
+        ]
+      ],
+      "output": "G2",
+      "solutions": [
+        "=BYROW(B2:E5,LAMBDA(rw,MAX(rw)))"
+      ],
+      "functions": [
+        "BYROW",
+        "LAMBDA",
+        "MAX"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d10",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Round averages"
+      },
+      "prompt": {
+        "en": "Average of each round (column of B2:E5), rounded to 1 decimal, with BYCOL."
+      },
+      "hint": {
+        "fr": "BYCOL renvoie une ligne."
+      },
+      "sheet": [
+        [
+          "Player",
+          "R1",
+          "R2",
+          "R3",
+          "R4"
+        ],
+        [
+          "Ana",
+          71,
+          84,
+          66,
+          90
+        ],
+        [
+          "Ben",
+          88,
+          79,
+          93,
+          81
+        ],
+        [
+          "Chloé",
+          64,
+          72,
+          70,
+          69
+        ],
+        [
+          "Dev",
+          95,
+          61,
+          88,
+          77
+        ]
+      ],
+      "output": "B7",
+      "solutions": [
+        "=BYCOL(B2:E5,LAMBDA(col,ROUND(AVERAGE(col),1)))",
+        "=ROUND(BYCOL(B2:E5,LAMBDA(col,AVERAGE(col))),1)"
+      ],
+      "functions": [
+        "BYCOL",
+        "LAMBDA",
+        "ROUND",
+        "AVERAGE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d11",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Pairwise maximum"
+      },
+      "prompt": {
+        "en": "For each row, the larger of A and B (A2:B6), with MAP."
+      },
+      "hint": {
+        "fr": "MAP accepte plusieurs tableaux : LAMBDA reçoit un paramètre par tableau."
+      },
+      "sheet": [
+        [
+          "A",
+          "B"
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          12,
+          7
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          20,
+          21
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      "output": "D2",
+      "solutions": [
+        "=MAP(A2:A6,B2:B6,LAMBDA(p,q,MAX(p,q)))",
+        "=IF(A2:A6>B2:B6,A2:A6,B2:B6)"
+      ],
+      "functions": [
+        "MAP",
+        "LAMBDA",
+        "MAX",
+        "IF"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d12",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Word count"
+      },
+      "prompt": {
+        "en": "Number of words in each sentence of A2:A5."
+      },
+      "hint": {
+        "fr": "TEXTSPLIT dans un MAP, ou la différence de longueur avec SUBSTITUTE."
+      },
+      "sheet": [
+        [
+          "Sentence"
+        ],
+        [
+          "Excel is fast"
+        ],
+        [
+          "Practice every single day"
+        ],
+        [
+          "Win"
+        ],
+        [
+          "Lambda functions are powerful tools"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=MAP(A2:A5,LAMBDA(t,COUNTA(TEXTSPLIT(t,\" \"))))",
+        "=LEN(A2:A5)-LEN(SUBSTITUTE(A2:A5,\" \",\"\"))+1"
+      ],
+      "functions": [
+        "MAP",
+        "LAMBDA",
+        "COUNTA",
+        "TEXTSPLIT",
+        "LEN",
+        "SUBSTITUTE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d13",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Every other row"
+      },
+      "prompt": {
+        "en": "Keep rows 1, 3, 5, 7 and 9 of A2:A11."
+      },
+      "hint": {
+        "fr": "SEQUENCE(5,,1,2) donne 1;3;5;7;9."
+      },
+      "sheet": [
+        [
+          "Code"
+        ],
+        [
+          "K1"
+        ],
+        [
+          "K2"
+        ],
+        [
+          "K3"
+        ],
+        [
+          "K4"
+        ],
+        [
+          "K5"
+        ],
+        [
+          "K6"
+        ],
+        [
+          "K7"
+        ],
+        [
+          "K8"
+        ],
+        [
+          "K9"
+        ],
+        [
+          "K10"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=CHOOSEROWS(A2:A11,SEQUENCE(5,,1,2))",
+        "=FILTER(A2:A11,ISODD(SEQUENCE(10)))"
+      ],
+      "functions": [
+        "CHOOSEROWS",
+        "SEQUENCE",
+        "FILTER",
+        "ISODD"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d14",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Reverse a list"
+      },
+      "prompt": {
+        "en": "Return A2:A7 in reverse order."
+      },
+      "hint": {
+        "fr": "SORTBY sur une séquence décroissante, ou CHOOSEROWS avec des indices négatifs."
+      },
+      "sheet": [
+        [
+          "Rank"
+        ],
+        [
+          "Gold"
+        ],
+        [
+          "Silver"
+        ],
+        [
+          "Bronze"
+        ],
+        [
+          "4th"
+        ],
+        [
+          "5th"
+        ],
+        [
+          "6th"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=SORTBY(A2:A7,SEQUENCE(6),-1)",
+        "=CHOOSEROWS(A2:A7,SEQUENCE(6,,-1,-1))",
+        "=INDEX(A2:A7,SEQUENCE(6,,6,-1))"
+      ],
+      "functions": [
+        "SORTBY",
+        "SEQUENCE",
+        "CHOOSEROWS",
+        "INDEX"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d15",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Digit sum"
+      },
+      "prompt": {
+        "en": "Sum of the digits of the number in A2."
+      },
+      "hint": {
+        "fr": "MID(A2, SEQUENCE(LEN(A2)), 1) découpe le nombre en chiffres (texte) : convertissez avec --."
+      },
+      "sheet": [
+        [
+          "Number"
+        ],
+        [
+          9475
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=SUM(--MID(A2,SEQUENCE(LEN(A2)),1))",
+        "=REDUCE(0,MID(A2,SEQUENCE(LEN(A2)),1),LAMBDA(a,d,a+d))"
+      ],
+      "functions": [
+        "SUM",
+        "MID",
+        "SEQUENCE",
+        "LEN",
+        "REDUCE",
+        "LAMBDA"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d16",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "Moving average"
+      },
+      "prompt": {
+        "en": "3-value moving average of A2:A9 (6 results)."
+      },
+      "hint": {
+        "fr": "Pour chaque i, la moyenne de INDEX(plage, SEQUENCE(3,,i)) ; ou trois DROP décalés."
+      },
+      "sheet": [
+        [
+          "Value"
+        ],
+        [
+          10
+        ],
+        [
+          12
+        ],
+        [
+          9
+        ],
+        [
+          15
+        ],
+        [
+          18
+        ],
+        [
+          14
+        ],
+        [
+          20
+        ],
+        [
+          22
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=MAP(SEQUENCE(6),LAMBDA(i,AVERAGE(INDEX(A2:A9,SEQUENCE(3,,i)))))",
+        "=(DROP(A2:A9,-2)+DROP(DROP(A2:A9,1),-1)+DROP(A2:A9,2))/3"
+      ],
+      "functions": [
+        "MAP",
+        "SEQUENCE",
+        "LAMBDA",
+        "AVERAGE",
+        "INDEX",
+        "DROP"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d17",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "Occurrence number"
+      },
+      "prompt": {
+        "en": "For each value of A2:A9, how many times it has appeared so far (including itself)."
+      },
+      "hint": {
+        "fr": "Comparez TAKE(plage, i) à la i-ème valeur."
+      },
+      "sheet": [
+        [
+          "Team"
+        ],
+        [
+          "a"
+        ],
+        [
+          "b"
+        ],
+        [
+          "a"
+        ],
+        [
+          "c"
+        ],
+        [
+          "b"
+        ],
+        [
+          "a"
+        ],
+        [
+          "c"
+        ],
+        [
+          "a"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=MAP(SEQUENCE(8),LAMBDA(i,SUM(--(TAKE(A2:A9,i)=INDEX(A2:A9,i)))))"
+      ],
+      "functions": [
+        "MAP",
+        "SEQUENCE",
+        "LAMBDA",
+        "SUM",
+        "TAKE",
+        "INDEX"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d18",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Transpose by hand"
+      },
+      "prompt": {
+        "en": "Transpose B2:D3 without TRANSPOSE, using MAKEARRAY."
+      },
+      "hint": {
+        "fr": "Inversez i et j dans INDEX."
+      },
+      "sheet": [
+        [
+          "",
+          "Q1",
+          "Q2",
+          "Q3"
+        ],
+        [
+          "East",
+          10,
+          20,
+          30
+        ],
+        [
+          "West",
+          40,
+          50,
+          60
+        ]
+      ],
+      "output": "F2",
+      "solutions": [
+        "=MAKEARRAY(3,2,LAMBDA(i,j,INDEX(B2:D3,j,i)))",
+        "=TRANSPOSE(B2:D3)"
+      ],
+      "functions": [
+        "MAKEARRAY",
+        "LAMBDA",
+        "INDEX",
+        "TRANSPOSE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d19",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Column by column"
+      },
+      "prompt": {
+        "en": "Put B2:D4 into one column, reading column by column."
+      },
+      "hint": {
+        "fr": "Troisième argument de TOCOL : scan_by_column."
+      },
+      "sheet": [
+        [
+          "",
+          "X",
+          "Y",
+          "Z"
+        ],
+        [
+          "r1",
+          1,
+          4,
+          7
+        ],
+        [
+          "r2",
+          2,
+          5,
+          8
+        ],
+        [
+          "r3",
+          3,
+          6,
+          9
+        ]
+      ],
+      "output": "F2",
+      "solutions": [
+        "=TOCOL(B2:D4,,TRUE)"
+      ],
+      "functions": [
+        "TOCOL"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d20",
+      "type": "formula-eval",
+      "level": 1,
+      "title": {
+        "en": "Four columns"
+      },
+      "prompt": {
+        "en": "Wrap the 12 names of A2:A13 into rows of 4."
+      },
+      "hint": {
+        "fr": "WRAPROWS(vector, wrap_count)."
+      },
+      "sheet": [
+        [
+          "Name"
+        ],
+        [
+          "Ada"
+        ],
+        [
+          "Bo"
+        ],
+        [
+          "Cy"
+        ],
+        [
+          "Di"
+        ],
+        [
+          "Ed"
+        ],
+        [
+          "Fa"
+        ],
+        [
+          "Gil"
+        ],
+        [
+          "Hu"
+        ],
+        [
+          "Ivy"
+        ],
+        [
+          "Jo"
+        ],
+        [
+          "Kai"
+        ],
+        [
+          "Lu"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=WRAPROWS(A2:A13,4)"
+      ],
+      "functions": [
+        "WRAPROWS"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d21",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "Vowel counter"
+      },
+      "prompt": {
+        "en": "Number of vowels (a, e, i, o, u, any case) in A2, with REDUCE."
+      },
+      "hint": {
+        "fr": "Découpez le texte en caractères, testez chacun avec SEARCH."
+      },
+      "sheet": [
+        [
+          "Text"
+        ],
+        [
+          "Spreadsheet Olympics"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REDUCE(0,MID(A2,SEQUENCE(LEN(A2)),1),LAMBDA(a,ch,a+ISNUMBER(SEARCH(ch,\"aeiou\"))))",
+        "=COLUMNS(REGEXEXTRACT(A2,\"[aeiou]\",1,1))",
+        "=SUM(--ISNUMBER(SEARCH(MID(A2,SEQUENCE(LEN(A2)),1),\"aeiou\")))"
+      ],
+      "functions": [
+        "REDUCE",
+        "MID",
+        "SEQUENCE",
+        "LEN",
+        "LAMBDA",
+        "ISNUMBER",
+        "SEARCH",
+        "COLUMNS",
+        "REGEXEXTRACT",
+        "SUM"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d22",
+      "type": "formula-eval",
+      "level": 2,
+      "title": {
+        "en": "Staircase"
+      },
+      "prompt": {
+        "en": "5 × 5 grid: the column number when it is ≤ the row number, otherwise empty text \"\"."
+      },
+      "hint": {
+        "fr": "IF dans MAKEARRAY."
+      },
+      "sheet": [],
+      "output": "A1",
+      "solutions": [
+        "=MAKEARRAY(5,5,LAMBDA(i,j,IF(j<=i,j,\"\")))",
+        "=IF(SEQUENCE(,5)<=SEQUENCE(5),SEQUENCE(,5),\"\")"
+      ],
+      "functions": [
+        "MAKEARRAY",
+        "LAMBDA",
+        "IF",
+        "SEQUENCE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d23",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "Rank without RANK"
+      },
+      "prompt": {
+        "en": "Rank of each score of A2:A7 (1 = highest), without RANK functions."
+      },
+      "hint": {
+        "fr": "Rang = nombre de scores strictement supérieurs + 1."
+      },
+      "sheet": [
+        [
+          "Score"
+        ],
+        [
+          88
+        ],
+        [
+          95
+        ],
+        [
+          70
+        ],
+        [
+          95
+        ],
+        [
+          82
+        ],
+        [
+          60
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=MAP(A2:A7,LAMBDA(s,SUM(--(A2:A7>s))+1))",
+        "=MAP(A2:A7,LAMBDA(s,COUNTIF(A2:A7,\">\"&s)+1))"
+      ],
+      "functions": [
+        "MAP",
+        "LAMBDA",
+        "SUM",
+        "COUNTIF"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "d24",
+      "type": "formula-eval",
+      "level": 3,
+      "title": {
+        "en": "Reverse a word"
+      },
+      "prompt": {
+        "en": "Reverse the text in A2 (LAMBDA → ADBMAL)."
+      },
+      "hint": {
+        "fr": "REDUCE en ajoutant chaque caractère devant l'accumulateur."
+      },
+      "sheet": [
+        [
+          "Word"
+        ],
+        [
+          "LAMBDA"
+        ]
+      ],
+      "output": "C2",
+      "solutions": [
+        "=REDUCE(\"\",MID(A2,SEQUENCE(LEN(A2)),1),LAMBDA(a,ch,ch&a))",
+        "=CONCAT(MID(A2,SEQUENCE(LEN(A2),,LEN(A2),-1),1))"
+      ],
+      "functions": [
+        "REDUCE",
+        "MID",
+        "SEQUENCE",
+        "LEN",
+        "LAMBDA",
+        "CONCAT"
+      ],
+      "minExcel": "365"
+    }
+  ]
+}

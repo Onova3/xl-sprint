@@ -1,0 +1,668 @@
+{
+  "note": "Formules à recopier (frappe). Syntaxe canonique en-US : à convertir dans la langue/séparateurs du joueur à l'affichage.",
+  "items": [
+    {
+      "id": "t-base-0",
+      "type": "typing",
+      "level": "base",
+      "formula": "=SUM(C2:C100)",
+      "functions": [
+        "SUM"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-1",
+      "type": "typing",
+      "level": "base",
+      "formula": "=AVERAGE(B2:B50)",
+      "functions": [
+        "AVERAGE"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-2",
+      "type": "typing",
+      "level": "base",
+      "formula": "=MAX(C2:C100)-MIN(C2:C100)",
+      "functions": [
+        "MAX",
+        "MIN"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-3",
+      "type": "typing",
+      "level": "base",
+      "formula": "=ROUND(C2*1.2,2)",
+      "functions": [
+        "ROUND"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-4",
+      "type": "typing",
+      "level": "base",
+      "formula": "=IF(C2>=500,\"Pass\",\"Fail\")",
+      "functions": [
+        "IF"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-5",
+      "type": "typing",
+      "level": "base",
+      "formula": "=$A$2*B$1",
+      "functions": [],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-6",
+      "type": "typing",
+      "level": "base",
+      "formula": "=LEFT(A2,3)&\"-\"&RIGHT(A2,4)",
+      "functions": [
+        "LEFT",
+        "RIGHT"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-7",
+      "type": "typing",
+      "level": "base",
+      "formula": "=UPPER(TRIM(B2))",
+      "functions": [
+        "UPPER",
+        "TRIM"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-8",
+      "type": "typing",
+      "level": "base",
+      "formula": "=YEAR(A2)",
+      "functions": [
+        "YEAR"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-9",
+      "type": "typing",
+      "level": "base",
+      "formula": "=SUMIF(B2:B100,\"East\",C2:C100)",
+      "functions": [
+        "SUMIF"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-10",
+      "type": "typing",
+      "level": "base",
+      "formula": "=VLOOKUP(H2,A2:D100,4,FALSE)",
+      "functions": [
+        "VLOOKUP"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-11",
+      "type": "typing",
+      "level": "base",
+      "formula": "=COUNTIF(B2:B100,\">=50\")",
+      "functions": [
+        "COUNTIF"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-12",
+      "type": "typing",
+      "level": "base",
+      "formula": "=TEXT(A2,\"yyyy-mm-dd\")",
+      "functions": [
+        "TEXT"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-13",
+      "type": "typing",
+      "level": "base",
+      "formula": "=SEQUENCE(10)",
+      "functions": [
+        "SEQUENCE"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-base-14",
+      "type": "typing",
+      "level": "base",
+      "formula": "=SORT(UNIQUE(B2:B100))",
+      "functions": [
+        "SORT",
+        "UNIQUE"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-base-15",
+      "type": "typing",
+      "level": "base",
+      "formula": "=EOMONTH(A2,0)",
+      "functions": [
+        "EOMONTH"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-16",
+      "type": "typing",
+      "level": "base",
+      "formula": "=COUNTA(A2:A500)",
+      "functions": [
+        "COUNTA"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-17",
+      "type": "typing",
+      "level": "base",
+      "formula": "=MONTH(A2)",
+      "functions": [
+        "MONTH"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-18",
+      "type": "typing",
+      "level": "base",
+      "formula": "=INDEX(C2:C100,5)",
+      "functions": [
+        "INDEX"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-base-19",
+      "type": "typing",
+      "level": "base",
+      "formula": "=IFERROR(C2/D2,0)",
+      "functions": [
+        "IFERROR"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-mid-0",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=XLOOKUP(H2,A2:A100,C2:C100,\"Not found\")",
+      "functions": [
+        "XLOOKUP"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-mid-1",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=SUMIFS(C2:C100,B2:B100,\"East\",A2:A100,\">=\"&DATE(2026,1,1))",
+      "functions": [
+        "SUMIFS",
+        "DATE"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-mid-2",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=FILTER(A2:E100,(B2:B100=\"East\")*(C2:C100>1000),\"None\")",
+      "functions": [
+        "FILTER"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-mid-3",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=INDEX(C2:C100,MATCH(H2,A2:A100,0))",
+      "functions": [
+        "INDEX",
+        "MATCH"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-mid-4",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=TEXTJOIN(\", \",TRUE,UNIQUE(B2:B100))",
+      "functions": [
+        "TEXTJOIN",
+        "UNIQUE"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-mid-5",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=TAKE(SORTBY(A2:A100,C2:C100,-1),5)",
+      "functions": [
+        "TAKE",
+        "SORTBY"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-6",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=CHOOSECOLS(A2:E100,1,3,5)",
+      "functions": [
+        "CHOOSECOLS"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-7",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=VSTACK(A1:E1,FILTER(A2:E100,C2:C100>1000))",
+      "functions": [
+        "VSTACK",
+        "FILTER"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-8",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=TEXTSPLIT(A2,\",\",\";\")",
+      "functions": [
+        "TEXTSPLIT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-9",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=COUNTIFS(B2:B100,\"East\",C2:C100,\">500\")",
+      "functions": [
+        "COUNTIFS"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-mid-10",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=EOMONTH(A2,0)-EOMONTH(A2,-1)",
+      "functions": [
+        "EOMONTH"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-mid-11",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=SUMPRODUCT(C2:C100,E2:E100)",
+      "functions": [
+        "SUMPRODUCT"
+      ],
+      "minExcel": "2016"
+    },
+    {
+      "id": "t-mid-12",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=HSTACK(UNIQUE(B2:B100),SUMIFS(C2:C100,B2:B100,UNIQUE(B2:B100)))",
+      "functions": [
+        "HSTACK",
+        "UNIQUE",
+        "SUMIFS"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-13",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=GROUPBY(B2:B100,C2:C100,SUM)",
+      "functions": [
+        "GROUPBY"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-14",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=IFERROR(INDEX(D2:D100,XMATCH(MAX(C2:C100),C2:C100)),\"\")",
+      "functions": [
+        "IFERROR",
+        "INDEX",
+        "XMATCH",
+        "MAX"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-mid-15",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=DROP(SORT(A2:C100,3,-1),1)",
+      "functions": [
+        "DROP",
+        "SORT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-16",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=REGEXEXTRACT(A2,\"\\d+\",1)",
+      "functions": [
+        "REGEXEXTRACT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-17",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=REGEXREPLACE(A2,\"\\s+\",\" \")",
+      "functions": [
+        "REGEXREPLACE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-18",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=REGEXTEST(A2,\"^[A-Z]{2}\\d{4}$\")",
+      "functions": [
+        "REGEXTEST"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-mid-19",
+      "type": "typing",
+      "level": "mid",
+      "formula": "=TEXTAFTER(A2,\"@\")",
+      "functions": [
+        "TEXTAFTER"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-0",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=LET(d,A2:E100,s,CHOOSECOLS(d,3),FILTER(d,s>AVERAGE(s)))",
+      "functions": [
+        "LET",
+        "CHOOSECOLS",
+        "FILTER",
+        "AVERAGE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-1",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=LAMBDA(x,y,SQRT(x^2+y^2))(3,4)",
+      "functions": [
+        "LAMBDA",
+        "SQRT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-2",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=REDUCE(0,SEQUENCE(10),LAMBDA(a,i,a+i^2))",
+      "functions": [
+        "REDUCE",
+        "SEQUENCE",
+        "LAMBDA"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-3",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=MAKEARRAY(3,4,LAMBDA(i,j,ADDRESS(i,j,4)))",
+      "functions": [
+        "MAKEARRAY",
+        "LAMBDA",
+        "ADDRESS"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-4",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=BYROW(B2:E10,LAMBDA(rw,TEXTJOIN(\"|\",,rw)))",
+      "functions": [
+        "BYROW",
+        "LAMBDA",
+        "TEXTJOIN"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-5",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=DROP(REDUCE(\"\",A2:A10,LAMBDA(a,v,VSTACK(a,TEXTSPLIT(v,\",\")))),1)",
+      "functions": [
+        "DROP",
+        "REDUCE",
+        "LAMBDA",
+        "VSTACK",
+        "TEXTSPLIT"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-6",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=LET(t,A2,n,LEN(t),CONCAT(MID(t,SEQUENCE(n,,n,-1),1)))",
+      "functions": [
+        "LET",
+        "LEN",
+        "CONCAT",
+        "MID",
+        "SEQUENCE"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-hard-7",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=SCAN(0,C2:C100,LAMBDA(a,v,IF(v>a,v,a)))",
+      "functions": [
+        "SCAN",
+        "LAMBDA",
+        "IF"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-8",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=MAP(A2:A10,B2:B10,LAMBDA(p,q,IF(p>q,p-q,0)))",
+      "functions": [
+        "MAP",
+        "LAMBDA",
+        "IF"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-9",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=LET(s,SEQUENCE(12),WRAPROWS(s,3))",
+      "functions": [
+        "LET",
+        "SEQUENCE",
+        "WRAPROWS"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-10",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=TOCOL(IF(SEQUENCE(,MAX(B2:B4))<=B2:B4,A2:A4,NA()),3)",
+      "functions": [
+        "TOCOL",
+        "IF",
+        "SEQUENCE",
+        "MAX",
+        "NA"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-11",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=REDUCE({1;1},SEQUENCE(8),LAMBDA(a,i,VSTACK(a,SUM(TAKE(a,-2)))))",
+      "functions": [
+        "REDUCE",
+        "SEQUENCE",
+        "LAMBDA",
+        "VSTACK",
+        "SUM",
+        "TAKE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-12",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=LET(u,UNIQUE(B2:B100),HSTACK(u,MAP(u,LAMBDA(x,SUM(FILTER(C2:C100,B2:B100=x))))))",
+      "functions": [
+        "LET",
+        "UNIQUE",
+        "HSTACK",
+        "MAP",
+        "LAMBDA",
+        "SUM",
+        "FILTER"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-13",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=MAKEARRAY(5,5,LAMBDA(i,j,IF(j<=i,j,\"\")))",
+      "functions": [
+        "MAKEARRAY",
+        "LAMBDA",
+        "IF"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-14",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=REGEXREPLACE(A2:A5,\"(\\w+), (\\w+)\",\"$2 $1\")",
+      "functions": [
+        "REGEXREPLACE"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-15",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=FILTER(A2:A8,REGEXTEST(A2:A8,\"^[\\w.]+@[\\w-]+\\.[a-z]{2,}$\"))",
+      "functions": [
+        "FILTER",
+        "REGEXTEST"
+      ],
+      "minExcel": "365"
+    },
+    {
+      "id": "t-hard-16",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=LET(x,A2:A100,y,B2:B100,SUMPRODUCT((x-AVERAGE(x))*(y-AVERAGE(y)))/SQRT(SUMPRODUCT((x-AVERAGE(x))^2)*SUMPRODUCT((y-AVERAGE(y))^2)))",
+      "functions": [
+        "LET",
+        "SUMPRODUCT",
+        "AVERAGE",
+        "SQRT"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-hard-17",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=SORTBY(UNIQUE(A2:A100),COUNTIFS(A2:A100,UNIQUE(A2:A100)),-1)",
+      "functions": [
+        "SORTBY",
+        "UNIQUE",
+        "COUNTIFS"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-hard-18",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=XLOOKUP(\"^INV-\",A2:A6,B2:B6,,3)",
+      "functions": [
+        "XLOOKUP"
+      ],
+      "minExcel": "2021"
+    },
+    {
+      "id": "t-hard-19",
+      "type": "typing",
+      "level": "hard",
+      "formula": "=BYCOL(B2:E5,LAMBDA(col,ROUND(AVERAGE(col),1)))",
+      "functions": [
+        "BYCOL",
+        "LAMBDA",
+        "ROUND",
+        "AVERAGE"
+      ],
+      "minExcel": "365"
+    }
+  ]
+}
