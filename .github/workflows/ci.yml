@@ -1,0 +1,52 @@
+# Tests, builds (site + fichier unique), puis déploiement GitHub Pages depuis main.
+name: CI
+
+on:
+  push:
+    branches: [main, 'phase-*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build:single
+      - run: npm run build
+        env:
+          # site servi sous https://<compte>.github.io/<dépôt>/
+          BASE_PATH: /${{ github.event.repository.name }}/
+      - run: cp dist/xl-sprint.html dist/site/xl-sprint.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xl-sprint-single-file
+          path: dist/xl-sprint.html
+      - if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/site
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
